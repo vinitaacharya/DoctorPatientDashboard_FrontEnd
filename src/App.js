@@ -1,4 +1,6 @@
 import React , {useState, useEffect} from 'react'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Landing from "./landing";
 
 function App() {
   const[data, setData] = useState([{}])
@@ -15,13 +17,20 @@ function App() {
   }, [])
   return (
     <div>
-      {(typeof data.members === 'undefined')?(
+      <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={(typeof data.members === 'undefined')?(
         <p>Loading...</p>
       ): (
         data.members.map((member, i) =>(
           <p key={i}>{member}</p>
         ))
-      )}
+      )} />
+          <Route path="/landing" element={<Landing />} />
+        </Routes>
+      </div>
+      </Router>
     </div>
   )
 }
