@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+.landingnav{
+    width: 99vw;
+    height: 8vh;
+    background-color: #5889BD;
+    display: flex;
+    align-items: center;
+}
+
+h2{
+    color: #FFF;
+    font-family: "Montserrat", sans-serif;
+    font-size: 3.3rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: 0.97875rem;
+    margin: 0;
+    padding-left: 1vw;
+    text-align: left;
+}
+
+.landinghero{
+    background: linear-gradient(106deg, #5889BD 0.82%, #99C6DB 101.41%);
+    height: 92vh;
+    display: flex;
+    flex-direction: row;
+}
+
+h3{
+    margin: 0px;
+}
+
+.herotext{
+    width: 50vw;
+    color: #FFF;
+    font-family: Montserrat;
+    font-size: 3.125rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    align-content: center;
+    padding-left: 5vw;
+    padding-right: 5vw;
+    text-align: left;
+}
+
+.heroimage{
+    width: 50vw;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Pushes the image to the bottom */
+    justify-content: flex-end;
+}
+
+.doctorhero{
+    max-width: 40vw;
+    max-height: 92vh;
+    align-self: baseline;
+}
+
+.herobutton{
+    border-radius: 30px;
+    border: none;
+    background-color: #EEF2FE;
+    color: #5889BD;
+    text-align: center;
+    font-family: Montserrat;
+    font-size: .45em;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    padding: 5px 10px;
+    font-weight: 600;
+    width: 10vw;
+    height: 5vh;
+}
+
+.herobuttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 5vw;
+    margin-top: 5vh;
+}
+
+.aboutdiv{
+    height: 50vh;
+    width: 99vw;
+    align-content: center;
+}
+
+h4{
+    margin: 0px;
+    padding: 0px;
+    color: #000;
+    text-align: center;
+    font-family: Montserrat;
+    font-size: 64px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: 6.4px;
+}
+
+hr{
+    width: 5vw;
+    height:2px;
+    background-color: #5889BD;
+    border-color: #5889BD;
+}
+
+.abouttext{
+    color: #000;
+    text-align: center;
+    font-family: Merriweather;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin: 0px;
+    padding: 0px;
+    width: 50vw;
+    text-align: center;
+    margin: auto;
+    margin-top: 4vh;
+}
+
+.content{
+    margin: auto;
+}
+.white{
+    color: white;
+}
+
+.patienttest{
+    width: 99vw;
+    align-content: center;
+    padding-top: 4vh;
+    padding-bottom: 4vh;
+    background: linear-gradient(106deg, #5889BD 0.82%, #99C6DB 101.41%);
+}
+
+.testcards{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    gap: 12vw;
+    margin-top: 4vh;
+}
+
+.patientcard{
+    display: flex;
+    flex-direction: column;
+    width: 290px;
+}
+
+.patientimage{
+    width: 290px;
+}
+
+.patienttext{
+    font-family: Merriweather;
+    color: white;
+    font-style: italic;
+    font-size: 26px;
+}
+
+.doctortest{
+    width: 99vw;
+    align-content: center;
+    padding-top: 4vh;
+    padding-bottom: 4vh;
+}
+
+#black{
+    color: black;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    width: 100%;
+    height: 100%;
+    background-color: transparent; /* Optional */
+  }
