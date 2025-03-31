@@ -1,6 +1,7 @@
 import React , {useState, useEffect} from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Landing from "./landing";
+import Patient_Landing from "./patient_dashboard/patient_landing";
 
 function App() {
   const[data, setData] = useState([{}])
@@ -28,6 +29,7 @@ function App() {
         ))
       )} />
           <Route path="/landing" element={<Landing />} />
+          <Route path="/patient_dashboard/patient_landing" element={<Patient_Landing />} />
         </Routes>
       </div>
       </Router>
