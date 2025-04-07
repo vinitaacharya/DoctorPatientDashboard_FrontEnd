@@ -43,6 +43,10 @@ function Landing() {
     const handleOpenPatientLogin = () => setOpenPatientLogin(true);
     const handleClosePatientLogin = () => setOpenPatientLogin(false);
 
+    const [openDoctorLogin, setOpenDoctorLogin] = React.useState(false);
+    const handleOpenDoctorLogin = () => setOpenDoctorLogin(true);
+    const handleCloseDoctorLogin = () => setOpenDoctorLogin(false);
+
       const [values, setValues] = useState({
         email: '',
         password: ''
@@ -88,7 +92,7 @@ function Landing() {
                                 Patient Signup
                               </Typography>
                                     <div className='labels'>
-                                        <label htmlFor="first_name">First Name: </label>
+                                        <label htmlFor="first_name">Email: </label>
                                         <input type='text'
                                         name='email'
                                         className="form-control" 
@@ -97,7 +101,7 @@ function Landing() {
                                         onChange={e => setValues({...values, email: e.target.value})}/>
                                     </div>
                                     <div className='labels'>
-                                        <label htmlFor="first_name">First Name: </label>
+                                        <label htmlFor="first_name">Password: </label>
                                         <input type='text'
                                         name='password'
                                         className="form-control" 
@@ -105,16 +109,48 @@ function Landing() {
                                         value={values.password}
                                         onChange={e => setValues({...values, password: e.target.value})}/>
                                     </div>
-                                    <button className="patientlogin btn-info" onClick={() => navigate('/')}>
-
+                                    <button className="patientlogin btn-info" onClick={() => navigate('/patient_dashboard/patient_landing')}>
+                                            Login
+                                    </button>
                             </Box>
                           </Modal>
                           
                   
                     {/*If you select doctor*/}
-                    <button className="doctorbtn btn-info" onClick={() => navigate('/customer')}>
-                        Doctor
-                    </button>
+                    <Button className="doctorlgn btn-info" onClick={handleOpenDoctorLogin}> Doctor </Button>
+                          <Modal
+                            open={openDoctorLogin}
+                            onClose={handleCloseDoctorLogin}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                          >
+                            <Box sx={style}>
+                              <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
+                                Doctor Signup
+                              </Typography>
+                                    <div className='labels'>
+                                        <label htmlFor="first_name">Email: </label>
+                                        <input type='text'
+                                        name='email'
+                                        className="form-control" 
+                                        placeholder='Enter Email'
+                                        value={values.email}
+                                        onChange={e => setValues({...values, email: e.target.value})}/>
+                                    </div>
+                                    <div className='labels'>
+                                        <label htmlFor="first_name">Password: </label>
+                                        <input type='text'
+                                        name='password'
+                                        className="form-control" 
+                                        placeholder='Enter Password'
+                                        value={values.password}
+                                        onChange={e => setValues({...values, password: e.target.value})}/>
+                                    </div>
+                                    <button className="patientlogin btn-info" onClick={() => navigate('/patient_dashboard/patient_landing')}>
+                                            Login
+                                    </button>
+                            </Box>
+                          </Modal>
                     </Typography>
                   </Box>
                 </Modal>

@@ -1,6 +1,6 @@
 import React, { lazy, useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import "./doctorsignup.css";
+import "./patientsignup.css";
 import Checkbox from '@mui/material/Checkbox';
 import { Table, TableRow } from '@mui/material';
 import Button from '@mui/material/Button';
@@ -11,7 +11,7 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 
-function Doctorsignup(){
+function Patientsignup(){
 
   const [values, setValues] = useState({
     first_name: '',
@@ -28,7 +28,8 @@ function Doctorsignup(){
     pharmacy_address: '',
     pharm_zip: '',
     pharm_city: '',
-    pharmacy_name: ''
+    pharmacy_name: '',
+    blood: ''
 })
 
   const navigate = useNavigate()
@@ -38,9 +39,17 @@ function Doctorsignup(){
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [age, setAge] = React.useState('');
+  const [blood, setBlood] = React.useState('');
+  const [gender, setGender] = React.useState('');
+
+
 
   const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
+    setGender(event.target.value);
+  };
+
+  const handleChange2 = (event: SelectChangeEvent) => {
+    setBlood(event.target.value);
   };
       
 
@@ -50,7 +59,7 @@ function Doctorsignup(){
     <div className="SignUp">
         <div className="signupnav">
             <h2>DPP</h2>
-            <h2 className="title">Doctor Signup</h2>
+            <h2 className="title">Patient Signup</h2>
         </div>
 
         <div className="patienthero">
@@ -96,7 +105,7 @@ function Doctorsignup(){
                               className="form-control-select"
                               labelId="demo-simple-select-label"
                               id="demo-simple-select"
-                              value={age}
+                              value={gender}
                               onChange={handleChange}
                               displayEmpty
                               renderValue={(selected) => selected ? selected : "Select Gender"}
@@ -385,8 +394,8 @@ function Doctorsignup(){
                               className="form-control-select"
                               labelId="demo-simple-select-label"
                               id="demo-simple-select"
-                              value={age}
-                              onChange={handleChange}
+                              value={blood}
+                              onChange={handleChange2}
                               displayEmpty
                               renderValue={(selected) => selected ? selected : "Select Blood Type"}
                               
@@ -423,7 +432,7 @@ function Doctorsignup(){
                         <input type='text'
                         name='insur_name'
                         className="form-control" 
-                        placeholder='Enter insurancen ame'
+                        placeholder='Enter insurance name'
                         value={values.insur_name}
                         onChange={e => setValues({...values, insur_name: e.target.value})}/>
                     </div>
@@ -492,4 +501,4 @@ function Doctorsignup(){
   );
 }
 
-export default Doctorsignup;
+export default Patientsignup;

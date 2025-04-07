@@ -1,6 +1,9 @@
 import React , {useState, useEffect} from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Landing from "./landing";
+import Patient_Landing from "./patient_dashboard/patient_landing";
+import Patientsignup from './patient_signup/patientsignup';
+import Doctorsignup from './doctor_signup/doctorsignup';
 
 function App() {
   const[data, setData] = useState([{}])
