@@ -28,7 +28,8 @@ function Patientsignup(){
     pharmacy_address: '',
     pharm_zip: '',
     pharm_city: '',
-    pharmacy_name: ''
+    pharmacy_name: '',
+    blood: ''
 })
 
   const navigate = useNavigate()
@@ -38,9 +39,17 @@ function Patientsignup(){
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [age, setAge] = React.useState('');
+  const [blood, setBlood] = React.useState('');
+  const [gender, setGender] = React.useState('');
+
+
 
   const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
+    setGender(event.target.value);
+  };
+
+  const handleChange2 = (event: SelectChangeEvent) => {
+    setBlood(event.target.value);
   };
       
 
@@ -96,7 +105,7 @@ function Patientsignup(){
                               className="form-control-select"
                               labelId="demo-simple-select-label"
                               id="demo-simple-select"
-                              value={age}
+                              value={gender}
                               onChange={handleChange}
                               displayEmpty
                               renderValue={(selected) => selected ? selected : "Select Gender"}
@@ -385,8 +394,8 @@ function Patientsignup(){
                               className="form-control-select"
                               labelId="demo-simple-select-label"
                               id="demo-simple-select"
-                              value={age}
-                              onChange={handleChange}
+                              value={blood}
+                              onChange={handleChange2}
                               displayEmpty
                               renderValue={(selected) => selected ? selected : "Select Blood Type"}
                               

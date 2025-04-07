@@ -32,9 +32,21 @@ const style = {
 function Landing() {
 
     const [open, setOpen] = React.useState(false);
-  
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const [openLogin, setOpenLogin] = React.useState(false);
+    const handleOpenLogin = () => setOpenLogin(true);
+    const handleCloseLogin = () => setOpenLogin(false);
+
+    const [openPatientLogin, setOpenPatientLogin] = React.useState(false);
+    const handleOpenPatientLogin = () => setOpenPatientLogin(true);
+    const handleClosePatientLogin = () => setOpenPatientLogin(false);
+
+      const [values, setValues] = useState({
+        email: '',
+        password: ''
+    })
     
     const navigate = useNavigate()
 
@@ -48,28 +60,66 @@ function Landing() {
         <div className="herotext">
             <h3>Have Access To A Health Professional at Any Time</h3>
             <div className="herobuttons">
-            <Button className="herobutton" onClick={handleOpen}>Login</Button>
+            {/*Login Buttons*/}
+            <Button className="herobutton" onClick={handleOpenLogin}>Login</Button>
                 <Modal
-                  open={open}
-                  onClose={handleClose}
+                  open={openLogin}
+                  onClose={handleCloseLogin}
                   aria-labelledby="modal-modal-title"
                   aria-describedby="modal-modal-description"
                 >
+                  {/*opens first popup asking if youre a doctor/patient*/}
                   <Box sx={style}>
                     <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
                       Are you a patient or a doctor?
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    <button className="patientbtn btn-info" onClick={() => navigate('/customer')}>
-                        Patient
-                    </button>
+
+                    {/*If you select patient*/}
+                    <Button className="patientlgn btn-info" onClick={handleOpenPatientLogin}> Patient </Button>
+                          <Modal
+                            open={openPatientLogin}
+                            onClose={handleClosePatientLogin}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                          >
+                            <Box sx={style}>
+                              <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
+                                Patient Signup
+                              </Typography>
+                                    <div className='labels'>
+                                        <label htmlFor="first_name">First Name: </label>
+                                        <input type='text'
+                                        name='email'
+                                        className="form-control" 
+                                        placeholder='Enter Email'
+                                        value={values.email}
+                                        onChange={e => setValues({...values, email: e.target.value})}/>
+                                    </div>
+                                    <div className='labels'>
+                                        <label htmlFor="first_name">First Name: </label>
+                                        <input type='text'
+                                        name='password'
+                                        className="form-control" 
+                                        placeholder='Enter Password'
+                                        value={values.password}
+                                        onChange={e => setValues({...values, password: e.target.value})}/>
+                                    </div>
+                                    <button className="patientlogin btn-info" onClick={() => navigate('/')}>
+
+                            </Box>
+                          </Modal>
+                          
+                  
+                    {/*If you select doctor*/}
                     <button className="doctorbtn btn-info" onClick={() => navigate('/customer')}>
                         Doctor
                     </button>
                     </Typography>
                   </Box>
                 </Modal>
-                
+
+                {/*Sign Up Buttons*/}
                 <Button className="herobutton" onClick={handleOpen}>Sign Up</Button>
                 <Modal
                   open={open}
