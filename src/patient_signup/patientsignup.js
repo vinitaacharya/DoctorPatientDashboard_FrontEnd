@@ -62,7 +62,7 @@ function Patientsignup(){
             <h2 className="title">Patient Signup</h2>
         </div>
 
-        <div className="patienthero">
+        <div className="signuptop">
 
         <form className="form-container">
           <div className="info-container">
@@ -489,12 +489,6 @@ function Patientsignup(){
             </div>
             </div>
       </div>
-        
-
-        <div className="doctortest">
-
-          
-        </div>
             
     </div>
     </>

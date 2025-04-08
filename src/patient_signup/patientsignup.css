@@ -36,9 +36,8 @@
     width: 99vw;
     align-content: center;
     padding-top: 4vh;
-    padding-bottom: 4vh;
     background: linear-gradient(106deg, #5889BD 0.82%, #99C6DB 101.41%);
-    
+    height: fit-content;
 }
 
 
@@ -289,14 +288,6 @@ th, td {
     text-align: left; /* Aligns text to the left */
 }
 
-.patienttest {
-    background: linear-gradient(106deg, #5889BD 0.82%, #99C6DB 101.41%);
-    height: 92vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 50px;
-}
 
 
 .terms{
