@@ -180,7 +180,7 @@ function Landing() {
             </div>
         </div>
         <div className="heroimage">
-            <img src={heroImage} alt="doctor point" className="doctorhero"/>
+            <img src={heroImage} alt="doctor point" className="doctorherod"/>
         </div>
       </div>
       

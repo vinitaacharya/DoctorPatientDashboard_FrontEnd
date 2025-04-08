@@ -32,15 +32,6 @@
     padding-top: 100px;
 }
 
-.doctortest{
-    width: 99vw;
-    align-content: center;
-    padding-top: 4vh;
-    padding-bottom: 4vh;
-    background: linear-gradient(106deg, #5889BD 0.82%, #99C6DB 101.41%);
-    
-}
-
 
 
 .horizontal-bar {
@@ -274,16 +265,6 @@ th, td {
     text-align: left; /* Aligns text to the left */
 }
 
-.patienttest {
-    background: linear-gradient(106deg, #5889BD 0.82%, #99C6DB 101.41%);
-    height: 92vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 50px;
-}
-
-
 .terms{
     font-size: 25px;
     justify-content: center; /* Horizontally centers text */
@@ -383,9 +364,18 @@ h1 {
 
 .doctortest {
     background: white;
-    height: 92vh;
+    height: fit-content;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 50px;
+}
+
+.signuptop{
+    background: linear-gradient(106deg, #5889BD 0.82%, #99C6DB 101.41%);
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 100px;
 }
