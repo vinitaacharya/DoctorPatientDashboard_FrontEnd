@@ -8,6 +8,9 @@ import FlowerBackgroundImg from "./patient_landing_assets/FlowerBackground.png"
 import overviewSurveyImg from "./patient_landing_assets/overviewSurveyImg.png"
 import {  Button, Typography, Modal} from "@mui/material";
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
+import doc1 from "./doctorim/doctor1.png";
+import { useNavigate } from 'react-router-dom';
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
   borderRadius:30,
@@ -37,6 +40,7 @@ const style = {
 function Patient_Landing() {
 
 //surveys modal
+const navigate = useNavigate();
 const [openSurvey, setOpenSurvey] = useState(false);
 
 const openSurveysModal = () => {
@@ -221,29 +225,80 @@ const closeSurveysModal = () => {
             <Grid item xs={4}>
               <Item sx={{background: "linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)"}}>xs=4</Item>
             </Grid>
+
             {/* item 4 */}
             <Grid item xs={4}>
               <Item  sx={{ 
-    position: "relative",
-    overflow:"hidden",
-    backgroundImage: `url(${FlowerBackgroundImg})`, 
-    backgroundColor: "lightgray", 
-    backgroundSize: "cover",
-    backgroundPosition: "center", 
-    backgroundRepeat: "no-repeat",
-    "&::before": { 
-      content: '""',
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: "rgba(255, 255, 255, 0.1)", 
-      backdropFilter: "blur(10px)", 
-      zIndex: 1,
-    }
-  }}><Box sx={{ position: "relative", zIndex: 2 }}>xs=4</Box></Item>
+                position: "relative",
+                overflow:"hidden",
+                backgroundImage: `url(${FlowerBackgroundImg})`, 
+                backgroundColor: "lightgray", 
+                backgroundSize: "cover",
+                backgroundPosition: "center", 
+                backgroundRepeat: "no-repeat",
+                "&::before": { 
+                  content: '""',
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: "rgba(255, 255, 255, 0.1)", 
+                  backdropFilter: "blur(10px)", 
+                  zIndex: 1,
+                }
+              }}>
+              <Box sx={{ position: "relative", zIndex: 2 }}>
+                <Box sx={{ position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2}}>
+                  <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '2em' }}>
+                    Doctors & Booking
+                  </Typography>
+                  <Box sx={{ display: "flex", alignItems: "center", mb: 2}}>
+                    <Box
+                      component="img"
+                      src = {doc1}
+                      alt="Doctor"
+                      sx={{
+                        maxHeight: '20vh',
+                        width: '20vw',
+                        borderRadius: "30px",
+                        objectFit: "cover",
+                        mr: 2,
+                      }}
+                    />
+                    <Box>
+                      <Typography variant="subtitle1" fontWeight="medium" sx={{fontFamily: 'Montserrat', fontSize: '1.5em'}}>
+                        Dr. Geller
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontSize: "0.85rem", fontFamily: 'Merriweather', fontSize: '1.2em'}}>
+                        Dr. Geller has studied at an institution for some time and is very reliable and stuff.
+                      </Typography>
+                      <Button variant="contained" sx={{ color: "white", borderRadius: 5, textTransform: "none", backgroundColor: "#5A8BBE", fontFamily: 'Montserrat', marginTop: '7px', fontSize: '1.3em'}}>
+                      Learn More
+                    </Button>
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 2}}>
+                    <Button variant="contained" sx={{ backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto'}}>
+                      Make an Appointment
+                    </Button>
+                    <Button variant="contained" onClick={() => navigate('/patient_dashboard/patient_doctorlist')} sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto'}}>
+                      See More Doctors
+                    </Button>
+                    <Button variant="contained" sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto'}}>
+                      Delete Current Doctor
+                    </Button>
+                  </Box>
+                </Box>
+
+              </Box>
+
+              </Item>
             </Grid>
+
+
+
             {/* item 5 */}
             <Grid item xs={4}>
               <Item sx={{background: "linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)", backgroundSize: "cover",}}>xs=4</Item>
