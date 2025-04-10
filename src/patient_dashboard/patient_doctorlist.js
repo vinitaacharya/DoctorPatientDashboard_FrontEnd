@@ -71,6 +71,8 @@ function Patient_Doctorlist() {
     setOpenLearnMore(false);
   };
 
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+
     return(
         <div style={{ display: "flex" }}>
             <Patient_Navbar />
@@ -145,7 +147,7 @@ function Patient_Doctorlist() {
               </Box>
 
               <Button
-                onClick={openLearnMoreModal}
+                onClick={() => { setSelectedDoctor(doc); setOpenLearnMore(true); }}
                 variant="contained"
                 sx={{
                   backgroundColor: "#5A4AA3",
@@ -163,8 +165,10 @@ function Patient_Doctorlist() {
             
             </Paper>
           ))}
+
+          {selectedDoctor && (
           <Modal open={openLearnMore} onClose={closeLearnMoreModal}>
-                <Box
+          <Box
                   sx={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -212,21 +216,22 @@ function Patient_Doctorlist() {
                         }}
                     />
                     <Box>
-                    <Typography variant="h6" fontWeight="bold">
-                        Dr. Hillary Geller
+                    <Typography variant="h6" fontWeight="500" sx={{fontFamily: 'Montserrat', fontSize:'1.5em', paddingBottom:'1vh'}}>
+                        Dr. {selectedDoctor.first_name} {selectedDoctor.last_name}
                       </Typography>
-                      <Typography variant="body2">
-                        <strong>Specialization:</strong> Nutritionist
+                      <Typography variant="body2" sx={{fontFamily: 'Merriweather', color:"#000000", fontsize:'1.1em', paddingBottom:'1vh'}}>
+                      <strong>Specialization:</strong> {selectedDoctor.specialty || "N/A"}
+                      </Typography >
+                      <Typography variant="body2" sx={{fontFamily: 'Merriweather', color:"#000000", fontsize:'1.1em', paddingBottom:'1vh'}}>
+                      <strong>Years of Experience:</strong> {selectedDoctor.years_of_practice} years
                       </Typography>
-                      <Typography variant="body2">
-                        <strong>Years of Experience:</strong> 4 years
+                      <Typography variant="body2" sx={{fontFamily: 'Merriweather', color:"#000000", fontsize:'1.1em'}}>
+                      <strong>Appointment Fee:</strong> ${selectedDoctor.payment_fee}
                       </Typography>
-                      <Typography variant="body2">
-                        <strong>Appointment Fee:</strong> $150
-                      </Typography>
+                      {/*
                       <Typography variant="body2">
                         <strong>Rating:</strong> 4.3/5
-                      </Typography>
+                      </Typography>*/}
                       </Box>
                     </Box>
                     
@@ -235,15 +240,17 @@ function Patient_Doctorlist() {
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               
               
-                      <Typography variant="body2" mt={2}>
+                      <Typography variant="body2" mt={2} sx={{fontFamily: 'Merriweather', color:"#000000", fontsize:'1.1em'}}>
                         <strong>About:</strong><br />
-                        Dr. Hillary Geller is a board-certified nutritionist and weight management specialist with over 10 years of experience helping patients achieve their health and fitness goals. She earned her medical degree from Johns Hopkins University and completed her residency in clinical nutrition at Harvard Medical School. Dr. Geller is passionate about creating personalized diet and exercise plans that fit each patient's lifestyle...
+                        {selectedDoctor.description || "No bio provided."}
                       </Typography>
                     </Box>
                     
                   </Paper>
                 </Box>
+                
               </Modal>
+              )}
         </Box>
         </Box>
       </Box>
