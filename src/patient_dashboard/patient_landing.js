@@ -158,6 +158,17 @@ const handleSubmit = (e) => {
   console.log({ weightChange, weightAmount, bloodPressure });
 };
 
+
+//Learn More Modal
+const [openLearnMore, setOpenLearnMore] = useState(false);
+
+const openLearnMoreModal = () => {
+  setOpenLearnMore(true);
+};
+const closeLearnMoreModal = () => {
+  setOpenLearnMore(false);
+};
+
   return (
 
     <div style={{ display: "flex" }}>
@@ -449,6 +460,7 @@ const handleSubmit = (e) => {
         />
     
         <Button
+          onClick={closeDailySurveysModal}
           type="submit"
           variant="contained"
           fullWidth
@@ -557,6 +569,7 @@ const handleSubmit = (e) => {
         />
 
         <Button
+          onClick={closeWeeklySurveysModal}
           type="submit"
           variant="contained"
           fullWidth
@@ -817,11 +830,93 @@ const handleSubmit = (e) => {
                       <Typography variant="body2" sx={{ fontSize: "0.85rem", fontFamily: 'Merriweather', fontSize: '1.2em'}}>
                         Dr. Geller has studied at an institution for some time and is very reliable and stuff.
                       </Typography>
-                      <Button variant="contained" sx={{ color: "white", borderRadius: 5, textTransform: "none", backgroundColor: "#5A8BBE", fontFamily: 'Montserrat', marginTop: '7px', fontSize: '1.3em'}}>
+                      <Button onClick={openLearnMoreModal} variant="contained" sx={{ color: "white", borderRadius: 5, textTransform: "none", backgroundColor: "#5A8BBE", fontFamily: 'Montserrat', marginTop: '7px', fontSize: '1.3em'}}>
                       Learn More
                     </Button>
                     </Box>
                   </Box>
+                     {/* Learn More Model*/}
+
+                     <Modal open={openLearnMore} onClose={closeLearnMoreModal}>
+  <Box
+    sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+    }}
+  >
+    <Paper
+      sx={{
+        position: 'relative',
+        width: 600,
+        p: 4,
+        borderRadius: 3,
+        boxShadow: 5,
+        bgcolor: '#EEF2FE',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 3,
+      }}
+    >
+      {/* Close Icon */}
+      <IconButton
+        onClick={closeLearnMoreModal}
+        sx={{
+          position: 'absolute',
+          top: 12,
+          right: 12,
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+
+      {/* Profile Image */}
+      <Box sx={{display:'flex', flexDirection: 'row'}}>
+      <Box
+          component="img"
+          src = {doc1}
+          alt="Doctor"
+          sx={{
+            maxHeight: '20vh',
+            width: '10vw',
+            borderRadius: "30px",
+            objectFit: "cover",
+            mr: 2,
+          }}
+      />
+      <Box>
+      <Typography variant="h6" fontWeight="bold">
+          Dr. Hillary Geller
+        </Typography>
+        <Typography variant="body2">
+          <strong>Specialization:</strong> Nutritionist
+        </Typography>
+        <Typography variant="body2">
+          <strong>Years of Experience:</strong> 4 years
+        </Typography>
+        <Typography variant="body2">
+          <strong>Appointment Fee:</strong> $150
+        </Typography>
+        <Typography variant="body2">
+          <strong>Rating:</strong> 4.3/5
+        </Typography>
+        </Box>
+      </Box>
+      
+      
+      {/* Content */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+
+
+        <Typography variant="body2" mt={2}>
+          <strong>About:</strong><br />
+          Dr. Hillary Geller is a board-certified nutritionist and weight management specialist with over 10 years of experience helping patients achieve their health and fitness goals. She earned her medical degree from Johns Hopkins University and completed her residency in clinical nutrition at Harvard Medical School. Dr. Geller is passionate about creating personalized diet and exercise plans that fit each patient's lifestyle...
+        </Typography>
+      </Box>
+    </Paper>
+  </Box>
+</Modal>
 
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 2}}>
                     <Button variant="contained" sx={{ backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto'}}>
