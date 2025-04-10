@@ -14,6 +14,9 @@ import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Card, CardContent, IconButton} from '@mui/material';
+import Rating from '@mui/material/Rating';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -41,6 +44,15 @@ const style = {
   p: 4,
 };
 
+const StyledRating = styled(Rating)({
+  '& .MuiRating-iconFilled': {
+    color: '#ff6d75',
+  },
+  '& .MuiRating-iconHover': {
+    color: '#ff3d47',
+  },
+});
+
 const upcomingAppointments = [
   {
     date: "Monday, 03/04 - 3:00PM",
@@ -56,7 +68,27 @@ const upcomingAppointments = [
   },
 ];
 
+const data = {
+  appointmentDate: '01/04/25',
+  prescription: 'Fakemed',
+  status: 'Ready',
+  pickedUp: true,
+  pickupLocation: 'Newark CVS',
+  diet: 'Keto',
+  notes: 'Drink lots of water and avoid any heavy carbs',
+  rating: 0,
+};
+const labelMap = {
+  appointmentDate: 'Appointment Date',
+  prescription: 'Prescription',
+  status: 'Status',
+  pickupLocation: 'Pickup Location',
+  diet: 'Diet',
+  notes: 'Notes',
+};
+
 function Patient_Landing() {
+  const [value, setValue] = React.useState(2);
 
 //surveys modal
 const navigate = useNavigate();
@@ -452,8 +484,61 @@ const closeSurveysModal = () => {
 
             {/* item 5 */}
             <Grid item xs={4}>
-              <Item sx={{background: "linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)", backgroundSize: "cover",}}>xs=4</Item>
+              <Item sx={{background: "linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)", backgroundSize: "cover", fontFamily: 'Montserrat'}}>
+                <Box sx={{ position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2}}>
+                  <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '2em' }}>
+                      Appointment Overview
+                  </Typography>
+
+                    {Object.entries(data).map(([key, value]) => {
+                      if (key === 'pickedUp' || key === 'rating') return null;
+
+                      return (
+                        <Box
+                          key={key}
+                          display="flex"
+                          alignItems="center"
+                          mt={key === 'status' ? 1 : 0}
+                          mb={key === 'status' ? 1 : 0}
+                        >
+                          <Typography variant="body1" 
+                          sx={{fontFamily: 'Montserrat', fontSize: '1.2em' }}>
+                            <strong>{labelMap[key]}:</strong> {value}
+                          </Typography>
+
+                          {key === 'status' && data.pickedUp && (
+                            <Button
+                              size="small"
+                              variant="contained"
+                              sx={{
+                                ml: 2,
+                                backgroundColor: '#5889BD',
+                                color: '#fff',
+                                textTransform: 'none',
+                                borderRadius: '16px',
+                                fontSize: '0.75rem',
+                                padding: '2px 12px',
+                                fontFamily: 'Montserrat',
+                                '&:hover': {
+                                  backgroundColor: '#6c97c8',
+                                },
+                              }}
+                            >
+                              Picked up
+                            </Button>
+                          )}
+                  </Box>
+                );
+              })}
+
+                <Typography component="legend" sx={{fontFamily: 'Montserrat', fontSize: '1.2em', fontWeight: 'bold', marginTop: '4px'}}> Rate Your Appointment:</Typography>
+                <Typography>Fix labels so I can put rating pls</Typography>
+                </Box>
+              </Item>
+
             </Grid>
+
+
           </Grid>
         </Box>
       </div>
