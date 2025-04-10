@@ -114,9 +114,9 @@ function Patient_Doctorlist() {
                   <Typography variant="h5" fontWeight="medium" sx={{fontFamily: 'Montserrat', fontSize:'1.5em'}}>
                     Dr. {doc.first_name} {doc.last_name}
                   </Typography>
-                  {/*<Typography variant="body2" sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
-                    <strong>Specialization:</strong> {doc.description || "N/A"}
-                  </Typography>*/}
+                  <Typography variant="body2" sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
+                    <strong>Specialization:</strong> {doc.specialty || "N/A"}
+                  </Typography>
                   <Typography variant="body2" sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
                     <strong>Years of Experience:</strong> {doc.years_of_practice} years
                   </Typography>
