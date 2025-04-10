@@ -44,7 +44,7 @@ export default function Patient_Navbar() {
       //enter path here - medical charts
     }
     if (index === 5) {
-      //enter path here - billing
+      navigate("/patient_dashboard/patient_billing");
     }
     if (index === 6) {
       //enter path here - community page profile
