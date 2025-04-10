@@ -7,6 +7,9 @@ import { styled } from '@mui/material/styles';
 import doc1 from "./doctorim/doctor1.png";
 import doc2 from "./doctorim/doctor2.png";
 import doc3 from "./doctorim/doctor3.png";
+import {Select,MenuItem, Modal} from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 
 
 /**const doctors = [
@@ -44,6 +47,7 @@ import doc3 from "./doctorim/doctor3.png";
       },
   ];**/
 
+
 function Patient_Doctorlist() {
   const [doctors, setDoctors] = useState([]);
   useEffect(() => {
@@ -56,6 +60,17 @@ function Patient_Doctorlist() {
         console.error("Error fetching doctor data:", error);
       });
   }, [])
+
+  //Learn More Modal
+  const [openLearnMore, setOpenLearnMore] = useState(false);
+  
+  const openLearnMoreModal = () => {
+    setOpenLearnMore(true);
+  };
+  const closeLearnMoreModal = () => {
+    setOpenLearnMore(false);
+  };
+
     return(
         <div style={{ display: "flex" }}>
             <Patient_Navbar />
@@ -130,6 +145,7 @@ function Patient_Doctorlist() {
               </Box>
 
               <Button
+                onClick={openLearnMoreModal}
                 variant="contained"
                 sx={{
                   backgroundColor: "#5A4AA3",
@@ -144,8 +160,90 @@ function Patient_Doctorlist() {
               >
                 Learn More
               </Button>
+            
             </Paper>
           ))}
+          <Modal open={openLearnMore} onClose={closeLearnMoreModal}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                  }}
+                >
+                  <Paper
+                    sx={{
+                      position: 'relative',
+                      width: 600,
+                      p: 4,
+                      borderRadius: 3,
+                      boxShadow: 5,
+                      bgcolor: '#EEF2FE',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 3,
+                    }}
+                  >
+                    {/* Close Icon */}
+                    <IconButton
+                      onClick={closeLearnMoreModal}
+                      sx={{
+                        position: 'absolute',
+                        top: 12,
+                        right: 12,
+                      }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+              
+                    {/* Profile Image */}
+                    <Box sx={{display:'flex', flexDirection: 'row'}}>
+                    <Box
+                        component="img"
+                        src = {doc1}
+                        alt="Doctor"
+                        sx={{
+                          maxHeight: '20vh',
+                          width: '10vw',
+                          borderRadius: "30px",
+                          objectFit: "cover",
+                          mr: 2,
+                        }}
+                    />
+                    <Box>
+                    <Typography variant="h6" fontWeight="bold">
+                        Dr. Hillary Geller
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Specialization:</strong> Nutritionist
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Years of Experience:</strong> 4 years
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Appointment Fee:</strong> $150
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Rating:</strong> 4.3/5
+                      </Typography>
+                      </Box>
+                    </Box>
+                    
+                    
+                    {/* Content */}
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              
+              
+                      <Typography variant="body2" mt={2}>
+                        <strong>About:</strong><br />
+                        Dr. Hillary Geller is a board-certified nutritionist and weight management specialist with over 10 years of experience helping patients achieve their health and fitness goals. She earned her medical degree from Johns Hopkins University and completed her residency in clinical nutrition at Harvard Medical School. Dr. Geller is passionate about creating personalized diet and exercise plans that fit each patient's lifestyle...
+                      </Typography>
+                    </Box>
+                    
+                  </Paper>
+                </Box>
+              </Modal>
         </Box>
         </Box>
       </Box>
