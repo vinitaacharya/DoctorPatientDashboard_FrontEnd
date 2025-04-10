@@ -92,7 +92,7 @@ function Landing() {
                                 Patient Signup
                               </Typography>
                                     <div className='labels'>
-                                        <label htmlFor="first_name">Email: </label>
+                                        <label className = 'def-label' htmlFor="first_name">Email: </label>
                                         <input type='text'
                                         name='email'
                                         className="form-control" 
@@ -101,7 +101,7 @@ function Landing() {
                                         onChange={e => setValues({...values, email: e.target.value})}/>
                                     </div>
                                     <div className='labels'>
-                                        <label htmlFor="first_name">Password: </label>
+                                        <label className = 'def-label' htmlFor="first_name">Password: </label>
                                         <input type='text'
                                         name='password'
                                         className="form-control" 

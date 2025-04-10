@@ -64,7 +64,7 @@ function Doctorsignup(){
             <div className="basic-info">
                   <h1>Basic Information</h1>
                     <div className='labels'>
-                        <label htmlFor="first_name">First Name: </label>
+                        <label className='def-label' htmlFor="first_name">First Name: </label>
                         <input type='text'
                         name='first_name'
                         className="form-control" 
@@ -73,7 +73,7 @@ function Doctorsignup(){
                         onChange={e => setValues({...values, first_name: e.target.value})}/>
                     </div>
                     <div className='labels'>
-                        <label htmlFor="last_name">Last Name: </label>
+                        <label className='def-label' htmlFor="last_name">Last Name: </label>
                         <input type='text'
                         name='last_name'
                         className="form-control" 
@@ -85,7 +85,7 @@ function Doctorsignup(){
                     {/*Make the fields horizontal */}
                     <div className='horizontal-bar'>
                       <div className='labels'>
-                          <label htmlFor="dob" className='dob-label'>DOB: </label>
+                          <label htmlFor="dob" className='short-label'>DOB: </label>
                           <input type='text'
                           name='dob'
                           className="form-control-dob" 
@@ -117,7 +117,7 @@ function Doctorsignup(){
 
                     {/*Normal Now */}
                     <div className='labels'>
-                        <label htmlFor="phone">Phone: </label>
+                        <label className='def-label' htmlFor="phone">Phone: </label>
                         <input type='text'
                         name='phone'
                         className="form-control" 
@@ -126,7 +126,7 @@ function Doctorsignup(){
                         onChange={e => setValues({...values, phone: e.target.value})}/>
                     </div>
                     <div className='labels'>
-                        <label htmlFor="address">Address: </label>
+                        <label className='def-label' htmlFor="address">Address: </label>
                         <input type='text'
                         name='address'
                         className="form-control" 
@@ -139,7 +139,7 @@ function Doctorsignup(){
                               
                     <div className='horizontal-bar'>
                       <div className='labels'>
-                          <label htmlFor="zip" className='zip-label'>Zip code: </label>
+                          <label htmlFor="zip" className='def-label'>Zip code: </label>
                           <input type='text'
                           name='zip'
                           className="form-control-dob" 
@@ -148,7 +148,7 @@ function Doctorsignup(){
                           onChange={e => setValues({...values, zip: e.target.value})}/>
                       </div>
                       <div className='labels'>
-                          <label htmlFor="city" className='dob-label'>City: </label>
+                          <label htmlFor="city" className='short-label'>City: </label>
                           <input type='text'
                           name='city'
                           className="form-control-gender" 
@@ -209,7 +209,7 @@ function Doctorsignup(){
                         onChange={e => setValues({...values, years: e.target.value})}/>
                     </div>
                     <div className='labels'>
-                        <label htmlFor="pay" className='pay'>Payment Fee: </label>
+                        <label htmlFor="pay" className='med-label'>Payment Fee: </label>
                         <input type='text'
                         name='pay'
                         className="form-control" 
@@ -218,7 +218,7 @@ function Doctorsignup(){
                         onChange={e => setValues({...values, pay: e.target.value})}/>
                     </div>
                     <div className='labels'>
-                        <label htmlFor="specialty" className='pay'>Specialty: </label>
+                        <label htmlFor="specialty" className='med-label'>Specialty: </label>
                         <input type='text'
                         name='specialty'
                         className="form-control" 
@@ -252,7 +252,7 @@ function Doctorsignup(){
             <div className="basic-info">
                   <h1>Other Information</h1>
                     <div className='labels2'>
-                        <label htmlFor="email">Email: </label>
+                        <label className='def-label' htmlFor="email">Email: </label>
                         <input type='text'
                         name='email'
                         className="form-control" 
@@ -261,7 +261,7 @@ function Doctorsignup(){
                         onChange={e => setValues({...values, email: e.target.value})}/>
                     </div>
                     <div className='labels2'>
-                        <label htmlFor="password">Password: </label>
+                        <label className='def-label' htmlFor="password">Password: </label>
                         <input type='text'
                         name='password'
                         className="form-control" 

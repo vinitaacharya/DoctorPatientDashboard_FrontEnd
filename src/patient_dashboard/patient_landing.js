@@ -21,6 +21,7 @@ import { Card, CardContent} from '@mui/material';
 import Rating from '@mui/material/Rating';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import Plot from 'react-plotly.js';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -610,10 +611,12 @@ const handleSubmit = (e) => {
       </Typography>
       <Box
         component="img"
-        src="/chart-placeholder.png" // replace with actual chart
+        //src="/chart-placeholder.png" // replace with actual chart
         alt="Weight Chart"
         sx={{ width: '100%', borderRadius: 2, mb: 2 }}
-      />
+      >
+        
+      </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <Button size="small">←</Button>
         <Box sx={{ display: 'flex', gap: 1 }}>
