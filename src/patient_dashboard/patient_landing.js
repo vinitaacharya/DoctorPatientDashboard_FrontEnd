@@ -8,6 +8,8 @@ import FlowerBackgroundImg from "./patient_landing_assets/FlowerBackground.png"
 import overviewSurveyImg from "./patient_landing_assets/overviewSurveyImg.png"
 import {  Button, Typography, Modal} from "@mui/material";
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
+import Plot from 'react-plotly.js';
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
   borderRadius:30,
@@ -194,10 +196,12 @@ const closeSurveysModal = () => {
       </Typography>
       <Box
         component="img"
-        src="/chart-placeholder.png" // replace with actual chart
+        //src="/chart-placeholder.png" // replace with actual chart
         alt="Weight Chart"
         sx={{ width: '100%', borderRadius: 2, mb: 2 }}
-      />
+      >
+        
+      </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <Button size="small">←</Button>
         <Box sx={{ display: 'flex', gap: 1 }}>

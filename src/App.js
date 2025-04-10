@@ -5,6 +5,8 @@ import Patient_Landing from "./patient_dashboard/patient_landing";
 import Patientsignup from './patient_signup/patientsignup';
 import Doctorsignup from './doctor_signup/doctorsignup';
 import Patient_Doctorlist from './patient_dashboard/patient_doctorlist';
+import Patient_Chart from './patient_medicalchart/patient_medicalchart/patient_medicalchart';
+
 
 function App() {
   const[data, setData] = useState([{}])
@@ -31,11 +33,14 @@ function App() {
           <p key={i}>{member}</p>
         ))
       )} />
+          <Route index element={<Landing />} />
           <Route path="/landing" element={<Landing />} />
           <Route path="/patient_dashboard/patient_landing" element={<Patient_Landing />} />
           <Route path="/patient_dashboard/patient_doctorlist" element={<Patient_Doctorlist />} />
           <Route path="/patientsignup" element={<Patientsignup />} />
           <Route path="/doctorsignup" element={<Doctorsignup/>} />
+          <Route path="/patient_medicalchart/patient_medicalchart" element={<Patient_Chart/>} />
+
         </Routes>
       </div>
       </Router>
