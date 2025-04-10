@@ -5,6 +5,7 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 import FlowerBackgroundImg from "./patient_landing_assets/FlowerBackground.png"
+import mealImg from "./patient_landing_assets/meals.png"
 import overviewSurveyImg from "./patient_landing_assets/overviewSurveyImg.png"
 import {  Button, Typography, Modal} from "@mui/material";
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
@@ -333,7 +334,47 @@ const closeSurveysModal = () => {
 
             {/* item 3 */}
             <Grid item xs={4}>
-              <Item sx={{background: "linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)"}}>xs=4</Item>
+              <Item sx={{background: "linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)"}}>
+                <Box>
+                  <Typography variant="h6" gutterBottom sx={{fontFamily: "Montserrat", color: "#FEFEFD", fontSize: '2.5em', textAlign: 'left', paddingLeft: '1.5vw'}}>
+                    Meal Plans
+                  </Typography>
+                  <Typography variant="h6" gutterBottom sx={{fontFamily: "Montserrat", color: "#FEFEFD", fontSize: '2vh', textAlign: 'left', paddingLeft: '1.5vw', fontWeight: 'normal'}}>
+                    Come up with your own plans or follow along with doctor recommendations
+                  </Typography>
+                  <Box
+                      component="img"
+                      src = {mealImg}
+                      alt="Meal"
+                      sx={{
+                        maxHeight: '20vh',
+                        width: '80%',
+                        borderRadius: "30px",
+                        objectFit: "cover",
+                        mr: 2,
+                      }}
+                    />
+                </Box>
+
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#5A8BBE",
+                    color: "#FEFEFE",
+                    textTransform: "none",
+                    "&:hover": { backgroundColor: "#5A8BCF" },
+                    width: "70%",
+                    borderRadius: "30px",
+                    fontFamily: "Montserrat",
+                    fontSize: "1.5em",
+                    fontWeight: "700px",
+                    marginTop: "2%",
+                    marginBottom: "1%",
+                  }}
+                >
+                  Go to Meal Plans
+                </Button>
+              </Item>
             </Grid>
 
             {/* item 4 */}
