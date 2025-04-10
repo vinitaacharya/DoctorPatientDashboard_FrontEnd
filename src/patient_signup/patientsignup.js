@@ -264,7 +264,7 @@ function Patientsignup(){
                           onChange={e => setValues({...values, height: e.target.value})}/>
                       </div>
                       <div className='labels2'>
-                          <label htmlFor="active" className='active-label'>How active are you?: </label>
+                          <label htmlFor="active" className='active-label'>Hours of Fitness: </label>
                           <input type='text'
                           name='active'
                           className="form-control-active" 
