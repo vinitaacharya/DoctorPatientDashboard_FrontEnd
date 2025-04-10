@@ -6,6 +6,7 @@ import Patientsignup from './patient_signup/patientsignup';
 import Doctorsignup from './doctor_signup/doctorsignup';
 import Patient_Doctorlist from './patient_dashboard/patient_doctorlist';
 import Patient_Billing from './patient_dashboard/patient_billing';
+import Pharmacy_Stock from './pharmacy/pharmacy_stock'
 
 function App() {
   const[data, setData] = useState([{}])
@@ -36,6 +37,7 @@ function App() {
           <Route path="/patient_dashboard/patient_landing" element={<Patient_Landing />} />
           <Route path="/patient_dashboard/patient_doctorlist" element={<Patient_Doctorlist />} />
           <Route path="/patient_dashboard/patient_billing" element={<Patient_Billing />} />
+          <Route path="/pharmacy/pharmacy_stock" element={<Pharmacy_Stock />} />
           <Route path="/patientsignup" element={<Patientsignup />} />
           <Route path="/doctorsignup" element={<Doctorsignup/>} />
         </Routes>
