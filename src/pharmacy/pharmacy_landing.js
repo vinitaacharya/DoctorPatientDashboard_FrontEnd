@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"; 
-import Patient_Navbar from "./pharmacy_navbar"; 
+import Pharmacy_Navbar from "./pharmacy_navbar"; 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
@@ -32,11 +32,11 @@ const style = {
     p: 4,
 };
 
-function Base() {
+function Pharmacy_Landing() {
     return (
         <div style={{ display: "flex" }}>
-          <Patient_Navbar />
+          <Pharmacy_Navbar />
         </div>
     )
 }
-export default Base;
+export default Pharmacy_Landing;
