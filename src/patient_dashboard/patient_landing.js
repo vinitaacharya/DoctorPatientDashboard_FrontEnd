@@ -40,6 +40,21 @@ const style = {
   p: 4,
 };
 
+const upcomingAppointments = [
+  {
+    date: "Monday, 03/04 - 3:00PM",
+    doctor: "Dr. Geller",
+  },
+  {
+    date: "Tuesday, 03/05 - 1:30PM",
+    doctor: "Dr. Smith",
+  },
+  {
+    date: "Wednesday, 03/06 - 2:45PM",
+    doctor: "Dr. Lee",
+  },
+];
+
 function Patient_Landing() {
 
 //surveys modal
@@ -225,44 +240,75 @@ const closeSurveysModal = () => {
             <Grid item xs={5}>
               <Item sx={{backgroundColor:"#EEF2FE"}}>
                 <Box>
-                <Typography variant="h6" gutterBottom sx={{fontFamily: "Montserrat", color: "#22252C", fontSize: '2.5em', textAlign: 'left', paddingLeft: '7px'}}>
+                <Typography variant="h6" gutterBottom sx={{fontFamily: "Montserrat", color: "#22252C", fontSize: '2.5em', textAlign: 'left', paddingLeft: '1.5vw'}}>
                   Upcoming Appointments
                 </Typography>
                 <Box className="custom-scroll" sx={{height: '30vh', width: '90%', margin: 'auto', overflowY: "auto"} }>
 
-                  <Box sx={{backgroundColor: '#d9e6f6', width:'90%', margin:"auto", borderRadius: "30px", height: "fit-content", paddingTop: '1.2vh', paddingBottom: '1vh', marginBottom: '2vh'}}>
-                    <Typography variant="subtitle1" fontWeight="medium" sx={{fontFamily: "Montserrat", color: '#22252C', fontSize: '1.5em', textAlign: 'left', paddingLeft: '1vw'}}>
-                      Monday, 03/04 - 3:00PM
+                {upcomingAppointments.map((appointment, index) => (
+                  <Box
+                  key={index}
+                  sx={{
+                    backgroundColor: "#d9e6f6",
+                    width: "90%",
+                    margin: "auto",
+                    borderRadius: "30px",
+                    height: "fit-content",
+                    paddingTop: "1.2vh",
+                    paddingBottom: "1vh",
+                    marginBottom: "2vh",
+                  }}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="medium"
+                      sx={{
+                        fontFamily: "Montserrat",
+                        color: "#22252C",
+                        fontSize: "1.5em",
+                        textAlign: "left",
+                        paddingLeft: "1vw",
+                      }}
+                    >
+                      {appointment.date}
                     </Typography>
-                    <Typography variant="body1" sx={{fontFamily: "Merrriweather", fontWeight: 'bold', color: '#22252C', fontSize: '1.4em',textAlign: 'left', paddingLeft: '1vw'}}>
-                      Dr. Geller
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontFamily: "Merrriweather",
+                        fontWeight: "bold",
+                        color: "#22252C",
+                        fontSize: "1.4em",
+                        textAlign: "left",
+                        paddingLeft: "1vw",
+                      }}
+                    >
+                      {appointment.doctor}
                     </Typography>
                     <Button
                       variant="contained"
-                      sx={{ backgroundColor: '#5A8BBE', color: '#22252C', textTransform: 'none', '&:hover': { backgroundColor: '#5A8BCF' }, width: '70%', borderRadius: "30px", fontFamily: "Merrriweather", fontSize: "1.5em", fontWeight: '700px', marginTop: '2%', marginBottom: '1%'}}
+                      sx={{
+                        backgroundColor: "#5A8BBE",
+                        color: "#22252C",
+                        textTransform: "none",
+                        "&:hover": { backgroundColor: "#5A8BCF" },
+                        width: "70%",
+                        borderRadius: "30px",
+                        fontFamily: "Merrriweather",
+                        fontSize: "1.5em",
+                        fontWeight: "700px",
+                        marginTop: "2%",
+                        marginBottom: "1%",
+                      }}
                     >
                       Go to Appointment
                     </Button>
                   </Box>
-
-                  <Box sx={{backgroundColor: '#d9e6f6', width:'90%', margin:"auto", borderRadius: "30px", height: "fit-content", paddingTop: '1.2vh', paddingBottom: '1vh'}}>
-                    <Typography variant="subtitle1" fontWeight="medium" sx={{fontFamily: "Montserrat", color: '#22252C', fontSize: '1.5em', textAlign: 'left', paddingLeft: '1vw'}}>
-                      Monday, 03/04 - 3:00PM
-                    </Typography>
-                    <Typography variant="body1" sx={{fontFamily: "Merrriweather", fontWeight: 'bold', color: '#22252C', fontSize: '1.4em',textAlign: 'left', paddingLeft: '1vw'}}>
-                      Dr. Geller
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      sx={{ backgroundColor: '#5A8BBE', color: '#22252C', textTransform: 'none', '&:hover': { backgroundColor: '#5A8BCF' }, width: '70%', borderRadius: "30px", fontFamily: "Merrriweather", fontSize: "1.5em", fontWeight: '700px', marginTop: '2%', marginBottom: '1%'}}
-                    >
-                      Go to Appointment
-                  </Button>
-                  </Box>
+                ))}
                   
                 </Box>
 
-                <Box display="flex" justifyContent="center" mt={3} alignItems="center">
+                <Box display="flex" justifyContent="center" mt={3} alignItems="center" sx={{marginBottom: '1px', paddingBottom: '1px'}}>
                   {/* Left Arrow */}
                   <IconButton sx={{ backgroundColor: 'none', borderRadius: '50%', mx: 0.5 }}>
                     <ArrowBackIcon sx={{ color: '#5A8BBE' }} />
