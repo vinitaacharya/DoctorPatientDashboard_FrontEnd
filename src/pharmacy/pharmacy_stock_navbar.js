@@ -20,11 +20,15 @@ export default function Patient_Navbar() {
   const handleClick = (index) => {
     console.log('clicked with parameter:', index);
     
+    if (index === 0) {
+      //
+    }
     if (index === 1) {
       navigate("/landing");
+
     }
     if (index === 2) {
-      navigate("/patient_dashboard/patient_landing");
+      //
 
     }
     if (index === 3) {
@@ -52,6 +56,11 @@ export default function Patient_Navbar() {
         <ListItemButton onClick={() => handleClick(0)} sx={{ justifyContent: "center", marginY: '1vh' }}>
           <ListItemIcon sx={{ minWidth: "unset" }}>
             <img src={HeartImg} style={{ width: '7vh' }} />
+          </ListItemIcon>
+        </ListItemButton>
+        <ListItemButton onClick={() => handleClick(1)} sx={{ justifyContent: "center", marginY: '1vh' }}>
+          <ListItemIcon sx={{ minWidth: "unset" }}>
+            <img src={LogoutImg} style={{ width: '7vh' }} />
           </ListItemIcon>
         </ListItemButton>
       </List>
