@@ -17,7 +17,7 @@ import doc1 from "./doctorim/doctor1.png";
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { Card, CardContent, IconButton} from '@mui/material';
+import { Card, CardContent} from '@mui/material';
 import Rating from '@mui/material/Rating';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
