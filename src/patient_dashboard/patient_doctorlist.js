@@ -8,7 +8,8 @@ import doc1 from "./doctorim/doctor1.png";
 import doc2 from "./doctorim/doctor2.png";
 import doc3 from "./doctorim/doctor3.png";
 
-const doctors = [
+
+/**const doctors = [
     {
       name: "Dr. Hillary Geller",
       specialization: "Nutritionist",
@@ -41,9 +42,20 @@ const doctors = [
         rating: "4.9/5",
         image: doc1,
       },
-  ];
+  ];**/
 
 function Patient_Doctorlist() {
+  const [doctors, setDoctors] = useState([]);
+  useEffect(() => {
+    fetch('http://127.0.0.1:5000/doctors')
+      .then(response => response.json())
+      .then(data => {
+        setDoctors(data);
+      })
+      .catch(error => {
+        console.error("Error fetching doctor data:", error);
+      });
+  }, [])
     return(
         <div style={{ display: "flex" }}>
             <Patient_Navbar />
@@ -58,7 +70,7 @@ function Patient_Doctorlist() {
           Doctors
         </Typography>
 
-        <Box className="custom-scroll"
+        <Box
           sx={{
             backgroundColor: "#EEF2FE",
             padding: '2vw',
@@ -66,10 +78,10 @@ function Patient_Doctorlist() {
             width: "80vw",
             height: "80vh",
             margin: "auto",
-            overflowY: "auto",
 
           }}
         >
+          <Box className="custom-scroll" sx={{ height: "72vh", overflowY: "auto"}}>
           {doctors.map((doc, index) => (
             <Paper
               key={index}
@@ -89,7 +101,7 @@ function Patient_Doctorlist() {
             >
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Avatar
-                  src={doc.image}
+                  src={doc1}
                   sx={{
                     width: '18vh',
                     height: '18vh',
@@ -100,20 +112,20 @@ function Patient_Doctorlist() {
                 />
                 <Box>
                   <Typography variant="h5" fontWeight="medium" sx={{fontFamily: 'Montserrat', fontSize:'1.5em'}}>
-                    {doc.name}
+                    Dr. {doc.first_name} {doc.last_name}
+                  </Typography>
+                  {/*<Typography variant="body2" sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
+                    <strong>Specialization:</strong> {doc.description || "N/A"}
+                  </Typography>*/}
+                  <Typography variant="body2" sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
+                    <strong>Years of Experience:</strong> {doc.years_of_practice} years
                   </Typography>
                   <Typography variant="body2" sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
-                    <strong>Specialization:</strong> {doc.specialization}
+                    <strong>Appointment Fee:</strong> ${doc.payment_fee}
                   </Typography>
-                  <Typography variant="body2" sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
-                    <strong>Years of Experience:</strong> {doc.experience}
-                  </Typography>
-                  <Typography variant="body2" sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
-                    <strong>Appointment Fee:</strong> {doc.fee}
-                  </Typography>
-                  <Typography variant="body2"sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
+                  {/*<Typography variant="body2"sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
                     <strong>Rating:</strong> {doc.rating}
-                  </Typography>
+                  </Typography>*/}
                 </Box>
               </Box>
 
@@ -134,6 +146,7 @@ function Patient_Doctorlist() {
               </Button>
             </Paper>
           ))}
+        </Box>
         </Box>
       </Box>
         </div>
