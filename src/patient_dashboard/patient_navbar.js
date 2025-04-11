@@ -54,7 +54,7 @@ export default function Patient_Navbar() {
     <Drawer
       variant="permanent"
       sx={{
-        width: 90,
+        width: '5.5vw',
         flexShrink: 0,
         "& .MuiDrawer-paper": {
           width: 'fit-content',
