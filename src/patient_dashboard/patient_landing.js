@@ -73,6 +73,21 @@ const upcomingAppointments = [
   },
 ];
 
+const pastAppointments = [
+  {
+    date: "Monday, 02/26 - 4:00PM",
+    doctor: "Dr. Raynor",
+  },
+  {
+    date: "Thursday, 02/22 - 12:00PM",
+    doctor: "Dr. Thomas",
+  },
+  {
+    date: "Friday, 02/16 - 11:15AM",
+    doctor: "Dr. Lopez",
+  },
+];
+
 const data = {
   appointmentDate: '01/04/25',
   prescription: 'Fakemed',
@@ -169,6 +184,8 @@ const openLearnMoreModal = () => {
 const closeLearnMoreModal = () => {
   setOpenLearnMore(false);
 };
+
+const [showUpcoming, setShowUpcoming] = useState(true);
 
   return (
 
@@ -651,11 +668,11 @@ const closeLearnMoreModal = () => {
               <Item sx={{backgroundColor:"#EEF2FE"}}>
                 <Box>
                 <Typography variant="h6" gutterBottom sx={{fontFamily: "Montserrat", color: "#22252C", fontSize: '2.5em', textAlign: 'left', paddingLeft: '1.5vw'}}>
-                  Upcoming Appointments
+                  {showUpcoming ? "Upcoming Appointments" : "Past Appointments"}
                 </Typography>
                 <Box className="custom-scroll" sx={{height: '30vh', width: '90%', margin: 'auto', overflowY: "auto"} }>
 
-                {upcomingAppointments.map((appointment, index) => (
+                {(showUpcoming ? upcomingAppointments : pastAppointments).map((appointment, index) => (
                   <Box
                   key={index}
                   sx={{
@@ -720,18 +737,18 @@ const closeLearnMoreModal = () => {
 
                 <Box display="flex" justifyContent="center" mt={3} alignItems="center" sx={{marginBottom: '1px', paddingBottom: '1px'}}>
                   {/* Left Arrow */}
-                  <IconButton sx={{ backgroundColor: 'none', borderRadius: '50%', mx: 0.5 }}>
+                  <IconButton onClick={() => setShowUpcoming(!showUpcoming)} sx={{ backgroundColor: 'none', borderRadius: '50%', mx: 0.5 }}>
                     <ArrowBackIcon sx={{ color: '#5A8BBE' }} />
                   </IconButton>
                   
                   {/* Dots */}
                   <Box display="flex" alignItems="center">
-                    <Box sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#5A8BBE', mx: 0.5 }} />
-                    <Box sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#B5CBE5', mx: 0.5 }} />
+                    <Box sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: showUpcoming ? '#5A8BBE' : '#B5CBE5', mx: 0.5 }} />
+                    <Box sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: showUpcoming ? '#B5CBE5' : '#5A8BBE', mx: 0.5 }} />
                   </Box>
 
                   {/* Right Arrow */}
-                  <IconButton sx={{ backgroundColor: 'none', borderRadius: '50%', mx: 0.5 }}>
+                  <IconButton onClick={() => setShowUpcoming(!showUpcoming)} sx={{ backgroundColor: 'none', borderRadius: '50%', mx: 0.5 }}>
                     <ArrowForwardIcon sx={{ color: '#5A8BBE' }} />
                   </IconButton>
                 </Box>
