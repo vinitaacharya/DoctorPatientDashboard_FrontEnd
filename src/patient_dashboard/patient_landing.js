@@ -51,10 +51,10 @@ const style = {
 
 const StyledRating = styled(Rating)({
   '& .MuiRating-iconFilled': {
-    color: '#ff6d75',
+    color: '#FEFEFD',
   },
   '& .MuiRating-iconHover': {
-    color: '#ff3d47',
+    color: '#FEFEFD',
   },
 });
 
@@ -1008,7 +1008,14 @@ const [showUpcoming, setShowUpcoming] = useState(true);
               })}
 
                 <Typography component="legend" sx={{fontFamily: 'Montserrat', fontSize: '1.2em', fontWeight: 'bold', marginTop: '4px'}}> Rate Your Appointment:</Typography>
-                <Typography>Fix labels so I can put rating pls</Typography>
+                <StyledRating
+                  name="customized-color"
+                  defaultValue={0}
+                  getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}
+                  precision={1}
+                  icon={<FavoriteIcon fontSize="inherit" sx={{ fontSize: '2vw'}}/>}
+                  emptyIcon={<FavoriteBorderIcon fontSize="inherit" sx={{ fontSize: '2vw', color: '#FEFEFD' }} />}
+                />
                 </Box>
               </Item>
 
