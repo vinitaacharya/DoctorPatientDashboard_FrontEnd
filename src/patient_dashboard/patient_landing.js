@@ -797,6 +797,7 @@ const [showUpcoming, setShowUpcoming] = useState(true);
                     marginTop: "2%",
                     marginBottom: "1%",
                   }}
+                  onClick={() => navigate('/patient_dashboard/patient_mealplan')}
                 >
                   Go to Meal Plans
                 </Button>
