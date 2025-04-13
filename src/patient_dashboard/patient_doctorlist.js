@@ -7,6 +7,9 @@ import { styled } from '@mui/material/styles';
 import doc1 from "./doctorim/doctor1.png";
 import doc2 from "./doctorim/doctor2.png";
 import doc3 from "./doctorim/doctor3.png";
+import {Select,MenuItem, Modal} from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 
 
 /**const doctors = [
@@ -44,6 +47,7 @@ import doc3 from "./doctorim/doctor3.png";
       },
   ];**/
 
+
 function Patient_Doctorlist() {
   const [doctors, setDoctors] = useState([]);
   useEffect(() => {
@@ -56,6 +60,19 @@ function Patient_Doctorlist() {
         console.error("Error fetching doctor data:", error);
       });
   }, [])
+
+  //Learn More Modal
+  const [openLearnMore, setOpenLearnMore] = useState(false);
+  
+  const openLearnMoreModal = () => {
+    setOpenLearnMore(true);
+  };
+  const closeLearnMoreModal = () => {
+    setOpenLearnMore(false);
+  };
+
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+
     return(
         <div style={{ display: "flex" }}>
             <Patient_Navbar />
@@ -114,9 +131,9 @@ function Patient_Doctorlist() {
                   <Typography variant="h5" fontWeight="medium" sx={{fontFamily: 'Montserrat', fontSize:'1.5em'}}>
                     Dr. {doc.first_name} {doc.last_name}
                   </Typography>
-                  {/*<Typography variant="body2" sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
-                    <strong>Specialization:</strong> {doc.description || "N/A"}
-                  </Typography>*/}
+                  <Typography variant="body2" sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
+                    <strong>Specialization:</strong> {doc.specialty || "N/A"}
+                  </Typography>
                   <Typography variant="body2" sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
                     <strong>Years of Experience:</strong> {doc.years_of_practice} years
                   </Typography>
@@ -130,6 +147,7 @@ function Patient_Doctorlist() {
               </Box>
 
               <Button
+                onClick={() => { setSelectedDoctor(doc); setOpenLearnMore(true); }}
                 variant="contained"
                 sx={{
                   backgroundColor: "#5A4AA3",
@@ -144,8 +162,95 @@ function Patient_Doctorlist() {
               >
                 Learn More
               </Button>
+            
             </Paper>
           ))}
+
+          {selectedDoctor && (
+          <Modal open={openLearnMore} onClose={closeLearnMoreModal}>
+          <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                  }}
+                >
+                  <Paper
+                    sx={{
+                      position: 'relative',
+                      width: 600,
+                      p: 4,
+                      borderRadius: 3,
+                      boxShadow: 5,
+                      bgcolor: '#EEF2FE',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 3,
+                    }}
+                  >
+                    {/* Close Icon */}
+                    <IconButton
+                      onClick={closeLearnMoreModal}
+                      sx={{
+                        position: 'absolute',
+                        top: 12,
+                        right: 12,
+                      }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+              
+                    {/* Profile Image */}
+                    <Box sx={{display:'flex', flexDirection: 'row'}}>
+                    <Box
+                        component="img"
+                        src = {doc1}
+                        alt="Doctor"
+                        sx={{
+                          maxHeight: '20vh',
+                          width: '10vw',
+                          borderRadius: "30px",
+                          objectFit: "cover",
+                          mr: 2,
+                        }}
+                    />
+                    <Box>
+                    <Typography variant="h6" fontWeight="500" sx={{fontFamily: 'Montserrat', fontSize:'1.5em', paddingBottom:'1vh'}}>
+                        Dr. {selectedDoctor.first_name} {selectedDoctor.last_name}
+                      </Typography>
+                      <Typography variant="body2" sx={{fontFamily: 'Merriweather', color:"#000000", fontsize:'1.1em', paddingBottom:'1vh'}}>
+                      <strong>Specialization:</strong> {selectedDoctor.specialty || "N/A"}
+                      </Typography >
+                      <Typography variant="body2" sx={{fontFamily: 'Merriweather', color:"#000000", fontsize:'1.1em', paddingBottom:'1vh'}}>
+                      <strong>Years of Experience:</strong> {selectedDoctor.years_of_practice} years
+                      </Typography>
+                      <Typography variant="body2" sx={{fontFamily: 'Merriweather', color:"#000000", fontsize:'1.1em'}}>
+                      <strong>Appointment Fee:</strong> ${selectedDoctor.payment_fee}
+                      </Typography>
+                      {/*
+                      <Typography variant="body2">
+                        <strong>Rating:</strong> 4.3/5
+                      </Typography>*/}
+                      </Box>
+                    </Box>
+                    
+                    
+                    {/* Content */}
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              
+              
+                      <Typography variant="body2" mt={2} sx={{fontFamily: 'Merriweather', color:"#000000", fontsize:'1.1em'}}>
+                        <strong>About:</strong><br />
+                        {selectedDoctor.description || "No bio provided."}
+                      </Typography>
+                    </Box>
+                    
+                  </Paper>
+                </Box>
+                
+              </Modal>
+              )}
         </Box>
         </Box>
       </Box>

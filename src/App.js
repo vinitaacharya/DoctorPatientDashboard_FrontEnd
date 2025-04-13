@@ -6,6 +6,7 @@ import Patientsignup from './patient_signup/patientsignup';
 import Doctorsignup from './doctor_signup/doctorsignup';
 import Patient_Doctorlist from './patient_dashboard/patient_doctorlist';
 import Patient_Billing from './patient_dashboard/patient_billing';
+import Patient_Mealplan from './patient_dashboard/patient_mealplan';
 import Pharmacy_Stock from './pharmacy/pharmacy_stock'
 import Pharmacy_Landing from './pharmacy/pharmacy_landing'
 import Patient_Chart from './patient_medicalchart/patient_medicalchart/patient_medicalchart';
@@ -46,6 +47,7 @@ function App() {
           <Route path="/patientsignup" element={<Patientsignup />} />
           <Route path="/doctorsignup" element={<Doctorsignup/>} />
           <Route path="/patient_medicalchart/patient_medicalchart" element={<Patient_Chart/>} />
+          <Route path="/patient_dashboard/patient_mealplan" element={<Patient_Mealplan/>} />
 
         </Routes>
       </div>

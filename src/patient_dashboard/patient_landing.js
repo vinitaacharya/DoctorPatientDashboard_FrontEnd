@@ -51,10 +51,10 @@ const style = {
 
 const StyledRating = styled(Rating)({
   '& .MuiRating-iconFilled': {
-    color: '#ff6d75',
+    color: '#FEFEFD',
   },
   '& .MuiRating-iconHover': {
-    color: '#ff3d47',
+    color: '#FEFEFD',
   },
 });
 
@@ -70,6 +70,21 @@ const upcomingAppointments = [
   {
     date: "Wednesday, 03/06 - 2:45PM",
     doctor: "Dr. Lee",
+  },
+];
+
+const pastAppointments = [
+  {
+    date: "Monday, 02/26 - 4:00PM",
+    doctor: "Dr. Raynor",
+  },
+  {
+    date: "Thursday, 02/22 - 12:00PM",
+    doctor: "Dr. Thomas",
+  },
+  {
+    date: "Friday, 02/16 - 11:15AM",
+    doctor: "Dr. Lopez",
   },
 ];
 
@@ -135,17 +150,39 @@ const [mealPlanFollowed, setMealPlanFollowed] = useState("");
 const [mood, setMood] = useState("");
 const [calorieIntake, setCalorieIntake] = useState("");
 
-const handleDailySubmit = (e) => {
+const handleDailySubmit = async (e) => {
   e.preventDefault();
-  console.log({
+
+  const dailyData = {
     heartRate,
     waterIntake,
     exerciseMinutes,
     mealPlanFollowed,
     mood,
     calorieIntake
-  });
+  };
+//replace fetch with correct url
+
+  try {
+    const response = await fetch('http://localhost:5000/api/surveys/daily', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dailyData),
+    });
+
+    if (response.ok) {
+      console.log('Daily survey submitted successfully');
+      closeDailySurveysModal(); // Close modal on success
+    } else {
+      console.error('Failed to submit daily survey');
+    }
+  } catch (error) {
+    console.error('Error submitting daily survey:', error);
+  }
 };
+
 
 
 
@@ -154,9 +191,33 @@ const [weightChange, setWeightChange] = React.useState("");
 const [weightAmount, setWeightAmount] = React.useState("");
 const [bloodPressure, setBloodPressure] = React.useState("");
 
-const handleSubmit = (e) => {
+const handleWeeklySubmit = async (e) => {
   e.preventDefault();
-  console.log({ weightChange, weightAmount, bloodPressure });
+
+  const weeklyData = {
+    weightChange,
+    weightAmount,
+    bloodPressure
+  };
+//replace fetch with correct url
+  try {
+    const response = await fetch('http://localhost:5000/api/surveys/weekly', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(weeklyData),
+    });
+
+    if (response.ok) {
+      console.log('Weekly survey submitted successfully');
+      closeWeeklySurveysModal(); // Close modal on success
+    } else {
+      console.error('Failed to submit weekly survey');
+    }
+  } catch (error) {
+    console.error('Error submitting weekly survey:', error);
+  }
 };
 
 
@@ -169,6 +230,8 @@ const openLearnMoreModal = () => {
 const closeLearnMoreModal = () => {
   setOpenLearnMore(false);
 };
+
+const [showUpcoming, setShowUpcoming] = useState(true);
 
   return (
 
@@ -528,7 +591,7 @@ const closeLearnMoreModal = () => {
         Natasha Pena
       </Typography>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleWeeklySubmit}>
         <Typography fontSize= '1.5vh' mb={1} paddingTop={2}>
           Change in Weight
         </Typography>
@@ -651,11 +714,11 @@ const closeLearnMoreModal = () => {
               <Item sx={{backgroundColor:"#EEF2FE"}}>
                 <Box>
                 <Typography variant="h6" gutterBottom sx={{fontFamily: "Montserrat", color: "#22252C", fontSize: '2.5em', textAlign: 'left', paddingLeft: '1.5vw'}}>
-                  Upcoming Appointments
+                  {showUpcoming ? "Upcoming Appointments" : "Past Appointments"}
                 </Typography>
                 <Box className="custom-scroll" sx={{height: '30vh', width: '90%', margin: 'auto', overflowY: "auto"} }>
 
-                {upcomingAppointments.map((appointment, index) => (
+                {(showUpcoming ? upcomingAppointments : pastAppointments).map((appointment, index) => (
                   <Box
                   key={index}
                   sx={{
@@ -720,18 +783,18 @@ const closeLearnMoreModal = () => {
 
                 <Box display="flex" justifyContent="center" mt={3} alignItems="center" sx={{marginBottom: '1px', paddingBottom: '1px'}}>
                   {/* Left Arrow */}
-                  <IconButton sx={{ backgroundColor: 'none', borderRadius: '50%', mx: 0.5 }}>
+                  <IconButton onClick={() => setShowUpcoming(!showUpcoming)} sx={{ backgroundColor: 'none', borderRadius: '50%', mx: 0.5 }}>
                     <ArrowBackIcon sx={{ color: '#5A8BBE' }} />
                   </IconButton>
                   
                   {/* Dots */}
                   <Box display="flex" alignItems="center">
-                    <Box sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#5A8BBE', mx: 0.5 }} />
-                    <Box sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: '#B5CBE5', mx: 0.5 }} />
+                    <Box sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: showUpcoming ? '#5A8BBE' : '#B5CBE5', mx: 0.5 }} />
+                    <Box sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: showUpcoming ? '#B5CBE5' : '#5A8BBE', mx: 0.5 }} />
                   </Box>
 
                   {/* Right Arrow */}
-                  <IconButton sx={{ backgroundColor: 'none', borderRadius: '50%', mx: 0.5 }}>
+                  <IconButton onClick={() => setShowUpcoming(!showUpcoming)} sx={{ backgroundColor: 'none', borderRadius: '50%', mx: 0.5 }}>
                     <ArrowForwardIcon sx={{ color: '#5A8BBE' }} />
                   </IconButton>
                 </Box>
@@ -780,6 +843,7 @@ const closeLearnMoreModal = () => {
                     marginTop: "2%",
                     marginBottom: "1%",
                   }}
+                  onClick={() => navigate('/patient_dashboard/patient_mealplan')}
                 >
                   Go to Meal Plans
                 </Button>
@@ -991,7 +1055,14 @@ const closeLearnMoreModal = () => {
               })}
 
                 <Typography component="legend" sx={{fontFamily: 'Montserrat', fontSize: '1.2em', fontWeight: 'bold', marginTop: '4px'}}> Rate Your Appointment:</Typography>
-                <Typography>Fix labels so I can put rating pls</Typography>
+                <StyledRating
+                  name="customized-color"
+                  defaultValue={0}
+                  getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}
+                  precision={1}
+                  icon={<FavoriteIcon fontSize="inherit" sx={{ fontSize: '2vw'}}/>}
+                  emptyIcon={<FavoriteBorderIcon fontSize="inherit" sx={{ fontSize: '2vw', color: '#FEFEFD' }} />}
+                />
                 </Box>
               </Item>
 
