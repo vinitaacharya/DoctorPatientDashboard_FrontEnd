@@ -36,6 +36,7 @@
     width: 99vw;
     align-content: center;
     padding-top: 4vh;
+    padding-left: 150px;
     background: linear-gradient(106deg, #5889BD 0.82%, #99C6DB 101.41%);
     height: fit-content;
 }
@@ -346,3 +347,30 @@ h1 {
     height: 5vh !important;
 }
 
+.signup-btn {
+    left:100px;
+}
+
+.signuptext{
+    width: 50vw;
+    color: #FFF;
+    font-family: Montserrat;
+    font-size: 3.125rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    align-content: center;
+    padding-left: 5vw;
+    padding-right: 5vw;
+    text-align: left;
+
+}
+
+.signupbuttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 5vw;
+    margin-top: 0vh;
+    margin-left: 25vh;
+}
