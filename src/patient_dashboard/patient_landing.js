@@ -150,17 +150,39 @@ const [mealPlanFollowed, setMealPlanFollowed] = useState("");
 const [mood, setMood] = useState("");
 const [calorieIntake, setCalorieIntake] = useState("");
 
-const handleDailySubmit = (e) => {
+const handleDailySubmit = async (e) => {
   e.preventDefault();
-  console.log({
+
+  const dailyData = {
     heartRate,
     waterIntake,
     exerciseMinutes,
     mealPlanFollowed,
     mood,
     calorieIntake
-  });
+  };
+//replace fetch with correct url
+
+  try {
+    const response = await fetch('http://localhost:5000/api/surveys/daily', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dailyData),
+    });
+
+    if (response.ok) {
+      console.log('Daily survey submitted successfully');
+      closeDailySurveysModal(); // Close modal on success
+    } else {
+      console.error('Failed to submit daily survey');
+    }
+  } catch (error) {
+    console.error('Error submitting daily survey:', error);
+  }
 };
+
 
 
 
@@ -169,9 +191,33 @@ const [weightChange, setWeightChange] = React.useState("");
 const [weightAmount, setWeightAmount] = React.useState("");
 const [bloodPressure, setBloodPressure] = React.useState("");
 
-const handleSubmit = (e) => {
+const handleWeeklySubmit = async (e) => {
   e.preventDefault();
-  console.log({ weightChange, weightAmount, bloodPressure });
+
+  const weeklyData = {
+    weightChange,
+    weightAmount,
+    bloodPressure
+  };
+//replace fetch with correct url
+  try {
+    const response = await fetch('http://localhost:5000/api/surveys/weekly', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(weeklyData),
+    });
+
+    if (response.ok) {
+      console.log('Weekly survey submitted successfully');
+      closeWeeklySurveysModal(); // Close modal on success
+    } else {
+      console.error('Failed to submit weekly survey');
+    }
+  } catch (error) {
+    console.error('Error submitting weekly survey:', error);
+  }
 };
 
 
@@ -545,7 +591,7 @@ const [showUpcoming, setShowUpcoming] = useState(true);
         Natasha Pena
       </Typography>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleWeeklySubmit}>
         <Typography fontSize= '1.5vh' mb={1} paddingTop={2}>
           Change in Weight
         </Typography>
