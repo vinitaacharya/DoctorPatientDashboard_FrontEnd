@@ -231,6 +231,39 @@ const closeLearnMoreModal = () => {
   setOpenLearnMore(false);
 };
 
+const [openDeleteCurrentDoctor, setOpenDeleteCurrentDoctor] = useState(false);
+const openDeleteCurrentDoctorModal = () =>{
+  setOpenDeleteCurrentDoctor(true);
+};
+const closeDeleteCurrentDoctorModal = () =>{
+  setOpenDeleteCurrentDoctor(false);
+}
+
+
+const handleDeleteCurrentDoctor = async () => {
+  try {
+    const doctorId = null//currentDoctorId;
+    const response = await fetch(`http://localhost:5000/api/delete-doctor/${doctorId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        // 'Authorization': 'Bearer yourToken'  // if you use auth
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Something went wrong while deleting');
+    }
+
+    console.log('Doctor deleted successfully');
+    closeDeleteCurrentDoctorModal();  // close the modal
+    // Optionally refresh data or navigate
+  } catch (error) {
+    console.error('Error deleting doctor:', error);
+  }
+};
+
+
 const [showUpcoming, setShowUpcoming] = useState(true);
 
   return (
@@ -860,6 +893,8 @@ const [showUpcoming, setShowUpcoming] = useState(true);
                 backgroundSize: "cover",
                 backgroundPosition: "center", 
                 backgroundRepeat: "no-repeat",
+                height:'100%',
+                maxHeight:"47vh",
                 "&::before": { 
                   content: '""',
                   position: "absolute",
@@ -872,8 +907,23 @@ const [showUpcoming, setShowUpcoming] = useState(true);
                   zIndex: 1,
                 }
               }}>
-              <Box sx={{ position: "relative", zIndex: 2 }}>
-                <Box sx={{ position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2}}>
+              <Box sx={{ position: "relative", zIndex: 2, height:'100%' }}>
+                <Box 
+                sx={{ position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2, maxHeight:"100%", overflowY:"auto",    '&::-webkit-scrollbar': {
+                  width: '8px',
+                },
+                '&::-webkit-scrollbar-track': {
+                  background: 'transpnt',
+                  borderRadius: '10px',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                  borderRadius: '10px',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                },
+                '&::-webkit-scrollbar-thumb:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                },}}>
                   <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '2em' }}>
                     Doctors & Booking
                   </Typography>
@@ -992,14 +1042,52 @@ const [showUpcoming, setShowUpcoming] = useState(true);
                     <Button variant="contained" onClick={() => navigate('/patient_dashboard/patient_doctorlist')} sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto'}}>
                       See More Doctors
                     </Button>
-                    <Button variant="contained" sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto'}}>
+                    <Button onClick={openDeleteCurrentDoctorModal} variant="contained" sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto'}}>
                       Delete Current Doctor
                     </Button>
+                    <Modal open={openDeleteCurrentDoctor} >
+                      <Box sx={{...style, display:'flex', flexDirection:'column',alignItems:"center",}}>
+                     
+                        <Typography sx={{color:"black", fontSize:'4vh', p:2}}> Are you sure you want to delete your current doctor? </Typography>
+                        <Typography sx={{color:"black", fontSize:'4vh', p:2}}> This action cannot be reveresed! </Typography>
+                        <Button
+                          onClick={handleDeleteCurrentDoctor}
+                          variant="contained"
+                          sx={{
+                            alignContent:'center',
+                            backgroundColor: '#D15254',
+                            color: 'black',
+                            borderRadius: '25px',
+                            fontWeight: 'bold',
+                            textTransform: 'none',
+                            marginTop:'2vh',
+                            marginBottom:'2vh',
+                            width:'30vh',
+                            fontFamily:'Merriweather',
+
+                          }}
+                        >DELETE</Button>
+                        <Button 
+                        onClick={closeDeleteCurrentDoctorModal}
+                        variant="contained"
+                        sx={{
+                          backgroundColor: '#719EC7',
+                          color: 'white',
+                          borderRadius: '25px',
+                          fontWeight: 'bold',
+                          textTransform: 'none',
+                          width:'30vh',
+                          fontFamily:'Merriweather',
+                        }}
+                        >Close
+                        </Button>
+
+                      </Box>
+                    </Modal>
                   </Box>
                 </Box>
-
               </Box>
-
+              
               </Item>
             </Grid>
 

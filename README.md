@@ -1,4 +1,4 @@
-Welcome to our Doctor Paitent Protal :)
+Welcome to our Doctor Patient Portal :)
 
 Get Started:
 
