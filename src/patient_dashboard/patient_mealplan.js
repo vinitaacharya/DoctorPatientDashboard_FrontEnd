@@ -45,7 +45,12 @@ const MealPlanCard = ({ title, author, tags, onView, onManage }) => (
   </Box>
 );
 
-const MealCard = ({ title, tags, description, image, day}) => {
+const MealCard = ({ title, tags, description, image, day, onAddToPlan}) => {
+        const handleClick = () => {
+          if (day) {
+            onAddToPlan({ title, tags, description, image });
+          }
+        };
   return (
     <Box
       sx={{
@@ -66,7 +71,7 @@ const MealCard = ({ title, tags, description, image, day}) => {
       <Box sx={{ flexGrow: 1 }}>
         <Typography sx={{ fontSize: '0.8em', fontFamily: 'Merriweather', fontSize: '1em' }}>Tags: {tags}</Typography>
         <Typography sx={{ fontSize: '0.8em', fontFamily: 'Merriweather', fontSize: '1em'}}>{description}</Typography>
-        <Button variant="contained" sx={{ backgroundColor: day ? '5A8BBE' : '#5A8BBE73', marginTop: 1, borderRadius: '30px', textTransform: 'none', fontSize: '1em', fontWeight:'bold'}}> {day ? `Add to plan` : "Select a meal plan to add"}</Button>
+        <Button variant="contained" onClick={handleClick} sx={{ backgroundColor: day ? '5A8BBE' : '#5A8BBE73', marginTop: 1, borderRadius: '30px', textTransform: 'none', fontSize: '1em', fontWeight:'bold'}}> {day ? `Add to plan` : "Select a meal plan to add"}</Button>
       </Box>
       </Box>
       </Box>
@@ -151,6 +156,18 @@ function Patient_Mealplan() {
     const [manage, setManage] = useState(false);
     const [selectedMealPlan, setSelectedMealPlan] = useState(null);
     const [day, setDay] = React.useState('');
+    const [plannedMeals, setPlannedMeals] = useState({});
+
+    const handleAddToPlan = (meal) => {
+      if (!day) return;
+    
+      setPlannedMeals(prev => {
+        const updatedDayMeals = prev[day] ? [...prev[day], meal] : [meal];
+        return { ...prev, [day]: updatedDayMeals };
+      });
+    };
+    
+
 
     
     const handleChange = (event: SelectChangeEvent) => {
@@ -187,8 +204,8 @@ function Patient_Mealplan() {
                 </Box>
               </RoundedPanel>
             ) : (
-              <RoundedPanel>
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                <RoundedPanel sx={{ display: 'flex', flexDirection: 'column' }}>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                   <Typography variant="h6" sx={{ fontSize: '2em' }}>Manage Meal Plan</Typography>
                   <Button
                     onClick={() => {
@@ -247,39 +264,106 @@ function Patient_Mealplan() {
                   {/* You can show savedMeals here and allow adding/removing/reordering */}
                 </Box>
                 ) : (
-                <Box mt={2} display="flex" justifyContent="space-between" alignItems="center">
-                  <Box>
-                  <Typography sx={{ fontFamily: 'Merriweather', fontSize: '1.2em' }}>
-                        {day}
-                  </Typography>
-                  </Box>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={day}
-                    onChange={handleChange}
-                    displayEmpty
-                    renderValue={(selected) => selected ? selected : "Select Day"}
-                    sx={{
-                      width: '200px', /* Adjust width to match input fields */
-                      height: '35px', /* Match input field height */
-                      textAlign: 'center',
-                      backgroundColor: 'white',
-                      border: '1px solid #D9D9D9',
-                      fontSize: '18px',
-                      paddingLeft: '5px'
-                    }}
-                  >
-                    <MenuItem value='Monday'>Monday</MenuItem>
-                    <MenuItem value='Tuesday'>Tuesday</MenuItem>
-                    <MenuItem value='Wednesday'>Wednesday</MenuItem>
-                    <MenuItem value='Thursday'>Thursday</MenuItem>
-                    <MenuItem value='Friday'>Friday</MenuItem>
-                    <MenuItem value='Saturday'>Saturday</MenuItem>
-                    <MenuItem value='Sunday'>Sunday</MenuItem>
-                  </Select>
-                  {/* You can show savedMeals here and allow adding/removing/reordering */}
-                </Box>
+                      <Box mt={2} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <Box display="flex" justifyContent="space-between" alignItems="center">
+                          <Typography sx={{ fontFamily: 'Merriweather', fontSize: '1.2em' }}>
+                            {day}
+                          </Typography>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={day}
+                            onChange={handleChange}
+                            displayEmpty
+                            renderValue={(selected) => selected ? selected : "Select Day"}
+                            sx={{
+                              width: '200px',
+                              height: '35px',
+                              textAlign: 'center',
+                              backgroundColor: 'white',
+                              border: '1px solid #D9D9D9',
+                              fontSize: '18px',
+                              paddingLeft: '5px'
+                            }}
+                          >
+                            <MenuItem value='Monday'>Monday</MenuItem>
+                            <MenuItem value='Tuesday'>Tuesday</MenuItem>
+                            <MenuItem value='Wednesday'>Wednesday</MenuItem>
+                            <MenuItem value='Thursday'>Thursday</MenuItem>
+                            <MenuItem value='Friday'>Friday</MenuItem>
+                            <MenuItem value='Saturday'>Saturday</MenuItem>
+                            <MenuItem value='Sunday'>Sunday</MenuItem>
+                          </Select>
+                        </Box>
+
+                        {/* PLANNED MEALS BELOW DROPDOWN */}
+                        <Box className="custom-scroll" sx={{ maxHeight: '50vh', overflowY: 'auto' }}>
+                          {plannedMeals[day]?.map((meal, idx) => (
+                            <Box key={idx} sx={{
+                              backgroundColor: '#DCEBFB',
+                              borderRadius: '20px',
+                              padding: '1em',
+                              marginBottom: '10px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 2
+                            }}>
+                              <img src={food1} alt={meal.title} style={{ width: 80, height: 80, borderRadius: 20 }} />
+                              <Box sx={{ flexGrow: 1 }}>
+                                <Typography sx={{ fontWeight: 'bold', fontFamily: 'Montserrat' }}>{meal.title}</Typography>
+                                <Box
+                                  display="flex"
+                                  flexDirection="column"
+                                  gap={1}
+                                  mt={1}
+                                  sx={{ width: 'fit-content' }}
+                                >
+                                  <Button
+                                    size="small"
+                                    variant="contained"
+                                    sx={{
+                                      backgroundColor: '#5A8BBE',
+                                      borderRadius: '20px',
+                                      textTransform: 'none',
+                                      fontWeight: 'bold',
+                                      fontFamily: 'Montserrat',
+                                      '&:hover': {
+                                        backgroundColor: '#4B79A8'
+                                      }
+                                    }}
+                                  >
+                                    Go to Meal
+                                  </Button>
+                                  <Button
+                                    size="small"
+                                    variant="contained"
+                                    onClick={() => {
+                                      setPlannedMeals(prev => {
+                                        const filtered = prev[day].filter((_, i) => i !== idx);
+                                        return { ...prev, [day]: filtered };
+                                      });
+                                    }}
+                                    sx={{
+                                      backgroundColor: '#5A8BBE',
+                                      borderRadius: '20px',
+                                      textTransform: 'none',
+                                      fontWeight: 'bold',
+                                      fontFamily: 'Montserrat',
+                                      '&:hover': {
+                                        backgroundColor: '#4B79A8'
+                                      }
+                                    }}
+                                  >
+                                    Remove
+                                  </Button>
+                                </Box>
+
+                              </Box>
+                            </Box>
+                          ))}
+                        </Box>
+                      </Box>
+
                 )}
               </RoundedPanel>
             )}
@@ -287,7 +371,7 @@ function Patient_Mealplan() {
             <Typography variant="h6" sx={{ color: 'white', mb: 2, fontSize: '2em'}}>Saved Meals</Typography>
             <Box className = 'custom-scroll' sx={{height: '70vh', overflowY: 'auto', paddingRight: '.5vw'}}>
             {savedMeals.map((meal, index) => (
-              <MealCard key={index} {...meal} day={day}/>
+              <MealCard key={index} {...meal} day={day} onAddToPlan={handleAddToPlan}/>
             ))}
             </Box>
           </RoundedPanel>

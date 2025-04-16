@@ -9,6 +9,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Modal from '@mui/material';
 
 
 
@@ -549,6 +550,7 @@ function Patientsignup() {
                   <label className='terms'>Do you Accept the terms and conditions? 
                     <Checkbox checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)}  />
                   </label>
+
                 </div>            
               </div>
             </div>
@@ -556,6 +558,8 @@ function Patientsignup() {
             <div className="signuptext">
               <div className="signupbuttons">
                 <Button type='submit' className="herobutton">Sign Up</Button>
+                <Button className="herobutton" onClick={() => navigate('/landing')}> Back </Button>
+
               </div>
             </div>
           </div>
