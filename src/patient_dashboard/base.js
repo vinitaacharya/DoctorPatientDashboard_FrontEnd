@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"; 
-import Patient_Navbar from "./pharmacy_navbar"; 
+import Patient_Navbar from "./patient_navbar"; 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';

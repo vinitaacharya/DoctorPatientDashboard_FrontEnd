@@ -10,6 +10,7 @@ import Patient_Mealplan from './patient_dashboard/patient_mealplan';
 import Pharmacy_Stock from './pharmacy/pharmacy_stock'
 import Pharmacy_Landing from './pharmacy/pharmacy_landing'
 import Patient_Chart from './patient_medicalchart/patient_medicalchart/patient_medicalchart';
+import Patient_Appointment from './patient_dashboard/patient_appointment';
 
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
           <Route path="/doctorsignup" element={<Doctorsignup/>} />
           <Route path="/patient_medicalchart/patient_medicalchart" element={<Patient_Chart/>} />
           <Route path="/patient_dashboard/patient_mealplan" element={<Patient_Mealplan/>} />
+          <Route path="/patient_dashboard/patient_appointment" element={<Patient_Appointment/>} />
 
         </Routes>
       </div>
