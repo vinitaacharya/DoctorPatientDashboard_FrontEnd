@@ -114,7 +114,7 @@ function Patient_Landing() {
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const patientId = 1;
+  const patientId = 4;
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -806,7 +806,7 @@ const [showUpcoming, setShowUpcoming] = useState(true);
                         paddingLeft: "1vw",
                       }}
                     >
-                      {appointment.date}
+                      {appointment.appointment_datetime}
                     </Typography>
                     <Typography
                       variant="body1"
@@ -819,7 +819,7 @@ const [showUpcoming, setShowUpcoming] = useState(true);
                         paddingLeft: "1vw",
                       }}
                     >
-                      {appointment.doctor}
+                      {appointment.doctor_name}
                     </Typography>
                     <Button
                       variant="contained"
