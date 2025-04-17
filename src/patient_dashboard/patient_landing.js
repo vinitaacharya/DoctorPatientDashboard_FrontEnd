@@ -58,20 +58,8 @@ const StyledRating = styled(Rating)({
   },
 });
 
-const upcomingAppointments = [
-  {
-    date: "Monday, 03/04 - 3:00PM",
-    doctor: "Dr. Geller",
-  },
-  {
-    date: "Tuesday, 03/05 - 1:30PM",
-    doctor: "Dr. Smith",
-  },
-  {
-    date: "Wednesday, 03/06 - 2:45PM",
-    doctor: "Dr. Lee",
-  },
-];
+
+
 
 const pastAppointments = [
   {
@@ -265,6 +253,57 @@ const handleDeleteCurrentDoctor = async () => {
 
 
 const [showUpcoming, setShowUpcoming] = useState(true);
+
+
+
+//Booking an appointment
+  const [openBookAppt, setOpenBookAppt] = useState(false);
+
+  const handleOpenBookAppt = () => setOpenBookAppt(true);
+  const handleCloseBookAppt = () => setOpenBookAppt(false);
+
+  // Form fields
+  const [apptReason, setApptReason] = useState('');
+  const [medications, setMedications] = useState('');
+  const [exercise, setExercise] = useState('');
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState('09:00');
+
+
+  const [pharmacyInfo, setPharmacyInfo] = useState("");
+
+  useEffect(() => {
+    // Replace with actual endpoint
+    fetch('http://localhost:5000/api/get-pharmacy')
+      .then(res => res.json())
+      .then(data => {
+        setPharmacyInfo(`${data.name}, ${data.address}, ${data.zip}, ${data.city}`);
+      })
+      .catch(err => {
+        console.error("Failed to fetch pharmacy info", err);
+      });
+  }, []);
+
+
+  const [upcomingAppointments, setUpcomingAppointments] = useState([
+    {
+      date: "Monday, 03/04 - 3:00PM",
+      doctor: "Dr. Geller",
+      timestamp: new Date("2025-03-04T15:00")
+    },
+    {
+      date: "Tuesday, 03/05 - 1:30PM",
+      doctor: "Dr. Smith",
+      timestamp: new Date("2025-03-05T13:30")
+    },
+    {
+      date: "Wednesday, 03/06 - 2:45PM",
+      doctor: "Dr. Lee",
+      timestamp: new Date("2025-03-06T14:45")
+    }
+  ]);
+  
+
 
   return (
 
@@ -1036,9 +1075,155 @@ const [showUpcoming, setShowUpcoming] = useState(true);
 </Modal>
 
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 2}}>
-                    <Button variant="contained" sx={{ backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto'}}>
-                      Make an Appointment
-                    </Button>
+                  <Button
+                    onClick={handleOpenBookAppt}
+                    variant="contained"
+                    sx={{
+                      backgroundColor: '#719EC7',
+                      color: 'white',
+                      textTransform: 'none',
+                      borderRadius: 5,
+                      fontFamily: 'Montserrat',
+                      fontSize: '1.2em',
+                      width: '75%',
+                      margin: 'auto',
+                    }}
+                  >
+                    Book Appointment
+                  </Button>
+                  <Modal open={openBookAppt} onClose={handleCloseBookAppt}>
+                    <Box sx={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '90%',
+                      maxWidth: 500,
+                      bgcolor: 'white',
+                      borderRadius: '20px',
+                      boxShadow: 24,
+                      p: 4,
+                    }}>
+                      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                        <Typography variant="h5" sx={{ fontFamily: 'Montserrat' }}>Book Appointment</Typography>
+                        <IconButton onClick={handleCloseBookAppt}>
+                          <CloseIcon />
+                        </IconButton>
+                      </Box>
+
+                      <Typography fontWeight="bold" mb={2}>Dr. Hillary Geller</Typography>
+
+                      <TextField
+                        label="Reason for Visit"
+                        fullWidth
+                        value={apptReason}
+                        onChange={(e) => setApptReason(e.target.value)}
+                        sx={{ mb: 2 }}
+                      />
+
+                      <TextField
+                        label="Current Medications"
+                        fullWidth
+                        value={medications}
+                        onChange={(e) => setMedications(e.target.value)}
+                        sx={{ mb: 2 }}
+                      />
+
+                      <TextField
+                        label="Exercise Frequency"
+                        fullWidth
+                        value={exercise}
+                        onChange={(e) => setExercise(e.target.value)}
+                        sx={{ mb: 2 }}
+                      />
+
+
+                      {/* Date and time selectors (replace with date picker if needed) */}
+                      <Typography sx={{ fontSize: '0.9em', fontWeight: 'bold', mt: 2 }}>Pick Date</Typography>
+                      <TextField
+                        type="date"
+                        fullWidth
+                        value={selectedDate.toISOString().split('T')[0]}
+                        onChange={(e) => setSelectedDate(new Date(e.target.value))}
+                        sx={{ mb: 2 }}
+                      />
+
+                      <Typography sx={{ fontSize: '0.9em', fontWeight: 'bold' }}>Time</Typography>
+                      <TextField
+                        type="time"
+                        fullWidth
+                        value={selectedTime}
+                        onChange={(e) => setSelectedTime(e.target.value)}
+                        sx={{ mb: 2 }}
+                      />
+
+                      <Typography sx={{ fontSize: '0.9em', fontStyle: 'italic', mb: 2 }}>
+                        Pharmacy: {pharmacyInfo || "Loading..."}
+                      </Typography>
+
+
+                      <Box display="flex" justifyContent="space-between">
+                      <Button
+                        onClick={() => {
+                          const formattedDate = selectedDate.toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            month: '2-digit',
+                            day: '2-digit',
+                          });
+                          const formattedTime = selectedTime; // already in HH:MM format
+
+                          const newAppointment = {
+                            date: `${formattedDate} - ${formattedTime}`,
+                            doctor: "Dr. Geller",
+                            timestamp: new Date(`${selectedDate.toISOString().split('T')[0]}T${selectedTime}`)  // Store raw Date
+                          };
+                          
+                          setUpcomingAppointments(prev =>
+                            [...prev, newAppointment].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+                          );
+                          
+
+                          // Optional: Clear fields
+                          setApptReason('');
+                          setMedications('');
+                          setExercise('');
+                          setSelectedDate(new Date());
+                          setSelectedTime('09:00');
+
+                          handleCloseBookAppt();
+                        }}
+                        variant="contained"
+                        sx={{
+                          backgroundColor: '#5A8BBE',
+                          borderRadius: '25px',
+                          textTransform: 'none',
+                          fontWeight: 'bold',
+                          fontFamily: 'Montserrat',
+                          width: '48%',
+                        }}
+                      >
+                        Request
+                      </Button>
+
+
+                        <Button
+                          onClick={handleCloseBookAppt}
+                          variant="contained"
+                          sx={{
+                            backgroundColor: '#D15254',
+                            borderRadius: '25px',
+                            textTransform: 'none',
+                            fontWeight: 'bold',
+                            fontFamily: 'Montserrat',
+                            width: '48%',
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Modal>
+
                     <Button variant="contained" onClick={() => navigate('/patient_dashboard/patient_doctorlist')} sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto'}}>
                       See More Doctors
                     </Button>
