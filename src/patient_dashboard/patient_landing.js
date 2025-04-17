@@ -61,20 +61,6 @@ const StyledRating = styled(Rating)({
 
 
 
-const pastAppointments = [
-  {
-    date: "Monday, 02/26 - 4:00PM",
-    doctor: "Dr. Raynor",
-  },
-  {
-    date: "Thursday, 02/22 - 12:00PM",
-    doctor: "Dr. Thomas",
-  },
-  {
-    date: "Friday, 02/16 - 11:15AM",
-    doctor: "Dr. Lopez",
-  },
-];
 
 const data = {
   appointmentDate: '01/04/25',
@@ -97,6 +83,35 @@ const labelMap = {
 
 function Patient_Landing() {
   const [value, setValue] = React.useState(2);
+
+  const [upcomingAppointments, setUpcomingAppointments] = useState([]);
+  const [pastAppointments, setPastAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const patientId = 4;
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const upcomingRes = await fetch(`http://127.0.0.1:5000/appointmentsupcoming/${patientId}`);
+        const pastRes = await fetch(`http://127.0.0.1:5000/appointmentspast/${patientId}`);
+  
+        if (!upcomingRes.ok || !pastRes.ok) {
+          throw new Error("Failed to fetch appointments");
+        }
+  
+        const upcomingData = await upcomingRes.json();
+        const pastData = await pastRes.json();
+  
+        setUpcomingAppointments(upcomingData);
+        setPastAppointments(pastData);
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchAppointments();
+  }, [patientId]);
 
 //surveys modal
 const navigate = useNavigate();
@@ -285,23 +300,6 @@ const [showUpcoming, setShowUpcoming] = useState(true);
   }, []);
 
 
-  const [upcomingAppointments, setUpcomingAppointments] = useState([
-    {
-      date: "Monday, 03/04 - 3:00PM",
-      doctor: "Dr. Geller",
-      timestamp: new Date("2025-03-04T15:00")
-    },
-    {
-      date: "Tuesday, 03/05 - 1:30PM",
-      doctor: "Dr. Smith",
-      timestamp: new Date("2025-03-05T13:30")
-    },
-    {
-      date: "Wednesday, 03/06 - 2:45PM",
-      doctor: "Dr. Lee",
-      timestamp: new Date("2025-03-06T14:45")
-    }
-  ]);
   
 
 
@@ -815,7 +813,7 @@ const [showUpcoming, setShowUpcoming] = useState(true);
                         paddingLeft: "1vw",
                       }}
                     >
-                      {appointment.date}
+                      {appointment.appointment_datetime}
                     </Typography>
                     <Typography
                       variant="body1"
@@ -828,7 +826,7 @@ const [showUpcoming, setShowUpcoming] = useState(true);
                         paddingLeft: "1vw",
                       }}
                     >
-                      {appointment.doctor}
+                      {appointment.doctor_name}
                     </Typography>
                     <Button
                       variant="contained"
