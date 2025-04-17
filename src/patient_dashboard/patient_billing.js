@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react"; 
 import Patient_Navbar from "./patient_navbar";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
+import { Select,MenuItem, InputLabel,  Modal, TextField, FormControl} from "@mui/material";
+
 import {
   Typography,
   Table,
@@ -67,6 +69,61 @@ function Patient_Billing() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  //Make a Payment Modal
+  const [openMakePayment, setOpenMakePayment] = useState(false);
+  
+  const openMakePaymentModal = () => {
+    setOpenMakePayment(true);
+  };
+  const closeMakePaymentModal = () => {
+    setOpenMakePayment(false);
+  };
+  
+  
+  // Daily survey form states
+  const [amount, setAmount] = useState('$200');
+  const [email, setEmail] = useState("");
+  const [cardNumber, setcardNumber] = useState("");
+  const [cardExpir, setCardExpir] = useState("");
+  const [cardCVC, setCardCVC] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [countryRegion, setCountryRegion] = useState("");
+  
+  const handlePaymentSubmit = async (e) => {
+    e.preventDefault();
+  
+    const paymentInfo = {
+      amount,
+      email,
+      cardNumber,
+      cardExpir,
+      cardCVC,
+      cardName,
+      countryRegion,
+    };
+  //replace fetch with correct url
+  
+    try {
+      const response = await fetch('http://localhost:5000/api/surveys/daily', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(paymentInfo),
+      });
+  
+      if (response.ok) {
+        console.log('Daily survey submitted successfully');
+        closeMakePaymentModal(); // Close modal on success
+      } else {
+        console.error('Failed to submit daily survey');
+      }
+    } catch (error) {
+      console.error('Error submitting daily survey:', error);
+    }
+  };
+  
 
   return (
     <div style={{ display: "flex" }}>
@@ -177,6 +234,7 @@ function Patient_Billing() {
           </Box>
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <Button
+              onClick={openMakePaymentModal}
               variant="contained"
               sx={{
                 backgroundColor: "#6B5DD3",
@@ -193,6 +251,125 @@ function Patient_Billing() {
             >
               Make a Payment
             </Button>
+            <Modal
+                    open={openMakePayment}
+                    //aria-labelledby="modal-modal-title"
+                    //aria-describedby="modal-modal-description"
+            >
+              <Box
+  component="form"
+  onSubmit={handlePaymentSubmit}
+  sx={{
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "#f4f6fc",
+    borderRadius: "20px",
+    boxShadow: 24,
+    p: 4,
+    display: "flex",
+    flexDirection: "column",
+    gap: 2,
+  }}
+>
+  <Typography variant="h6" sx={{ fontFamily: "Montserrat", fontWeight: 600 }}>
+    Payment
+  </Typography>
+
+  <TextField
+    label="Amount"
+    fullWidth
+    placeholder="$"
+    variant="outlined"
+    value={amount}
+    onChange={(e) => setAmount(e.target.value)}
+    required
+  />
+  <TextField
+    label="Email"
+    fullWidth
+    placeholder="you@example.com"
+    variant="outlined"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    required
+  />
+  <Typography variant="body2" sx={{ fontWeight: 600, fontFamily: "Montserrat" }}>
+    Card information
+  </Typography>
+  <TextField
+    placeholder="0000 0000 0000 0000"
+    fullWidth
+    variant="outlined"
+    value={cardNumber}
+    onChange={(e) => setcardNumber(e.target.value)}
+    required
+  />
+  <Box sx={{ display: "flex", gap: 1 }}>
+    <TextField
+      placeholder="MM/YY"
+      variant="outlined"
+      fullWidth
+      value={cardExpir}
+      onChange={(e) => setCardExpir(e.target.value)}
+      required
+    />
+    <TextField
+      placeholder="CVC"
+      variant="outlined"
+      fullWidth
+      value={cardCVC}
+      onChange={(e) => setCardCVC(e.target.value)}
+      required
+    />
+  </Box>
+  <TextField
+    label="Name on card"
+    fullWidth
+    placeholder="Name"
+    variant="outlined"
+    value={cardName}
+    onChange={(e) => setCardName(e.target.value)}
+    required
+  />
+  <FormControl fullWidth>
+    <InputLabel>Country or region</InputLabel>
+    <Select
+      required
+      value={countryRegion}
+      label="Country or region"
+      onChange={(e) => setCountryRegion(e.target.value)}
+    >
+      <MenuItem value="US">United States</MenuItem>
+      <MenuItem value="CA">Canada</MenuItem>
+      <MenuItem value="UK">United Kingdom</MenuItem>
+    </Select>
+  </FormControl>
+  <Button
+    onClick={closeMakePaymentModal}
+    type="submit"
+    fullWidth
+    sx={{
+      mt: 2,
+      backgroundColor: "#1c1c1e",
+      color: "#fff",
+      fontFamily: "Montserrat",
+      borderRadius: "8px",
+      paddingY: 1.2,
+      textTransform: "none",
+      fontSize: "1rem",
+      "&:hover": {
+        backgroundColor: "#000",
+      },
+    }}
+  >
+    Pay
+  </Button>
+</Box>
+
+            </Modal>
           </Box>
         </Paper>
       </Box>
@@ -201,3 +378,4 @@ function Patient_Billing() {
 }
 
 export default Patient_Billing;
+//do we want to allow them to do part of the payment or has to be whole charge at a time. Can it go into negative? Is it storing credit card information to check if it valid or not? 
