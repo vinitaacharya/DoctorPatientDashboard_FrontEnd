@@ -9,7 +9,21 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Modal from '@mui/material';
 
+
+
+/*
+Add profile Photo option
+Ask to include Gender, DOB, Address, Phone Number
+Zipcode, City, State, Weight Height, Fitness level
+Health Goals, Blood type,
+Dietary Restrictions and Medical Conditions
+
+
+
+
+*/
 
 function Patientsignup() {
   const [values, setValues] = useState({
@@ -31,6 +45,8 @@ function Patientsignup() {
     fitness: '',
     goal: '',
     blood: '',
+    medical_conditions: '',
+    dietary_restrictions: '',
     insur_name: '',
     policy: '',
     exp: '',
@@ -46,6 +62,10 @@ function Patientsignup() {
   const handleClose = () => setOpen(false);
   const [blood, setBlood] = React.useState('');
   const [gender, setGender] = React.useState('');
+  const [medicalConditions, setMedicalConditions] = useState([]);
+  const [dietaryRestrictions, setDietaryRestrictions] = useState([]);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+
 
   const [loading, setLoading] = useState(false);
 
@@ -64,8 +84,29 @@ function Patientsignup() {
     setValues({...values, [e.target.name]: e.target.value});
   }
 
+  const handleCheckboxChange = (event, type) => {
+    const value = event.target.name;
+  
+    if (type === "medical") {
+      setMedicalConditions(prev =>
+        prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+      );
+    } else if (type === "diet") {
+      setDietaryRestrictions(prev =>
+        prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+      );
+    }
+  };
+  
+
   const savePatient = (e) => {
     e.preventDefault();
+
+    if (!termsAccepted) {
+      alert("Please accept the terms and conditions");
+      return;
+    }
+
     setLoading(true);
 
     const data = {
@@ -87,6 +128,8 @@ function Patientsignup() {
       fitness: values.fitness,
       goal: values.goal,
       blood: values.blood,
+      medical_conditions: medicalConditions.length ? medicalConditions.join(', ') : 'None',
+      dietary_restrictions: dietaryRestrictions.length ? dietaryRestrictions.join(', ') : 'None',
       insurance_provider: values.insur_name,
       insurance_policy_number: values.policy,
       insurance_expiration_date: values.exp,
@@ -154,7 +197,7 @@ function Patientsignup() {
                 <div className='horizontal-bar'>
                   <div className='labels'>
                     <label htmlFor="dob" className='short-label'>DOB: </label>
-                    <input type='text'
+                    <input type='date'
                       name='dob'
                       className="form-control-dob" 
                       placeholder='Enter DOB'
@@ -335,41 +378,41 @@ function Patientsignup() {
                         <TableRow>
                           <td>
                             Cancer 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Cancer" checked={medicalConditions.includes("Cancer")} onChange={(e) => handleCheckboxChange(e, "medical")}/>
                           </td>
                           <td>
                             Diabetes 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Diabetes" checked={medicalConditions.includes("Diabetes")} onChange={(e) => handleCheckboxChange(e, "medical")}  />
                           </td>
                         </TableRow>
                         <TableRow>
                           <td>
                             Pregnant 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Pregnant" checked={medicalConditions.includes("Pregnant")} onChange={(e) => handleCheckboxChange(e, "medical")}  />
                           </td>
                           <td>
                             Bipolar 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Bipolar" checked={medicalConditions.includes("Bipolar")} onChange={(e) => handleCheckboxChange(e, "medical")} />
                           </td>
                         </TableRow>
                         <TableRow>
                           <td>
                             Asthma 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Asthma" checked={medicalConditions.includes("Asthma")} onChange={(e) => handleCheckboxChange(e, "medical")}  />
                           </td>
                           <td>
                             Anxiety 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Anxiety" checked={medicalConditions.includes("Anxiety")} onChange={(e) => handleCheckboxChange(e, "medical")}  />
                           </td>
                         </TableRow>
                         <TableRow>
                           <td>
-                            Epoilepsy 
-                            <Checkbox {...label}  />
+                            Epilepsy 
+                            <Checkbox name="Epilepsy" checked={medicalConditions.includes("Epilepsy")} onChange={(e) => handleCheckboxChange(e, "medical")}  />
                           </td>
                           <td>
                             Other 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Other" checked={medicalConditions.includes("Other")} onChange={(e) => handleCheckboxChange(e, "medical")}  />
                           </td>
                         </TableRow>
                       </tbody>
@@ -387,41 +430,41 @@ function Patientsignup() {
                         <TableRow>
                           <td>
                             Nuts 
-                            <Checkbox {...label}  />
-                          </td>
+                            <Checkbox name="Nuts" checked={dietaryRestrictions.includes("Nuts")} onChange={(e) => handleCheckboxChange(e, "diet")} />
+                            </td>
                           <td>
                             Eggs 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Eggs" checked={dietaryRestrictions.includes("Eggs")} onChange={(e) => handleCheckboxChange(e, "diet")}  />
                           </td>
                         </TableRow>
                         <TableRow>
                           <td>
                             Gluten 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Gluten" checked={dietaryRestrictions.includes("Gluten")} onChange={(e) => handleCheckboxChange(e, "diet")} />
                           </td>
                           <td>
                             Vegan 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Vegan" checked={dietaryRestrictions.includes("Vegan")} onChange={(e) => handleCheckboxChange(e, "diet")}  />
                           </td>
                         </TableRow>
                         <TableRow>
                           <td>
                             Fish 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Fish" checked={dietaryRestrictions.includes("Fish")} onChange={(e) => handleCheckboxChange(e, "diet")}  />
                           </td>
                           <td>
                             Vegetarian 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Vegetarian" checked={dietaryRestrictions.includes("Vegetarian")} onChange={(e) => handleCheckboxChange(e, "diet")}  />
                           </td>
                         </TableRow>
                         <TableRow>
                           <td>
                             Dairy 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Dairy" checked={dietaryRestrictions.includes("Dairy")} onChange={(e) => handleCheckboxChange(e, "diet")}  />
                           </td>
                           <td>
                             Other 
-                            <Checkbox {...label}  />
+                            <Checkbox name="Other" checked={dietaryRestrictions.includes("Other")} onChange={(e) => handleCheckboxChange(e, "diet")}  />
                           </td>
                         </TableRow>
                       </tbody>
@@ -478,7 +521,7 @@ function Patientsignup() {
                 {/*Normal Now */}
                 <div className='labels'>
                   <label className='def-label' htmlFor="exp">Exp. Date: </label>
-                  <input type='text'
+                  <input type='date'
                     name='exp'
                     className="form-control" 
                     placeholder='Enter your exp date'
@@ -496,7 +539,7 @@ function Patientsignup() {
                 </div>
                 <div className='labels'>
                   <label className='def-label'htmlFor="password">Password: </label>
-                  <input type='text'
+                  <input type='password'
                     name='password'
                     className="form-control" 
                     placeholder='Enter your password'
@@ -505,8 +548,9 @@ function Patientsignup() {
                 </div>      
                 <div className='labels'> 
                   <label className='terms'>Do you Accept the terms and conditions? 
-                    <Checkbox {...label}  />
+                    <Checkbox checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)}  />
                   </label>
+
                 </div>            
               </div>
             </div>
@@ -514,6 +558,8 @@ function Patientsignup() {
             <div className="signuptext">
               <div className="signupbuttons">
                 <Button type='submit' className="herobutton">Sign Up</Button>
+                <Button className="herobutton" onClick={() => navigate('/landing')}> Back </Button>
+
               </div>
             </div>
           </div>
