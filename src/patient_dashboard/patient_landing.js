@@ -57,7 +57,7 @@ const StyledRating = styled(Rating)({
     color: '#FEFEFD',
   },
 });
-
+/*
 const upcomingAppointments = [
   {
     date: "Monday, 03/04 - 3:00PM",
@@ -87,6 +87,7 @@ const pastAppointments = [
     doctor: "Dr. Lopez",
   },
 ];
+*/
 
 const data = {
   appointmentDate: '01/04/25',
@@ -109,6 +110,35 @@ const labelMap = {
 
 function Patient_Landing() {
   const [value, setValue] = React.useState(2);
+
+  const [upcomingAppointments, setUpcomingAppointments] = useState([]);
+  const [pastAppointments, setPastAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const patientId = 1;
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const upcomingRes = await fetch(`http://127.0.0.1:5000/appointmentsupcoming/${patientId}`);
+        const pastRes = await fetch(`http://127.0.0.1:5000/appointmentspast/${patientId}`);
+  
+        if (!upcomingRes.ok || !pastRes.ok) {
+          throw new Error("Failed to fetch appointments");
+        }
+  
+        const upcomingData = await upcomingRes.json();
+        const pastData = await pastRes.json();
+  
+        setUpcomingAppointments(upcomingData);
+        setPastAppointments(pastData);
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchAppointments();
+  }, [patientId]);
 
 //surveys modal
 const navigate = useNavigate();
