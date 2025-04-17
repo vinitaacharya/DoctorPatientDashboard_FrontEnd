@@ -34,28 +34,7 @@ const CustomTableCell = styled(TableCell)({
   color: "#4a4a4a",
 });
 
-const rows = [
-  {
-    no: 1,
-    article: "Fakemed1",
-    subtitle: "Pharmacy",
-    date: "1/02/25",
-    unitPrice: "$50",
-    charge: "$50",
-    credit: "$0",
-    currentBill: "$50",
-  },
-  {
-    no: 2,
-    article: "Appointment",
-    subtitle: "Doctor",
-    date: "1/02/25",
-    unitPrice: "$150",
-    charge: "$50",
-    credit: "$0",
-    currentBill: "$200",
-  },
-];
+
 
 function Patient_Billing() {
   const [page, setPage] = React.useState(0);
@@ -90,10 +69,13 @@ function Patient_Billing() {
   const [cardName, setCardName] = useState("");
   const [countryRegion, setCountryRegion] = useState("");
   
-  const handlePaymentSubmit = async (e) => {
+  const handlePaymentSubmit = (e) => {
     e.preventDefault();
   
-    const paymentInfo = {
+    const totalBalance = 200;
+    const numericAmount = parseFloat(amount.replace("$", ""));
+  
+    console.log("Mock payment submitted:", {
       amount,
       email,
       cardNumber,
@@ -101,30 +83,49 @@ function Patient_Billing() {
       cardCVC,
       cardName,
       countryRegion,
-    };
-  //replace fetch with correct url
+    });
   
-    try {
-      const response = await fetch('http://localhost:5000/api/surveys/daily', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(paymentInfo),
-      });
-  
-      if (response.ok) {
-        console.log('Daily survey submitted successfully');
-        closeMakePaymentModal(); // Close modal on success
-      } else {
-        console.error('Failed to submit daily survey');
-      }
-    } catch (error) {
-      console.error('Error submitting daily survey:', error);
+    if (numericAmount === totalBalance) {
+      setRows([]); // Clear the table
+      console.log("Payment matched total. Cleared rows.");
+    } else {
+      console.log("Payment submitted, but total doesn't match.");
     }
+  
+    closeMakePaymentModal();
   };
   
 
+  const [rows, setRows] = useState([
+    {
+      no: 1,
+      article: "Fakemed1",
+      subtitle: "Pharmacy",
+      date: "1/02/25",
+      unitPrice: "$50",
+      charge: "$50",
+      credit: "$0",
+      currentBill: "$50",
+    },
+    {
+      no: 2,
+      article: "Appointment",
+      subtitle: "Doctor",
+      date: "1/02/25",
+      unitPrice: "$150",
+      charge: "$50",
+      credit: "$0",
+      currentBill: "$200",
+    },
+  ]);
+
+  const calculateTotalBalance = () => {
+    return rows.reduce((total, row) => {
+      const numeric = parseFloat(row.currentBill.replace("$", ""));
+      return total + numeric;
+    }, 0);
+  };
+  
   return (
     <div style={{ display: "flex" }}>
       <Patient_Navbar />
@@ -235,6 +236,7 @@ function Patient_Billing() {
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <Button
               onClick={openMakePaymentModal}
+
               variant="contained"
               sx={{
                 backgroundColor: "#6B5DD3",
@@ -253,6 +255,8 @@ function Patient_Billing() {
             </Button>
             <Modal
                     open={openMakePayment}
+                    onClose={closeMakePaymentModal}
+
                     //aria-labelledby="modal-modal-title"
                     //aria-describedby="modal-modal-description"
             >
@@ -348,7 +352,7 @@ function Patient_Billing() {
     </Select>
   </FormControl>
   <Button
-    onClick={closeMakePaymentModal}
+   // onClick={closeMakePaymentModal}
     type="submit"
     fullWidth
     sx={{

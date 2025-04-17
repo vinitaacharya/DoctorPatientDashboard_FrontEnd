@@ -157,17 +157,19 @@ const handleDailySubmit = async (e) => {
   e.preventDefault();
 
   const dailyData = {
-    heartRate,
-    waterIntake,
-    exerciseMinutes,
-    mealPlanFollowed,
-    mood,
-    calorieIntake
+    patient_id: 1, // make sure this is defined in your component
+    date: new Date().toISOString().split('T')[0], // 'YYYY-MM-DD'
+    water_intake: waterIntake,
+    calories_consumed: calorieIntake,
+    heart_rate: heartRate,
+    exercise: exerciseMinutes,
+    mood: mood,
+    follow_plan: mealPlanFollowed ? 1 : 0, // convert to 0 or 1
   };
 //replace fetch with correct url
 
   try {
-    const response = await fetch('http://localhost:5000/api/surveys/daily', {
+    const response = await fetch('http://localhost:5000/api/daily-survey', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
