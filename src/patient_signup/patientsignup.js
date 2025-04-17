@@ -101,64 +101,106 @@ function Patientsignup() {
 
   const savePatient = (e) => {
     e.preventDefault();
-
+  
     if (!termsAccepted) {
       alert("Please accept the terms and conditions");
       return;
     }
-
+  
     setLoading(true);
-
-    const data = {
+  
+    // Register the patient
+    const registerData = {
       first_name: values.first_name,
       last_name: values.last_name,
-      dob: values.dob,
-      gender: values.gender,
-      phone: values.phone,
-      address: values.address,
-      zip: values.zip,
-      city: values.city,
-      state: values.state,
       pharmacy_name: values.pharmacy_name,
       pharmacy_address: values.pharmacy_address,
       pharmacy_zipcode: values.pharm_zip,
-      pharm_city: values.pharm_city,
-      weight: values.weight,
-      height: values.height,
-      fitness: values.fitness,
-      goal: values.goal,
-      blood: values.blood,
-      medical_conditions: medicalConditions.length ? medicalConditions.join(', ') : 'None',
-      dietary_restrictions: dietaryRestrictions.length ? dietaryRestrictions.join(', ') : 'None',
       insurance_provider: values.insur_name,
       insurance_policy_number: values.policy,
       insurance_expiration_date: values.exp,
       patient_email: values.email,
       patient_password: values.password
-    }
-    
+    };
+  
     fetch("http://127.0.0.1:5000/register-patient", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(registerData)
     })
       .then(res => res.json())
       .then(response => {
         if (response.message) {
-          alert(response.message);
+          return fetch(`http://127.0.0.1:5000/login-patient`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              email: values.email,
+              password: values.password
+            })
+          });
+        } else {
+          throw new Error(response.error || "Registration failed");
+        }
+      })
+      .then(res => res.json())
+      .then(loginResponse => {
+        if (!loginResponse.patient_id) {
+          throw new Error("Unable to retrieve patient ID");
+        }
+  
+        const patient_id = loginResponse.patient_id;
+  
+        // Submit the initial survey with updated fields
+        const surveyData = {
+          patient_id,
+          mobile_number: values.phone,
+          dob: values.dob,
+          gender: values.gender,
+          height: values.height,
+          weight: values.weight,
+          activity: values.fitness,  // Changed from fitness to activity
+          health_goals: values.goal,  // Changed from goal to health_goals
+          dietary_restrictions: dietaryRestrictions.join(', ') || "None",  // Changed from allergies
+          blood_type: values.blood,
+          patient_address: values.address,
+          patient_zipcode: values.zip,
+          patient_city: values.city,
+          patient_state: values.state,
+          medical_conditions: medicalConditions.join(', ') || "None",
+          family_history: "None",
+          past_procedures: "None",
+          favorite_meal: "None"  // New field
+        };
+  
+        return fetch("http://127.0.0.1:5000/init-patient-survey", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(surveyData)
+        });
+      })
+      .then(res => res.json())
+      .then(surveyResponse => {
+        if (surveyResponse.message) {
+          alert("Account created and survey submitted!");
           navigate('/landing');
         } else {
-          alert(response.error || "Registration failed. Please check your information.");
+          throw new Error(surveyResponse.error || "Survey failed");
         }
       })
       .catch(error => {
-        console.error("Error registering patient:", error);
-        alert("Failed to register patient.");
+        console.error("Error:", error);
+        alert(error.message);
       })
       .finally(() => setLoading(false));
   };
+
 
   return (
     <>

@@ -180,7 +180,6 @@ function Patient_Mealplan() {
     })
 
 
-
       
   return (
     <div style={{ display: "flex" }}>
