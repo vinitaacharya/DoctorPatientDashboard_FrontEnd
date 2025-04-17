@@ -47,7 +47,7 @@ export default function Patient_Navbar() {
       navigate("/patient_dashboard/patient_billing");
     }
     if (index === 6) {
-      //enter path here - community page profile
+      navigate("/patient_dashboard/profile");
     }
   };
   return (
