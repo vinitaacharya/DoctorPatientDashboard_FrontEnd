@@ -53,6 +53,29 @@ function Landing() {
     })
     
     const navigate = useNavigate()
+    const handleLogin = async (email, password) => {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/login-patient', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+    
+        const data = await response.json();
+    
+        if (response.ok) {
+          // Save patient ID (and optionally, email or token)
+          localStorage.setItem("patient_id", data.patient_id);
+          // Redirect to dashboard
+          navigate("/patient_dashboard/patient_landing");
+        } else {
+          alert(data.error || "Login failed");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        alert("An error occurred. Please try again.");
+      }
+    };
 
 
   return (
@@ -102,14 +125,14 @@ function Landing() {
                                     </div>
                                     <div className='labels'>
                                         <label className = 'def-label' htmlFor="first_name">Password: </label>
-                                        <input type='text'
+                                        <input type='password'
                                         name='password'
                                         className="form-control" 
                                         placeholder='Enter Password'
                                         value={values.password}
                                         onChange={e => setValues({...values, password: e.target.value})}/>
                                     </div>
-                                    <button className="patientlogin btn-info" onClick={() => navigate('/patient_dashboard/patient_landing')}>
+                                    <button className="patientlogin btn-info" onClick={() => handleLogin(values.email, values.password)}>
                                             Login
                                     </button>
                             </Box>

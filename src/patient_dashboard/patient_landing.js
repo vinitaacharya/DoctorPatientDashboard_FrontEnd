@@ -82,12 +82,23 @@ const labelMap = {
 };
 
 function Patient_Landing() {
+  const [patientId, setPatientId] = useState(null);
+
+  useEffect(() => {
+    const storedId = localStorage.getItem("patient_id");
+    if (storedId) {
+      setPatientId(storedId);
+      // Now use storedId to fetch data (like appointments)
+    } else {
+      navigate("/"); // or show login modal again
+    }
+  }, []);
+
   const [value, setValue] = React.useState(2);
 
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const patientId = 4;
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
