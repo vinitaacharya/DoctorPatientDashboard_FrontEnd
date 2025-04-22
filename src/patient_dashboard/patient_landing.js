@@ -113,7 +113,7 @@ function Patient_Landing() {
     fetchAppointments();
   }, [patientId]);
 
-  console.log("Patient ID:", patientId);
+  //console.log("Patient ID:", patientId);
 
 //surveys modal
 const navigate = useNavigate();
@@ -278,8 +278,26 @@ const [showUpcoming, setShowUpcoming] = useState(true);
 //Booking an appointment
   const [openBookAppt, setOpenBookAppt] = useState(false);
 
-  const handleOpenBookAppt = () => setOpenBookAppt(true);
-  const handleCloseBookAppt = () => setOpenBookAppt(false);
+  const handleOpenBookAppt = () => {
+    // Clear form state
+    setApptReason('');
+    setMedications('');
+    setExercise('');
+    setSelectedDate(new Date());
+    setSelectedTime('09:00');
+  
+    setOpenBookAppt(true);
+  };
+  
+  const handleCloseBookAppt = () => {
+    setOpenBookAppt(false);
+    setApptReason('');
+    setMedications('');
+    setExercise('');
+    setSelectedDate(new Date());
+    setSelectedTime('09:00');
+  };
+  
 
   // Form fields
   const [apptReason, setApptReason] = useState('');
@@ -374,13 +392,22 @@ const [showUpcoming, setShowUpcoming] = useState(true);
           const doctorData = await doctorRes.json();
           setDoctorInfo(doctorData);
         }
+  
+        // ✅ New: Fetch pharmacy info from the patient data
+        if (patientData.pharmacy_id) {
+          const pharmacyRes = await fetch(`http://localhost:5000/pharmacy/${patientData.pharmacy_id}`);
+          const pharmacyData = await pharmacyRes.json();
+          const { pharmacy_name, address, zipcode, city } = pharmacyData;
+          setPharmacyInfo(`${pharmacy_name}, ${address}, ${zipcode}, ${city}`);
+        }
       } catch (error) {
-        console.error("Failed to fetch doctor info:", error);
+        console.error("Failed to fetch doctor or pharmacy info:", error);
       }
     };
   
     fetchDoctorInfo();
   }, [patientId]);
+  
   
   
 
