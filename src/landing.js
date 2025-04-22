@@ -65,7 +65,8 @@ function Landing() {
     
         if (response.ok) {
           // Save patient ID (and optionally, email or token)
-          localStorage.setItem("patient_id", data.patient_id);
+          console.log("Patient ID returned from backend:", data.patient_id); // ✅ debug line
+          localStorage.setItem("patientId", data.patient_id);
           // Redirect to dashboard
           navigate("/patient_dashboard/patient_landing");
         } else {
