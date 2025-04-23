@@ -274,11 +274,6 @@ function Patient_Landing() {
 
   const [showUpcoming, setShowUpcoming] = useState(true);
 
-  const handleFindDoctor = () => {
-    console.log("Redirecting to 'Find a Doctor' page or opening modal...");
-    // You can later replace this with navigation logic or modal opening
-    // For example: navigate('/find-doctor') or setShowDoctorModal(true)
-  };
 
   //Booking an appointment
   const [openBookAppt, setOpenBookAppt] = useState(false);
@@ -1393,7 +1388,7 @@ function Patient_Landing() {
                         <Box>
                           
                           <Button
-                            onClick={handleFindDoctor}
+                            onClick={() => navigate('/patient_dashboard/patient_doctorlist')}
                             variant="contained"
                             sx={{
                               color: "white",
