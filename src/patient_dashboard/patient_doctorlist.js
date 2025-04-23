@@ -49,6 +49,7 @@ import IconButton from '@mui/material/IconButton';
 
 
 function Patient_Doctorlist() {
+  const patientId = localStorage.getItem("patientId");
   const [doctors, setDoctors] = useState([]);
   useEffect(() => {
     fetch('http://127.0.0.1:5000/doctors')
