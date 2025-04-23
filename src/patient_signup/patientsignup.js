@@ -201,6 +201,17 @@ function Patientsignup() {
       .finally(() => setLoading(false));
   };
 
+  const [pharmacies, setPharmacies] = useState([]);
+  const [isNewPharmacy, setIsNewPharmacy] = useState(false);
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:5000/pharmacies')
+      .then(res => res.json())
+      .then(data => setPharmacies(data))
+      .catch(err => console.error("Failed to fetch pharmacies", err));
+  }, []);
+
+
 
   return (
     <>
@@ -241,7 +252,7 @@ function Patientsignup() {
                     <label htmlFor="dob" className='short-label'>DOB: </label>
                     <input type='date'
                       name='dob'
-                      className="form-control-dob" 
+                      className="form-control" 
                       placeholder='Enter DOB'
                       value={values.dob}
                       onChange={e => setValues({...values, dob: e.target.value})}/>
@@ -319,46 +330,107 @@ function Patientsignup() {
               {/*Pharmacy side */}
               <div className="pharmacy-info">
                 <h1>Pharmacy Information</h1>
-                <div className='labels'>
-                  <label htmlFor="pharmacy_name" className='long-label'>Pharmacy Name: </label>
-                  <input type='text'
-                    name='pharmacy_name'
-                    className="form-control" 
-                    placeholder='Enter Pharmacy Name'
+
+                <div className="labels">
+                  <label className="long-label">Pharmacy:</label>
+                  <Select
+                    className="form-control-select"
                     value={values.pharmacy_name}
-                    onChange={e => setValues({...values, pharmacy_name: e.target.value})}/>
-                </div>
-                <div className='labels'>
-                  <label htmlFor="pharmacy_address" className='long-label'>Pharmacy Address: </label>
-                  <input type='text'
-                    name='pharmacy_address'
-                    className="form-control-add" 
-                    placeholder='Enter your pharmacy address'
-                    value={values.pharmacy_address}
-                    onChange={e => setValues({...values, pharmacy_address: e.target.value})}/>
+                    onChange={(e) => {
+                      const selectedName = e.target.value;
+                      if (selectedName === "__new") {
+                        setIsNewPharmacy(true);
+                        setValues(v => ({
+                          ...v,
+                          pharmacy_name: "__new", // temporary
+                          pharmacy_address: '',
+                          pharm_zip: '',
+                          pharm_city: ''
+                        }));
+                      } else {
+                        setIsNewPharmacy(false);
+                        const selectedPharmacy = pharmacies.find(p => p.name === selectedName);
+                        if (selectedPharmacy) {
+                          setValues(v => ({
+                            ...v,
+                            pharmacy_name: selectedPharmacy.name,
+                            pharmacy_address: selectedPharmacy.address,
+                            pharm_zip: selectedPharmacy.zipcode,
+                            pharm_city: selectedPharmacy.city
+                          }));
+                        }
+                      }
+                    }}
+                    
+                    displayEmpty
+                    renderValue={(selected) => selected ? selected : "Select Pharmacy"}
+                  >
+                    {pharmacies.map((pharm, idx) => (
+                      <MenuItem key={idx} value={pharm.name}>
+                        {pharm.name}
+                      </MenuItem>
+                    ))}
+                    {isNewPharmacy && (
+                      <div className="labels" style={{ marginTop: "15px" }}>
+                        <label htmlFor="pharmacy_name" className="long-label">New Pharmacy Name:</label>
+                        <input
+                          type="text"
+                          name="pharmacy_name"
+                          className="form-control"
+                          placeholder="Enter new pharmacy name"
+                          value={values.pharmacy_name === "__new" ? "" : values.pharmacy_name}
+                          onChange={(e) =>
+                            setValues({ ...values, pharmacy_name: e.target.value })
+                          }
+                        />
+                      </div>
+                    )}
+
+                  </Select>
                 </div>
 
-                <div className='horizontal-bar'>
-                  <div className='labels'>
-                    <label htmlFor="pharm_zip" className='def-label'>Zip code: </label>
-                    <input type='text'
-                      name='pharm_zip'
-                      className="form-control-dob" 
-                      placeholder='Enter ZIP'
-                      value={values.pharm_zip}
-                      onChange={e => setValues({...values, pharm_zip: e.target.value})}/>
-                  </div>
-                  <div className='labels'>
-                    <label htmlFor="pharm_city" className='short-label'>City: </label>
-                    <input type='text'
-                      name='pharm_city'
-                      className="form-control-gender" 
-                      placeholder='Enter City'
-                      value={values.pharm_city}
-                      onChange={e => setValues({...values, pharm_city: e.target.value})}/>
-                  </div>
-                </div>
+
+                {isNewPharmacy && (
+                  <>
+                    <div className="labels">
+                      <label htmlFor="pharmacy_address" className="long-label">Pharmacy Address:</label>
+                      <input
+                        type="text"
+                        name="pharmacy_address"
+                        className="form-control"
+                        placeholder="Enter pharmacy address"
+                        value={values.pharmacy_address}
+                        onChange={(e) => setValues({ ...values, pharmacy_address: e.target.value })}
+                      />
+                    </div>
+                    <div className="horizontal-bar">
+                      <div className="labels">
+                        <label htmlFor="pharm_zip" className="def-label">Zip Code:</label>
+                        <input
+                          type="text"
+                          name="pharm_zip"
+                          className="form-control-dob"
+                          placeholder="Enter ZIP"
+                          value={values.pharm_zip}
+                          onChange={(e) => setValues({ ...values, pharm_zip: e.target.value })}
+                        />
+                      </div>
+                      <div className="labels">
+                        <label htmlFor="pharm_city" className="short-label">City:</label>
+                        <input
+                          type="text"
+                          name="pharm_city"
+                          className="form-control-gender"
+                          placeholder="Enter City"
+                          value={values.pharm_city}
+                          onChange={(e) => setValues({ ...values, pharm_city: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
+
             </div>
           </div>
       
@@ -572,12 +644,16 @@ function Patientsignup() {
                 </div>
                 <div className='labels'>
                   <label className='def-label' htmlFor="email">Email: </label>
-                  <input type='text'
-                    name='email'
-                    className="form-control" 
-                    placeholder='Enter your email'
+                  <input
+                    type="email"
+                    name="email"
                     value={values.email}
-                    onChange={e => setValues({...values, email: e.target.value})}/>
+                    onChange={e => setValues({...values, email: e.target.value})}
+                    required
+                    pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                    title="Please enter a valid email address (e.g., user@example.com)"
+                    placeholder="Enter your email"
+                  />
                 </div>
                 <div className='labels'>
                   <label className='def-label'htmlFor="password">Password: </label>

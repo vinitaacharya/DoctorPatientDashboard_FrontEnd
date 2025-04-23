@@ -308,6 +308,7 @@ const [showUpcoming, setShowUpcoming] = useState(true);
 
 
   const [pharmacyInfo, setPharmacyInfo] = useState("");
+  
 
   useEffect(() => {
     // Commented out to avoid crash from 404

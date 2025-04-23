@@ -374,3 +374,12 @@ h1 {
     margin-top: 0vh;
     margin-left: 25vh;
 }
+
+.pharmacy-info .MuiInputBase-root {
+  background-color: white !important;
+  border-radius: 23px !important;
+  height: 35px;
+  padding-left: 5px;
+  border: 1px solid #D9D9D9 !important;
+  font-size: 18px;
+}
