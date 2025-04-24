@@ -8,6 +8,9 @@ import { TextField, Typography, IconButton, Avatar} from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import doc1 from "./doctorim/doctor1.png";
 import pat1 from "./nav_assets/Profile.png"
+import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+
 
 
 const Panel = styled(Paper)(({ theme }) => ({
@@ -88,28 +91,57 @@ const style = {
 };
 
 function Patient_Appointment() {
-    const [appointmentData, setAppointmentData] = useState(null);
+
+  const location = useLocation();
+  const { appointmentId } = location.state || {};
+  
+  const [appointmentData, setAppointmentData] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [showInput, setShowInput] = useState(true);
 
   useEffect(() => {
     const fetchAppointment = async () => {
-      const data = {
-        doctor: "Dr. Geller",
-        patientName: "Natasha Pena",
-        age: 25,
-        gender: "Female",
-        height: "5’3’’",
-        weight: "140lbs",
-        allergies: "N/A",
-        conditions: "Pre diabetic",
-        reason: "I have been having a hard time losing weight. I’m not sure if it’s my diet or something else.",
-        notes: "Not available until after appointment",
-        prescription: "Not available until after appointment",
-        mealPlan: "Not available until after appointment"
-      };
-      setAppointmentData(data);
+      try {
+        console.log("appointmentId:", appointmentId);
+        const res = await fetch(`http://localhost:5000/single_appointment/${appointmentId}`);
+        if (!res.ok) throw new Error("Failed to fetch appointment details");
+  
+        const data = await res.json();
+        const formattedData = {
+          doctor: data.doctor_name,
+          patientName: data.patient_name,
+          age: data.age,
+          gender: data.gender,
+          height: data.survey_height,
+          weight: data.survey_weight,
+          allergies: data.allergies,
+          conditions: data.conditions,
+          dietary_restrictions: data.dietary_restrictions,
+          dob : data.dob,
+          gender : data.survey_gender,
+          reason: data.reason_for_visit,
+          notes: data.doctor_appointment_note || "Not available until after appointment",
+          prescription: data.current_medications || "Not available until after appointment",
+          mealPlan: data.meal_prescribed || "Not available until after appointment",
+          appointmentDate: new Date(data.appointment_datetime)
+        };
+  
+        setAppointmentData(formattedData);
+                
+        // Check if the appointment is within 1 day
+        const currentDate = new Date();
+        const diffInTime = formattedData.appointmentDate.getTime() - currentDate.getTime();
+        const diffInDays = diffInTime / (1000 * 3600 * 24); // Convert milliseconds to days
+        
+        // Set visibility of input box
+        setShowInput(diffInDays <= 1);
+      } catch (error) {
+        console.error("Error fetching appointment:", error);
+      }
     };
+  
+    
 
     const fetchChat = async () => {
       const messages = [
@@ -119,9 +151,11 @@ function Patient_Appointment() {
       setChatMessages(messages);
     };
 
-    fetchAppointment();
+    if (appointmentId) {
+      fetchAppointment();
+    }
     fetchChat();
-  }, []);
+  }, [appointmentId]);
 
   const handleSend = () => {
     if (!newMessage.trim()) return;
@@ -148,11 +182,11 @@ function Patient_Appointment() {
               <>
                 <Typography sx={{fontSize: "1.3em"}}><strong>Doctor:</strong> {appointmentData.doctor}</Typography>
                 <Typography sx={{fontSize: "1.3em"}}><strong>Patient Name:</strong> {appointmentData.patientName}</Typography>
-                <Typography sx={{fontSize: "1.3em"}}><strong>Age:</strong> {appointmentData.age}</Typography>
+                <Typography sx={{fontSize: "1.3em"}}><strong>DOB:</strong> {appointmentData.dob}</Typography>
                 <Typography sx={{fontSize: "1.3em"}}><strong>Gender:</strong> {appointmentData.gender}</Typography>
                 <Typography sx={{fontSize: "1.3em"}}><strong>Height:</strong> {appointmentData.height}</Typography>
                 <Typography sx={{fontSize: "1.3em"}}><strong>Weight:</strong> {appointmentData.weight}</Typography>
-                <Typography sx={{fontSize: "1.3em"}}><strong>Allergies:</strong> {appointmentData.allergies}</Typography>
+                <Typography sx={{fontSize: "1.3em"}}><strong>Dietary Restrictions:</strong> {appointmentData.dietary_restrictions}</Typography>
                 <Typography sx={{fontSize: "1.3em"}}><strong>Pre-existing conditions:</strong> {appointmentData.conditions}</Typography>
                 <Typography sx={{fontSize: "1.3em"}}><strong>Reason for visit:</strong> {appointmentData.reason}</Typography>
                 <Typography sx={{ mt: 2, fontSize: "1.3em"}}><strong>Notes:</strong> {appointmentData.notes}</Typography>
@@ -185,6 +219,7 @@ function Patient_Appointment() {
 
 
             {/* Input */}
+            {showInput && (
             <Box display="flex" alignItems="center" mt={2}>
               <TextField
                 fullWidth
@@ -228,6 +263,7 @@ function Patient_Appointment() {
                 <SendIcon />
                 </IconButton>
             </Box>
+            )}
           </Panel>
         </Grid>
       </Grid>
