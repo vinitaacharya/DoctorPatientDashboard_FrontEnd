@@ -1158,20 +1158,17 @@ function Patient_Landing() {
                                     }}
                                   />
                                   <Box>
-                                    <Typography variant="h6" fontWeight="bold">
-                                      Dr. Hillary Geller
+                                    <Typography variant="h6" fontWeight="bold" sx={{fontFamily: 'Montserrat'}}>
+                                      Dr. {doctorInfo.first_name} {doctorInfo.last_name}
                                     </Typography>
                                     <Typography variant="body2">
-                                      <strong>Specialization:</strong> Nutritionist
+                                      <strong>Specialization:</strong> {doctorInfo.specialty || "N/A"}
                                     </Typography>
                                     <Typography variant="body2">
-                                      <strong>Years of Experience:</strong> 4 years
+                                      <strong>Years of Experience:</strong> {doctorInfo.years_of_practice} years
                                     </Typography>
                                     <Typography variant="body2">
-                                      <strong>Appointment Fee:</strong> $150
-                                    </Typography>
-                                    <Typography variant="body2">
-                                      <strong>Rating:</strong> 4.3/5
+                                      <strong>Appointment Fee:</strong> {doctorInfo.payment_fee}
                                     </Typography>
                                   </Box>
                                 </Box>
