@@ -109,8 +109,7 @@ function Patientsignup() {
   
     setLoading(true);
   
-    // Register the patient
-    const registerData = {
+    const fullData = {
       first_name: values.first_name,
       last_name: values.last_name,
       pharmacy_name: values.pharmacy_name,
@@ -120,78 +119,41 @@ function Patientsignup() {
       insurance_policy_number: values.policy,
       insurance_expiration_date: values.exp,
       patient_email: values.email,
-      patient_password: values.password
+      patient_password: values.password,
+  
+      // survey fields
+      mobile_number: values.phone,
+      dob: values.dob,
+      gender: values.gender,
+      height: values.height,
+      weight: values.weight,
+      activity: values.fitness,
+      health_goals: values.goal,
+      dietary_restrictions: dietaryRestrictions.join(', ') || "None",
+      blood_type: values.blood,
+      patient_address: values.address,
+      patient_zipcode: values.zip,
+      patient_city: values.city,
+      patient_state: values.state,
+      medical_conditions: medicalConditions.join(', ') || "None",
+      family_history: "None",
+      past_procedures: "None"
     };
   
-    fetch("http://127.0.0.1:5000/register-patient", {
+    fetch("http://127.0.0.1:5000/register-patient-with-survey", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(registerData)
+      body: JSON.stringify(fullData)
     })
       .then(res => res.json())
       .then(response => {
         if (response.message) {
-          return fetch(`http://127.0.0.1:5000/login-patient`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              email: values.email,
-              password: values.password
-            })
-          });
-        } else {
-          throw new Error(response.error || "Registration failed");
-        }
-      })
-      .then(res => res.json())
-      .then(loginResponse => {
-        if (!loginResponse.patient_id) {
-          throw new Error("Unable to retrieve patient ID");
-        }
-  
-        const patient_id = loginResponse.patient_id;
-  
-        // Submit the initial survey with updated fields
-        const surveyData = {
-          patient_id,
-          mobile_number: values.phone,
-          dob: values.dob,
-          gender: values.gender,
-          height: values.height,
-          weight: values.weight,
-          activity: values.fitness,  // Changed from fitness to activity
-          health_goals: values.goal,  // Changed from goal to health_goals
-          dietary_restrictions: dietaryRestrictions.join(', ') || "None",  // Changed from allergies
-          blood_type: values.blood,
-          patient_address: values.address,
-          patient_zipcode: values.zip,
-          patient_city: values.city,
-          patient_state: values.state,
-          medical_conditions: medicalConditions.join(', ') || "None",
-          family_history: "None",
-          past_procedures: "None",
-          favorite_meal: "None"  // New field
-        };
-  
-        return fetch("http://127.0.0.1:5000/init-patient-survey", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(surveyData)
-        });
-      })
-      .then(res => res.json())
-      .then(surveyResponse => {
-        if (surveyResponse.message) {
-          alert("Account created and survey submitted!");
+          alert("Account and survey submitted successfully!");
           navigate('/landing');
         } else {
-          throw new Error(surveyResponse.error || "Survey failed");
+          throw new Error(response.error || "Something went wrong");
         }
       })
       .catch(error => {
@@ -200,6 +162,7 @@ function Patientsignup() {
       })
       .finally(() => setLoading(false));
   };
+  
 
   const [pharmacies, setPharmacies] = useState([]);
   const [isNewPharmacy, setIsNewPharmacy] = useState(false);
