@@ -83,12 +83,41 @@ const labelMap = {
 };
 
 function Patient_Landing() {
+  
+const [patientInfo, setPatientInfo] = useState(null);
+
+useEffect(() => {
+  const fetchPatientInfo = async () => {
+    const id = localStorage.getItem("patientId");
+    if (!id) {
+      console.warn("No patient ID in localStorage");
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:5000/patient/${id}`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch patient info");
+      }
+
+      const data = await res.json();
+      setPatientInfo(data);
+      console.log("Patient info:", data);
+    } catch (error) {
+      console.error("Error fetching patient info:", error);
+    }
+  };
+
+  fetchPatientInfo();
+}, []);
+  
   const [value, setValue] = React.useState(2);
 
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const patientId = localStorage.getItem("patientId");
+
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -156,40 +185,48 @@ function Patient_Landing() {
   const [mood, setMood] = useState("");
   const [calorieIntake, setCalorieIntake] = useState("");
 
-  const handleDailySubmit = async (e) => {
-    e.preventDefault();
-
-    const dailyData = {
-      patient_id: 1, // make sure this is defined in your component
-      date: new Date().toISOString().split('T')[0], // 'YYYY-MM-DD'
-      water_intake: waterIntake,
-      calories_consumed: calorieIntake,
-      heart_rate: heartRate,
-      exercise: exerciseMinutes,
-      mood: mood,
-      follow_plan: mealPlanFollowed ? 1 : 0, // convert to 0 or 1
-    };
-    //replace fetch with correct url
-
-    try {
-      const response = await fetch('http://localhost:5000/api/daily-survey', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dailyData),
-      });
-
-      if (response.ok) {
-        console.log('Daily survey submitted successfully');
-        closeDailySurveysModal(); // Close modal on success
-      } else {
-        console.error('Failed to submit daily survey');
-      }
-    } catch (error) {
-      console.error('Error submitting daily survey:', error);
-    }
+const handleDailySubmit = async (e) => {
+  e.preventDefault();
+  const dailyData = {
+    
+    patient_id: patientId, 
+    date: new Date().toISOString().split('T')[0], // 'YYYY-MM-DD'
+    water_intake: waterIntake,
+    calories_consumed: calorieIntake,
+    heart_rate: heartRate,
+    exercise: exerciseMinutes,
+    mood: mood,
+    follow_plan: mealPlanFollowed ? 1 : 0, // convert to 0 or 1
   };
+//replace fetch with correct url
+
+  try {
+    const response = await fetch('http://localhost:5000/daily-survey', {
+
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dailyData),
+    });
+
+    if (response.ok) {
+      console.log('Daily survey submitted successfully');
+      setHeartRate("");
+      setWaterIntake("");
+      setExerciseMinutes("");
+      setMealPlanFollowed("");
+      setMood("");
+      setCalorieIntake("");
+
+      closeDailySurveysModal(); // Close modal on success
+    } else {
+      console.error('Failed to submit daily survey');
+    }
+  } catch (error) {
+    console.error('Error submitting daily survey:', error);
+  }
+};
 
 
 
@@ -202,20 +239,21 @@ function Patient_Landing() {
   const handleWeeklySubmit = async (e) => {
     e.preventDefault();
 
-    const weeklyData = {
-      weightChange,
-      weightAmount,
-      bloodPressure
-    };
-    //replace fetch with correct url
-    try {
-      const response = await fetch('http://localhost:5000/api/surveys/weekly', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(weeklyData),
-      });
+  const weeklyData = {
+    patient_id:patientId,
+    weight_change:weightChange ,
+    weight_amount:weightAmount,
+    blood_pressure:bloodPressure
+  };
+//replace fetch with correct url
+  try {
+    const response = await fetch('http://localhost:5000/weekly-surveys', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(weeklyData),
+    });
 
       if (response.ok) {
         console.log('Weekly survey submitted successfully');
@@ -493,120 +531,124 @@ function Patient_Landing() {
 
                     {/* Survey options*/}
 
-                    <Modal
-
-                      open={openSurvey}
-                      onClose={closeSurveysModal}
-                    //aria-labelledby="modal-modal-title"
-                    //aria-describedby="modal-modal-description"
-                    >
-                      <Box sx={style}>
-                        {/* Close Icon */}
-                        <IconButton
-                          onClick={closeSurveysModal}
-                          sx={{
-                            position: 'absolute',
-                            top: 8,
-                            right: 8,
-                            color: 'grey.600', // or any color you prefer
-                            zIndex: 1,
-                          }}
-                        >
-                          <CloseIcon />
-                        </IconButton>
-                        <Typography sx={{ color: "black", fontSize: '4vh' }}>
-                          Surveys
-                        </Typography>
-                        <Typography sx={{ color: "black", fontSize: '2vh' }}>
-                          Jane Doe
-                        </Typography>
-                        <Paper
-                          sx={{
-                            color: 'white',
-                            background: 'transparent',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            boxShadow: 0,
-                            p: 7,
-                          }}
-                        >
-                          <Button
-                            onClick={openDailySurveysModal}
-                            variant="contained"
-                            fullWidth
-                            sx={{
-                              backgroundColor: '#719EC7',
-                              color: 'white',
-                              borderRadius: '25px',
-                              fontWeight: 'bold',
-                              textTransform: 'none',
-                              margin: 2,
-                            }}
-                          >
-                            Daily Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4 }} />
-                          </Button>
-                          <Button
-                            onClick={openWeeklySurveysModal}
-                            variant="contained"
-                            fullWidth
-                            sx={{
-                              backgroundColor: '#719EC7',
-                              color: 'white',
-                              borderRadius: '25px',
-                              fontWeight: 'bold',
-                              textTransform: 'none',
-                            }}
-                          >
-                            Weekly Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4 }} />
-                          </Button>
-                        </Paper>
-                      </Box>
-                    </Modal>
-                  </Box>
+      <Modal
+      
+        open={openSurvey}
+        onClose={closeSurveysModal}
+        //aria-labelledby="modal-modal-title"
+        //aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+           {/* Close Icon */}
+    <IconButton 
+      onClick={closeSurveysModal}
+      sx={{
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        color: 'grey.600', // or any color you prefer
+        zIndex: 1,
+      }}
+    >
+      <CloseIcon />
+    </IconButton>
+          <Typography  sx={{color:"black", fontSize:'4vh'}}>
+            Surveys
+          </Typography>
+          {patientInfo && (
+            <Typography  sx={{color:"black", fontSize:'2vh'}}>
+                {patientInfo.first_name} {patientInfo.last_name}
+            </Typography>)}
+          
+          <Paper
+     sx={{
+      color:'white',
+      background:'transparent',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      boxShadow:0,
+      p:7,
+    }}
+     >
+          <Button 
+        onClick={openDailySurveysModal}
+        variant="contained"
+        fullWidth
+        sx={{
+          backgroundColor: '#719EC7',
+          color: 'white',
+          borderRadius: '25px',
+          fontWeight: 'bold',
+          textTransform: 'none',
+          margin:2,
+        }}
+      >
+        Daily Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4 }}  />
+      </Button>
+      <Button 
+        onClick={openWeeklySurveysModal}
+        variant="contained"
+        fullWidth
+        sx={{
+          backgroundColor: '#719EC7',
+          color: 'white',
+          borderRadius: '25px',
+          fontWeight: 'bold',
+          textTransform: 'none',
+        }}
+      >
+       Weekly Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4}}/>
+      </Button>
+      </Paper>
+        </Box>
+      </Modal>
+    </Box>
 
 
                   {/* DailySurvey*/}
 
-                  <Modal
-                    open={openDailySurvey}
-                    onClose={closeDailySurveysModal}
-                  //aria-labelledby="modal-modal-title"
-                  //aria-describedby="modal-modal-description"
-                  >
-                    <Box sx={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      width: { xs: '90%', sm: '75%', md: '60%' },
-                      maxWidth: 600,
-                      bgcolor: '#EEF2FE',
-                      boxShadow: 24,
-                      borderRadius: 3,
-                      p: 3,
-                      maxHeight: '85vh',
-                      overflowY: 'auto',
-                    }}  >
-                      {/* Close Icon */}
-                      <IconButton
-                        onClick={closeDailySurveysModal}
-                        sx={{
-                          position: 'absolute',
-                          top: 8,
-                          right: 8,
-                          color: 'grey.600', // or any color you prefer
-                          zIndex: 1,
-                        }}
-                      >
-                        <CloseIcon />
-                      </IconButton>
-                      <Typography sx={{ color: "black", fontSize: '4vh', paddingLeft: "1.5vh" }}>
-                        Daily Survey
-                      </Typography>
-                      <Typography sx={{ color: "black", fontSize: '2vh', paddingLeft: "1.5vh" }}>
-                        FirstName LastName
-                      </Typography>
+    <Modal
+        open={openDailySurvey}
+        onClose={closeDailySurveysModal}
+        //aria-labelledby="modal-modal-title"
+        //aria-describedby="modal-modal-description"
+      >
+        <Box  sx={{
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: { xs: '90%', sm: '75%', md: '60%' },
+    maxWidth: 600,
+    bgcolor: '#EEF2FE',
+    boxShadow: 24,
+    borderRadius: 3,
+    p: 3,
+    maxHeight: '85vh',
+    overflowY: 'auto',
+  }}  >
+        {/* Close Icon */}
+        <IconButton 
+      onClick={closeDailySurveysModal}
+      sx={{
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        color: 'grey.600', // or any color you prefer
+        zIndex: 1,
+      }}
+    >
+      <CloseIcon />
+    </IconButton>
+          <Typography  sx={{color:"black", fontSize:'4vh', paddingLeft:"1.5vh"}}>
+            Daily Survey
+          </Typography>
+          {patientInfo && (
+          <Typography sx={{color:"black", fontSize:'2vh',paddingLeft:"1.5vh"}}>
+            {patientInfo.first_name} {patientInfo.last_name}
+          </Typography>
+)}
 
 
                       <Paper
@@ -683,93 +725,94 @@ function Patient_Landing() {
                               displayEmpty
                               size="small"
 
-                            >
-                              <MenuItem value="" disabled><em style={{ color: 'gray', opacity: 0.7 }}>Dropdown option</em></MenuItem>
-                              <MenuItem value="Good">Good</MenuItem>
-                              <MenuItem value="Okay">Okay</MenuItem>
-                              <MenuItem value="Bad">Bad</MenuItem>
-                            </Select>
-                          </FormControl>
-
-                          <Typography fontSize='1.5vh' mb={1}>
-                            What is your calorie intake for today?
-                          </Typography>
-                          <TextField
-                            fullWidth
-                            placeholder="Type here"
-                            value={calorieIntake}
-                            size="small"
-                            onChange={(e) => setCalorieIntake(e.target.value)}
-                            sx={{ mb: 2 }}
-                          />
-
-                          <Button
-                            onClick={closeDailySurveysModal}
-                            type="submit"
-                            variant="contained"
-                            fullWidth
-                            sx={{
-                              mt: 2,
-                              backgroundColor: '#719EC7',
-                              borderRadius: '25px',
-                              fontWeight: 'bold',
-                              textTransform: 'none',
-                            }}
-                          >
-                            Submit
-                          </Button>
-                        </form>
-
+          >
+            <MenuItem value="" disabled><em style={{ color: 'gray', opacity: 0.7 }}>Dropdown option</em></MenuItem>
+            <MenuItem value="Good">Good</MenuItem>
+            <MenuItem value="Okay">Okay</MenuItem>
+            <MenuItem value="Bad">Bad</MenuItem>
+          </Select>
+        </FormControl>
+    
+        <Typography fontSize= '1.5vh' mb={1}>
+          What is your calorie intake for today?
+        </Typography>
+        <TextField
+          fullWidth
+          placeholder="Type here"
+          value={calorieIntake}
+          size="small"
+          onChange={(e) => setCalorieIntake(e.target.value)}
+          sx={{ mb: 2 }}
+        />
+    
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={{
+            mt: 2,
+            backgroundColor: '#719EC7',
+            borderRadius: '25px',
+            fontWeight: 'bold',
+            textTransform: 'none',
+          }}
+        >
+          Submit
+        </Button>
+      </form>
+  
 
                       </Paper>
                     </Box>
                   </Modal>
 
 
-                  {/* WeeklySurvey*/}
-                  <Modal
-                    open={openWeeklySurvey}
-                    onClose={closeWeeklySurveysModal}
-                  >
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: { xs: '90%', sm: '75%', md: '60%' },
-                        maxWidth: 400,
-                        bgcolor: '#EEF2FE',
-                        boxShadow: 24,
-                        borderRadius: 3,
-                        p: 3,
-                        maxHeight: '90vh',
-                        minHeight: '45vh',
-                        overflowY: 'auto',
-                      }}
-
-                      component={Paper}
-                    >
-                      {/* Close Icon */}
-                      <IconButton
-                        onClick={closeWeeklySurveysModal}
-                        sx={{
-                          position: 'absolute',
-                          top: 8,
-                          right: 8,
-                          color: 'grey.600', // or any color you prefer
-                          zIndex: 1,
-                        }}
-                      >
-                        <CloseIcon />
-                      </IconButton>
-                      <Typography sx={{ color: "black", fontSize: '4vh' }}>
-                        Weekly Survey
-                      </Typography>
-
-                      <Typography sx={{ color: "black", fontSize: '2vh' }}>
-                        Natasha Pena
-                      </Typography>
+    {/* WeeklySurvey*/}
+    <Modal
+  open={openWeeklySurvey}
+  onClose={closeWeeklySurveysModal}
+>
+<Box
+      sx={{
+        position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: { xs: '90%', sm: '75%', md: '60%' },
+    maxWidth: 400,
+    bgcolor: '#EEF2FE',
+    boxShadow: 24,
+    borderRadius: 3,
+    p: 3,
+    maxHeight: '90vh',
+    minHeight:'45vh',
+    overflowY: 'auto',
+  }} 
+      
+      component={Paper}
+    >
+       {/* Close Icon */}
+    <IconButton 
+      onClick={closeWeeklySurveysModal}
+      sx={{
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        color: 'grey.600', // or any color you prefer
+        zIndex: 1,
+      }}
+    >
+      <CloseIcon />
+    </IconButton>
+      <Typography sx={{color:"black", fontSize:'4vh'}}>
+        Weekly Survey
+      </Typography>
+      {patientInfo && (
+        <Typography sx={{color:"black", fontSize:'2vh'}}>
+          {patientInfo.first_name} {patientInfo.last_name}
+        </Typography>
+      )}
+      
 
                       <form onSubmit={handleWeeklySubmit}>
                         <Typography fontSize='1.5vh' mb={1} paddingTop={2}>
