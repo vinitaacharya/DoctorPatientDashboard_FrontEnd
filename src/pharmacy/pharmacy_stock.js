@@ -5,25 +5,12 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 import {TextField, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from "@mui/material";
+import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
-
-const Item = styled(Paper)(({ theme }) => ({
-  borderRadius:30,
-  backgroundColor: 'none',
-  padding: theme.spacing(1),
-  textAlign: 'center',
-}));
-const stockData = [
-  { name: "Phentermine (Adipex-P, Lomaira)", quantity: 120 },
-  { name: "Semaglutide (Wegovy, Ozempic)", quantity: 60 },
-  { name: "Orlistat (Alli, Xenical)", quantity: 40 },
-  { name: "Megestrol Acetate (Megace)", quantity: 30 },
-  { name: "Oxandrolone (Anavar)", quantity: 30 },
-];
 
 const PharmacyStock = () => {
   const [quantities, setQuantities] = useState({});
-  const [inventory, setInventory] = useState(stockData);
+  //const [inventory, setInventory] = useState(stockData);
   const [message, setMessage] = useState("");
 
   const handleChange = (e, name) => {
@@ -31,17 +18,71 @@ const PharmacyStock = () => {
   };
 
   const updateInventory = () => {
-    const updatedInventory = inventory.map(item => {
-      const addedQty = parseInt(quantities[item.name]) || 0;
+    const updates = Object.entries(quantities).map(([medicineName, qtyStr]) => {
+      const quantity = parseInt(qtyStr);
+      if (!quantity || quantity === 0) return null;
+  
+      const stockItem = pharmacyStock.find(item => item.medicine_name === medicineName);
+      if (!stockItem) return null;
+  
       return {
-        ...item,
-        quantity: item.quantity + addedQty
+        pharmacy_id: selectedPharmacy,
+        medicine_id: stockItem.medicine_id,
+        quantity_to_add: quantity,
       };
+    }).filter(Boolean);
+  
+    Promise.all(updates.map(update =>
+      fetch('/stock/update', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(update)
+      })
+    ))
+    .then(() => {
+      setMessage("Inventory Successfully Updated");
+      setQuantities({});
+      // Refetch updated stock
+      fetch(`/stock/${selectedPharmacy}`)
+        .then(res => res.json())
+        .then(data => setPharmacyStock(data))
+        .catch(err => console.error("Error refreshing stock:", err));
+    })
+    .catch(err => {
+      console.error("Error updating inventory:", err);
+      setMessage("Failed to update inventory.");
     });
-    setInventory(updatedInventory);
-    setMessage("Inventory Successfully Updated");
-    setQuantities({});
   };
+  
+
+  const [pharmacies, setPharmacies] = useState([]);
+  const [selectedPharmacy, setSelectedPharmacy] = useState("");
+
+  useEffect(() => {
+    fetch("/pharmacies")
+      .then((res) => res.json())
+      .then((data) => setPharmacies(data))
+      .catch((err) => console.error("Error fetching pharmacies:", err));
+  }, []);
+
+  const [pharmacyStock, setPharmacyStock] = useState([]);
+  useEffect(() => {
+    if (selectedPharmacy) {
+      fetch(`/stock/${selectedPharmacy}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.error) {
+            setPharmacyStock(data);
+          } else {
+            setPharmacyStock([]);
+          }
+        })
+        .catch(err => {
+          console.error("Error fetching pharmacy stock:", err);
+          setPharmacyStock([]);
+        });
+    }
+  }, [selectedPharmacy]);
 
   return (
     <div style={{ display: "flex" }}>
@@ -55,13 +96,25 @@ const PharmacyStock = () => {
         <Box className="custom-scroll" sx={{overflowY: 'auto', height: "80vh"}}>
 
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginTop: "1.5vh"}}>
-          <TextField
-            variant="outlined"
-            size="small"
-            sx={{ mr: 2, backgroundColor: "white"}}
-          />
-          <Button variant="contained" sx={{ borderRadius: 2, backgroundColor: "#5A5A5A", fontFamily: "Montserrat"}}>Search</Button>
+          <FormControl size="small" sx={{ minWidth: 250, mr: 2, backgroundColor: "white" }}>
+            <InputLabel id="pharmacy-select-label">Select Pharmacy</InputLabel>
+            <Select
+              labelId="pharmacy-select-label"
+              value={selectedPharmacy}
+              label="Select Pharmacy"
+              onChange={(e) => setSelectedPharmacy(e.target.value)}
+            >
+              {pharmacies.map((pharmacy) => (
+                <MenuItem key={pharmacy.id} value={pharmacy.id}>
+                  {pharmacy.name} ({pharmacy.city})
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
+
+        {selectedPharmacy &&(
+        <Box>
 
         <Box display="flex" justifyContent="space-evenly" sx={{ p: 3, paddingBottom: '0px' }}>
           <Box className="custom-scroll" sx={{ width: 'fit-content', backgroundColor: 'none', height: "65vh", overflowY: "auto"} }>
@@ -69,25 +122,25 @@ const PharmacyStock = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontFamily: 'Montserrat'}}><strong>Medication Name</strong></TableCell>
-                    <TableCell sx={{ fontFamily: 'Montserrat'}}><strong>Add</strong></TableCell>
+                    <TableCell sx={{ fontFamily: 'Montserrat', borderBottom: '3px'}}><strong>Medication Name</strong></TableCell>
+                    <TableCell sx={{ fontFamily: 'Montserrat', borderBottom: '3px'}}><strong>Add</strong></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {inventory.map(item => (
-                    <TableRow key={item.name}>
-                      <TableCell sx={{ fontFamily: 'Merriweather'}}>{item.name}</TableCell>
-                      <TableCell sx={{ fontFamily: 'Merriweather'}}>
-                        <TextField
-                          size="small"
-                          value={quantities[item.name] || ''}
-                          onChange={(e) => handleChange(e, item.name)}
-                          type="number"
-                          sx={{ width: 60}}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                {pharmacyStock.map(item => (
+                  <TableRow key={item.medicine_id}>
+                    <TableCell sx={{ fontFamily: 'Merriweather', borderBottom: '3px'}}>{item.medicine_name}</TableCell>
+                    <TableCell sx={{ fontFamily: 'Merriweather', borderBottom: '3px'}}>
+                      <TextField
+                        size="small"
+                        value={quantities[item.medicine_name] || ''}
+                        onChange={(e) => handleChange(e, item.medicine_name)}
+                        type="number"
+                        sx={{ width: 60 }}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -98,15 +151,15 @@ const PharmacyStock = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ fontFamily: 'Montserrat'}}><strong>Medication Name</strong></TableCell>
-                    <TableCell sx={{ fontFamily: 'Montserrat'}}><strong>Quantity</strong></TableCell>
+                    <TableCell sx={{ fontFamily: 'Montserrat', borderBottom: '3px'}}><strong>Medication Name</strong></TableCell>
+                    <TableCell sx={{ fontFamily: 'Montserrat', borderBottom: '3px'}}><strong>Quantity</strong></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {inventory.map(item => (
-                    <TableRow key={item.name}>
-                      <TableCell sx={{ fontFamily: 'Merriweather'}}>{item.name}</TableCell>
-                      <TableCell sx={{ fontFamily: 'Merriweather'}}>{item.quantity}</TableCell>
+                  {pharmacyStock.map(item => (
+                    <TableRow key={item.medicine_id}>
+                      <TableCell sx={{ fontFamily: 'Merriweather', borderBottom: '3px'}}>{item.medicine_name}</TableCell>
+                      <TableCell sx={{ fontFamily: 'Merriweather', borderBottom: '3px'}}>{item.stock_count}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -121,6 +174,10 @@ const PharmacyStock = () => {
             Add To Inventory
           </Button>
         </Box>
+
+        </Box>
+        )}
+
         </Box>
       </Box>
       </div>
