@@ -183,10 +183,10 @@ function Patient_Doctorlist() {
                 </Button>
                 {patient && !patient.doctor_id && (
                   <Button
-                    disabled={!doc.acceptingpatients}
+                    disabled={!doc.accepting_patients}
                     variant="outlined"
                     sx={{
-                      backgroundColor: doc.acceptingpatients ? "#5A8BBE" : "#5A4AA361",
+                      backgroundColor: doc.accepting_patients ? "#5A8BBE" : "#5A4AA361",
                       color: "white",
                       borderRadius: "20px",
                       textTransform: "none",
@@ -197,14 +197,11 @@ function Patient_Doctorlist() {
                       fontSize: '1.2em',
                       marginTop: '1vh',
                       '&:hover': {
-                        backgroundColor: doc.acceptingpatients ? "#3b6a9e" : "#ccc"
+                        backgroundColor: doc.accepting_patients ? "#3b6a9e" : "#ccc"
                       }
                     }}
-                  >
-                    {/* 
-                    {doc.acceptingpatients ? "Add Doctor" : "Not Accepting Patients"}*/}
-
-                    uhhh
+                  > 
+                    {doc.accepting_patients ? "Add Doctor" : "Not Accepting Patients"}
                   </Button>
                 )}
                 </Box>
