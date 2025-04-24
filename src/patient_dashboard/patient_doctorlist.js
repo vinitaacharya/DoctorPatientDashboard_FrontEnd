@@ -7,6 +7,7 @@ import { styled } from '@mui/material/styles';
 import doc1 from "./doctorim/doctor1.png";
 import doc2 from "./doctorim/doctor2.png";
 import doc3 from "./doctorim/doctor3.png";
+import { useNavigate } from 'react-router-dom';
 import { Select, MenuItem, Modal } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
@@ -47,7 +48,17 @@ import IconButton from '@mui/material/IconButton';
       },
   ];**/
 
-
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: '#EEF2FE',
+    boxShadow: 24,
+    borderRadius: 3,
+    p: 4,
+  };
 function Patient_Doctorlist() {
   const patientId = localStorage.getItem("patientId");
   const [doctors, setDoctors] = useState([]);
@@ -74,6 +85,43 @@ function Patient_Doctorlist() {
 
   const [selectedDoctor, setSelectedDoctor] = useState(null);
 
+  const [openAdd, setOpenAdd] = useState(false);
+
+  const openAddModal = () => {
+    setOpenAdd(true);
+  };
+  const closeAddModal = () => {
+    setOpenAdd(false);
+  };
+  const navigate = useNavigate();
+  const handleAddDoctor = async () => {
+    if (!selectedDoctor || !patient) return;
+  
+    try {
+      const response = await fetch('http://localhost:5000/select-doctor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          doctor_id: selectedDoctor.doctor_id,
+          patient_id: patient.patient_id,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Something went wrong while assigning doctor');
+      }
+  
+      console.log('Doctor assigned successfully');
+      closeAddModal(); // close the modal
+      navigate('/patient_dashboard/patient_landing');
+      // Optionally refresh data or show success message
+    } catch (error) {
+      console.error('Error assigning doctor:', error);
+    }
+  };
+  
   const [patient, setPatient] = useState(null);
 
   useEffect(() => {
@@ -132,6 +180,7 @@ function Patient_Doctorlist() {
                   color: "white",
                   paddingTop: '2vh',
                   paddingBottom: '2vh',
+                  marginRight: '.5vw'
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -183,6 +232,7 @@ function Patient_Doctorlist() {
                 </Button>
                 {patient && !patient.doctor_id && (
                   <Button
+                    onClick={() => { setSelectedDoctor(doc); setOpenAdd(true); }}
                     disabled={!doc.accepting_patients}
                     variant="outlined"
                     sx={{
@@ -293,6 +343,49 @@ function Patient_Doctorlist() {
                 </Box>
 
               </Modal>
+            )}
+
+            {(selectedDoctor &&
+              <Modal open={openAdd} onClose={closeAddModal} >
+                                            <Box sx={{ ...style, display: 'flex', flexDirection: 'column', alignItems: "center", }}>
+              
+                                              <Typography sx={{ color: "black", fontSize: '2em', p: 2, textAlign: 'center', fontWeight:'500px'}}> Would you like to add Dr. {selectedDoctor.first_name} {selectedDoctor.last_name} as your new doctor?</Typography>
+                                              <Button
+                                                onClick={handleAddDoctor}
+                                                variant="contained"
+                                                sx={{
+                                                  alignContent: 'center',
+                                                  backgroundColor: '#50965B',
+                                                  color: 'black',
+                                                  borderRadius: '25px',
+                                                  fontWeight: 'bold',
+                                                  textTransform: 'none',
+                                                  marginTop: '2vh',
+                                                  marginBottom: '2vh',
+                                                  width: '30vh',
+                                                  fontFamily: 'Merriweather',
+                                                  fontSize: '1em'
+              
+                                                }}
+                                              >YES</Button>
+                                              <Button
+                                                onClick={closeAddModal}
+                                                variant="contained"
+                                                sx={{
+                                                  backgroundColor: '#719EC7',
+                                                  color: 'black',
+                                                  borderRadius: '25px',
+                                                  fontWeight: 'bold',
+                                                  textTransform: 'none',
+                                                  width: '30vh',
+                                                  fontFamily: 'Merriweather',
+                                                  fontSize: '1em'
+                                                }}
+                                              >Close
+                                              </Button>
+              
+                                            </Box>
+                                          </Modal>
             )}
           </Box>
         </Box>

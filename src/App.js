@@ -13,7 +13,7 @@ import Patient_Chart from './patient_medicalchart/patient_medicalchart/patient_m
 import MealPlanCard from './patient_dashboard/MealPlanCard';
 import Profile from './patient_dashboard/profile';
 import Patient_Appointment from './patient_dashboard/patient_appointment';
-
+import Community_Homepage from './community_homepage';
 
 function App() {
   const[data, setData] = useState([{}])
@@ -54,6 +54,7 @@ function App() {
           <Route path="/MealPlanCard" element={<MealPlanCard/>} />
           <Route path="/patient_dashboard/profile" element={<Profile/>} />
           <Route path="/patient_dashboard/patient_appointment" element={<Patient_Appointment/>} />
+          <Route path="/community_homepage" element={<Community_Homepage/>} />
 
         </Routes>
       </div>

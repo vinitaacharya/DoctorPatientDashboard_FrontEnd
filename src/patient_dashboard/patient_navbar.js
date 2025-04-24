@@ -38,7 +38,7 @@ export default function Patient_Navbar() {
 
     }
     if (index === 3) {
-      //enter path here - community page
+      navigate("/community_homepage");
     }
     if (index === 4) {
       navigate("/patient_medicalchart/patient_medicalchart")
