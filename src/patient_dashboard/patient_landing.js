@@ -1464,61 +1464,68 @@ const handleDailySubmit = async (e) => {
                   <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '2em' }}>
                     Appointment Overview
                   </Typography>
+                  {pastAppointments.length > 0 ? (
+                    <>
+                      <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                        <strong>Date:</strong> {new Date(pastAppointments[0].appointment_datetime).toLocaleString()}
+                      </Typography>
+                      <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                        <strong>Prescription:</strong> endpoint tbd
+                      </Typography>
+                      <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                        <strong>Status:</strong>
+                        <Button
+                          size="small"
+                          variant="contained"
+                          sx={{
+                            ml: 1,
+                            backgroundColor: '#5889BD',
+                            color: '#fff',
+                            textTransform: 'none',
+                            borderRadius: '16px',
+                            fontSize: '0.75rem',
+                            padding: '2px 12px',
+                            fontFamily: 'Montserrat',
+                            '&:hover': {
+                              backgroundColor: '#6c97c8',
+                            },
+                          }}
+                        >
+                          Picked up
+                        </Button>
 
-                  {Object.entries(data).map(([key, value]) => {
-                    if (key === 'pickedUp' || key === 'rating') return null;
+                      </Typography>
+                      <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                        <strong>Pickup Location:</strong> endpoint tbd
+                      </Typography>
+                      <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                        <strong>Diet:</strong> {pastAppointments[0].meal_prescribed || "N/A"}
+                      </Typography>
+                      <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                        <strong>Notes:</strong> {pastAppointments[0].doctor_appointment_note || "No notes provided"}
+                      </Typography>
 
-                    return (
-                      <Box
-                        key={key}
-                        display="flex"
-                        alignItems="center"
-                        mt={key === 'status' ? 1 : 0}
-                        mb={key === 'status' ? 1 : 0}
-                      >
-                        <Typography variant="body1"
-                          sx={{ fontFamily: 'Montserrat', fontSize: '1.2em' }}>
-                          <strong>{labelMap[key]}:</strong> {value}
-                        </Typography>
-
-                        {key === 'status' && data.pickedUp && (
-                          <Button
-                            size="small"
-                            variant="contained"
-                            sx={{
-                              ml: 2,
-                              backgroundColor: '#5889BD',
-                              color: '#fff',
-                              textTransform: 'none',
-                              borderRadius: '16px',
-                              fontSize: '0.75rem',
-                              padding: '2px 12px',
-                              fontFamily: 'Montserrat',
-                              '&:hover': {
-                                backgroundColor: '#6c97c8',
-                              },
-                            }}
-                          >
-                            Picked up
-                          </Button>
-                        )}
-                      </Box>
-                    );
-                  })}
-
-                  <Typography component="legend" sx={{ fontFamily: 'Montserrat', fontSize: '1.2em', fontWeight: 'bold', marginTop: '4px' }}> Rate Your Appointment:</Typography>
-                  <StyledRating
-                    name="customized-color"
-                    defaultValue={0}
-                    getLabelText={(value) => `${value} Heart${value !== 1 ? 's' : ''}`}
-                    precision={1}
-                    icon={<FavoriteIcon fontSize="inherit" sx={{ fontSize: '2vw' }} />}
-                    emptyIcon={<FavoriteBorderIcon fontSize="inherit" sx={{ fontSize: '2vw', color: '#FEFEFD' }} />}
-                  />
+                      <Typography component="legend" sx={{ fontSize: '1.2em', fontWeight: 'bold', mt: 2 }}>
+                        Rate Your Appointment:
+                      </Typography>
+                      <StyledRating
+                        name="customized-color"
+                        defaultValue={0}
+                        precision={1}
+                        icon={<FavoriteIcon fontSize="inherit" sx={{ fontSize: '2vw' }} />}
+                        emptyIcon={<FavoriteBorderIcon fontSize="inherit" sx={{ fontSize: '2vw', color: '#FEFEFD' }} />}
+                      />
+                    </>
+                  ) : (
+                    <Typography sx={{ fontSize: '1.2em' }}>
+                      Book and attend an appointment to view overview.
+                    </Typography>
+                  )}
                 </Box>
               </Item>
 
-            </Grid>
+
+          </Grid>
 
 
           </Grid>
