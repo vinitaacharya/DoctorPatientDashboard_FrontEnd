@@ -983,6 +983,9 @@ const handleDailySubmit = async (e) => {
                         </Typography>
                         <Button
                           variant="contained"
+                          onClick={() => navigate('/patient_dashboard/patient_appointment', {
+                            state: { appointmentId: appointment.patient_appt_id }
+                          })}
                           sx={{
                             backgroundColor: "#5A8BBE",
                             color: "#22252C",
