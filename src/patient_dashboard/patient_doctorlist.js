@@ -186,7 +186,7 @@ function Patient_Doctorlist() {
                     disabled={!doc.accepting_patients}
                     variant="outlined"
                     sx={{
-                      backgroundColor: doc.accepting_patients ? "#5A8BBE" : "#5A4AA361",
+                      backgroundColor: doc.accepting_patients ? "#5A4AA3" : "#5A4AA361",
                       color: "white",
                       borderRadius: "20px",
                       textTransform: "none",
