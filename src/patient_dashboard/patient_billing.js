@@ -54,6 +54,7 @@ function Patient_Billing() {
   
   const openMakePaymentModal = () => {
     setOpenMakePayment(true);
+    setAmount(calculateTotalBalance().toString());
   };
   const closeMakePaymentModal = () => {
     setOpenMakePayment(false);
@@ -61,7 +62,7 @@ function Patient_Billing() {
   
   
   // Daily survey form states
-  const [amount, setAmount] = useState('$200');
+  const [amount, setAmount] = useState("");
   const [email, setEmail] = useState("");
   const [cardNumber, setcardNumber] = useState("");
   const [cardExpir, setCardExpir] = useState("");
@@ -72,7 +73,7 @@ function Patient_Billing() {
   const handlePaymentSubmit = (e) => {
     e.preventDefault();
   
-    const totalBalance = 200;
+    const totalBalance = calculateTotalBalance();
     const numericAmount = parseFloat(amount.replace("$", ""));
   
     console.log("Mock payment submitted:", {
@@ -230,7 +231,7 @@ function Patient_Billing() {
 
           <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3, mr: 2 }}>
             <Typography variant="subtitle1" sx={{fontFamily: "Montserrat", fontWeight: 600}}>
-              Current Balance <span style={{ color: "#4a4a4a", fontFamily: "Montserrat", marginLeft: '3vw'}}>$200</span>
+              Current Balance <span style={{ color: "#4a4a4a", fontFamily: "Montserrat", marginLeft: '3vw'}}>${calculateTotalBalance()}</span>
             </Typography>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
