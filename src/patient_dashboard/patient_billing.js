@@ -18,11 +18,11 @@ import TablePagination from "@mui/material/TablePagination";
 import { styled } from "@mui/material/styles";
 
 const columns = [
-  { id: "no", label: "No.", minWidth: 50, align: "left" },
-  { id: "article", label: "Article", minWidth: 100, align: "left" },
+  { id: "article", label: "Article", minWidth: 150, align: "center" },
   { id: "date", label: "Date", minWidth: 100, align: "left" },
-  { id: "unitPrice", label: "Unit Price", minWidth: 100, align: "right" },
-  { id: "charge", label: "Charge", minWidth: 100, align: "right" },
+  { id: "appointmentFee", label: "Appointment Charge", minWidth: 100, align: "center" },
+  { id: "prescriptionUnitPrice", label: "Prescription Unit Price", minWidth: 100, align: "center" },
+  { id: "totalPrescriptionCharge", label: "Total Presciption Charge", minWidth: 100, align: "center" },
   { id: "credit", label: "Credit", minWidth: 100, align: "right" },
   { id: "currentBill", label: "Current Bill", minWidth: 120, align: "right" },
 ];
@@ -54,6 +54,7 @@ function Patient_Billing() {
   
   const openMakePaymentModal = () => {
     setOpenMakePayment(true);
+    setAmount(calculateTotalBalance().toString());
   };
   const closeMakePaymentModal = () => {
     setOpenMakePayment(false);
@@ -61,7 +62,7 @@ function Patient_Billing() {
   
   
   // Daily survey form states
-  const [amount, setAmount] = useState('$200');
+  const [amount, setAmount] = useState("");
   const [email, setEmail] = useState("");
   const [cardNumber, setcardNumber] = useState("");
   const [cardExpir, setCardExpir] = useState("");
@@ -72,8 +73,21 @@ function Patient_Billing() {
   const handlePaymentSubmit = (e) => {
     e.preventDefault();
   
-    const totalBalance = 200;
     const numericAmount = parseFloat(amount.replace("$", ""));
+    const newBillTotal = calculateTotalBalance() - numericAmount;
+  
+    const newPaymentRow = {
+      article: "Credit Card Payment",
+      date: new Date().toLocaleDateString(),
+      appointmentFee: "-",
+      prescriptionUnitPrice: "-",
+      totalPrescriptionCharge: "-",
+      credit: `$${numericAmount.toFixed(2)}`,
+      currentBill: `$${newBillTotal.toFixed(2)}`
+    };
+  
+    setRows([...rows, newPaymentRow]);
+    closeMakePaymentModal();
   
     console.log("Mock payment submitted:", {
       amount,
@@ -84,35 +98,30 @@ function Patient_Billing() {
       cardName,
       countryRegion,
     });
-  
-    if (numericAmount === totalBalance) {
-      setRows([]); // Clear the table
-      console.log("Payment matched total. Cleared rows.");
-    } else {
-      console.log("Payment submitted, but total doesn't match.");
-    }
-  
-    closeMakePaymentModal();
   };
+  
+  
   
 
   const [rows, setRows] = useState([
     {
-      no: 1,
-      article: "Fakemed1",
-      subtitle: "Pharmacy",
+ 
+      article: "Appt. 1",
       date: "1/02/25",
-      unitPrice: "$50",
+      appointmentFee:"$50",
+      prescriptionUnitPrice: "$50",
+      totalPrescriptionCharge:"$50",
       charge: "$50",
       credit: "$0",
       currentBill: "$50",
     },
     {
-      no: 2,
-      article: "Appointment",
-      subtitle: "Doctor",
+      
+      article: "Appt. 2",
       date: "1/02/25",
-      unitPrice: "$150",
+      appointmentFee:"$50",
+      prescriptionUnitPrice: "$50",
+      totalPrescriptionCharge:"$150",
       charge: "$50",
       credit: "$0",
       currentBill: "$200",
@@ -120,10 +129,9 @@ function Patient_Billing() {
   ]);
 
   const calculateTotalBalance = () => {
-    return rows.reduce((total, row) => {
-      const numeric = parseFloat(row.currentBill.replace("$", ""));
-      return total + numeric;
-    }, 0);
+    if (rows.length === 0) return 0;
+    const lastRow = rows[rows.length - 1];
+    return parseFloat(lastRow.currentBill.replace("$", ""));
   };
   
   return (
@@ -157,7 +165,7 @@ function Patient_Billing() {
             paddingLeft: "10%",
             paddingRight: "10%",
             backgroundColor: "#eef2fe",
-            maxWidth: "85%",
+            maxWidth: "95%",
             height: "85vh",
             margin: "auto",
             paddingTop: "5%",
@@ -185,35 +193,33 @@ function Patient_Billing() {
                 </TableRow>
               </TableHead>
               <TableBody sx={{ border: "none" }}>
-                {rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={row.no}>
-                      {columns.map((column) => (
-                        <TableCell sx={{ border: "none", fontFamily: "Montserrat", fontWeight: 600}} key={column.id} align={column.align}>
-                          {column.id === "article" ? (
-                            <>
-                              <Typography
-                                sx={{ fontWeight: 600, fontFamily: "Montserrat" }}
-                              >
-                                {row.article}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                sx={{ color: "gray", fontFamily: "Montserrat" }}
-                              >
-                                {row.subtitle}
-                              </Typography>
-                            </>
-                          ) : column.format && typeof row[column.id] === "number" ? (
-                            column.format(row[column.id])
-                          ) : (
-                            row[column.id]
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
+              {rows
+  .slice()
+  .reverse() // Reverses the order for most recent first
+  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+  .map((row) => (
+    <TableRow hover role="checkbox" tabIndex={-1} >
+      {columns.map((column) => (
+        <TableCell sx={{ border: "none", fontFamily: "Montserrat", fontWeight: 600 }} key={column.id} align={column.align}>
+          {column.id === "article" ? (
+            <>
+              <Typography sx={{ fontWeight: 600, fontFamily: "Montserrat" }}>
+                {row.article}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "gray", fontFamily: "Montserrat" }}>
+                {row.subtitle}
+              </Typography>
+            </>
+          ) : column.format && typeof row[column.id] === "number" ? (
+            column.format(row[column.id])
+          ) : (
+            row[column.id]
+          )}
+        </TableCell>
+      ))}
+    </TableRow>
+  ))}
+
               </TableBody>
             </Table>
           </TableContainer>
@@ -230,7 +236,7 @@ function Patient_Billing() {
 
           <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3, mr: 2 }}>
             <Typography variant="subtitle1" sx={{fontFamily: "Montserrat", fontWeight: 600}}>
-              Current Balance <span style={{ color: "#4a4a4a", fontFamily: "Montserrat", marginLeft: '3vw'}}>$200</span>
+              Current Balance <span style={{ color: "#4a4a4a", fontFamily: "Montserrat", marginLeft: '3vw'}}>${calculateTotalBalance()}</span>
             </Typography>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>

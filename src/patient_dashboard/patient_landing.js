@@ -288,12 +288,10 @@ const handleDailySubmit = async (e) => {
 
   const handleDeleteCurrentDoctor = async () => {
     try {
-      const doctorId = null//currentDoctorId;
-      const response = await fetch(`http://localhost:5000/api/delete-doctor/${doctorId}`, {
-        method: 'DELETE',
+      const response = await fetch(`http://localhost:5000/remove_doctor/${patientId}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': 'Bearer yourToken'  // if you use auth
         },
       });
 
@@ -302,10 +300,12 @@ const handleDailySubmit = async (e) => {
       }
 
       console.log('Doctor deleted successfully');
+      setDoctorInfo(null); 
       closeDeleteCurrentDoctorModal();  // close the modal
       // Optionally refresh data or navigate
     } catch (error) {
       console.error('Error deleting doctor:', error);
+      closeDeleteCurrentDoctorModal();
     }
   };
 
@@ -983,6 +983,9 @@ const handleDailySubmit = async (e) => {
                         </Typography>
                         <Button
                           variant="contained"
+                          onClick={() => navigate('/patient_dashboard/patient_appointment', {
+                            state: { appointmentId: appointment.patient_appt_id }
+                          })}
                           sx={{
                             backgroundColor: "#5A8BBE",
                             color: "#22252C",
