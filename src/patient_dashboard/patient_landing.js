@@ -262,6 +262,7 @@ function Patient_Landing() {
       }
 
       console.log('Doctor deleted successfully');
+      setDoctorInfo(null); 
       closeDeleteCurrentDoctorModal();  // close the modal
       // Optionally refresh data or navigate
     } catch (error) {
