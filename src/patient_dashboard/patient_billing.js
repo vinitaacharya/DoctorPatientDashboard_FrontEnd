@@ -18,8 +18,7 @@ import TablePagination from "@mui/material/TablePagination";
 import { styled } from "@mui/material/styles";
 
 const columns = [
-  { id: "no", label: "No.", minWidth: 50, align: "left" },
-  { id: "article", label: "Article", minWidth: 100, align: "left" },
+  { id: "article", label: "Article", minWidth: 150, align: "center" },
   { id: "date", label: "Date", minWidth: 100, align: "left" },
   { id: "appointmentFee", label: "Appointment Charge", minWidth: 100, align: "center" },
   { id: "prescriptionUnitPrice", label: "Prescription Unit Price", minWidth: 100, align: "center" },
@@ -78,13 +77,13 @@ function Patient_Billing() {
     const newBillTotal = calculateTotalBalance() - numericAmount;
   
     const newPaymentRow = {
-      no: rows.length + 1,
-      article: "Payment Received",
+      article: "Credit Card Payment",
       date: new Date().toLocaleDateString(),
-      unitPrice: "-",
-      charge: "$0",
+      appointmentFee: "-",
+      prescriptionUnitPrice: "-",
+      totalPrescriptionCharge: "-",
       credit: `$${numericAmount.toFixed(2)}`,
-      currentBill: `$${newBillTotal.toFixed(2)}`,
+      currentBill: `$${newBillTotal.toFixed(2)}`
     };
   
     setRows([...rows, newPaymentRow]);
@@ -102,23 +101,27 @@ function Patient_Billing() {
   };
   
   
+  
 
   const [rows, setRows] = useState([
     {
-      no: 1,
+ 
       article: "Appt. 1",
       date: "1/02/25",
       appointmentFee:"$50",
       prescriptionUnitPrice: "$50",
+      totalPrescriptionCharge:"$50",
       charge: "$50",
       credit: "$0",
       currentBill: "$50",
     },
     {
-      no: 2,
+      
       article: "Appt. 2",
       date: "1/02/25",
-      prescriptionUnitPrice: "$150",
+      appointmentFee:"$50",
+      prescriptionUnitPrice: "$50",
+      totalPrescriptionCharge:"$150",
       charge: "$50",
       credit: "$0",
       currentBill: "$200",
@@ -162,7 +165,7 @@ function Patient_Billing() {
             paddingLeft: "10%",
             paddingRight: "10%",
             backgroundColor: "#eef2fe",
-            maxWidth: "85%",
+            maxWidth: "95%",
             height: "85vh",
             margin: "auto",
             paddingTop: "5%",
@@ -190,35 +193,33 @@ function Patient_Billing() {
                 </TableRow>
               </TableHead>
               <TableBody sx={{ border: "none" }}>
-                {rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={row.no}>
-                      {columns.map((column) => (
-                        <TableCell sx={{ border: "none", fontFamily: "Montserrat", fontWeight: 600}} key={column.id} align={column.align}>
-                          {column.id === "article" ? (
-                            <>
-                              <Typography
-                                sx={{ fontWeight: 600, fontFamily: "Montserrat" }}
-                              >
-                                {row.article}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                sx={{ color: "gray", fontFamily: "Montserrat" }}
-                              >
-                                {row.subtitle}
-                              </Typography>
-                            </>
-                          ) : column.format && typeof row[column.id] === "number" ? (
-                            column.format(row[column.id])
-                          ) : (
-                            row[column.id]
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
+              {rows
+  .slice()
+  .reverse() // Reverses the order for most recent first
+  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+  .map((row) => (
+    <TableRow hover role="checkbox" tabIndex={-1} >
+      {columns.map((column) => (
+        <TableCell sx={{ border: "none", fontFamily: "Montserrat", fontWeight: 600 }} key={column.id} align={column.align}>
+          {column.id === "article" ? (
+            <>
+              <Typography sx={{ fontWeight: 600, fontFamily: "Montserrat" }}>
+                {row.article}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "gray", fontFamily: "Montserrat" }}>
+                {row.subtitle}
+              </Typography>
+            </>
+          ) : column.format && typeof row[column.id] === "number" ? (
+            column.format(row[column.id])
+          ) : (
+            row[column.id]
+          )}
+        </TableCell>
+      ))}
+    </TableRow>
+  ))}
+
               </TableBody>
             </Table>
           </TableContainer>
