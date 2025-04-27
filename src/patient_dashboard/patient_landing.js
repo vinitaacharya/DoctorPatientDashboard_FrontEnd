@@ -177,6 +177,18 @@ useEffect(() => {
   };
 
 
+  const [hasSurveyData, setHasSurveyData] = useState(false);
+
+  // Load survey status on mount
+  useEffect(() => {
+    const surveyFlag = localStorage.getItem('hasSurveyData');
+    if (surveyFlag === 'true') {
+      setHasSurveyData(true);
+    } else {
+      setHasSurveyData(false);
+    }
+  }, []);
+  
   // Daily survey form states
   const [heartRate, setHeartRate] = useState("");
   const [waterIntake, setWaterIntake] = useState("");
@@ -211,6 +223,8 @@ const handleDailySubmit = async (e) => {
     });
 
     if (response.ok) {
+      localStorage.setItem('hasSurveyData', 'true');
+      setHasSurveyData(true);      
       console.log('Daily survey submitted successfully');
       setHeartRate("");
       setWaterIntake("");
@@ -883,49 +897,50 @@ const handleDailySubmit = async (e) => {
                     alignItems: 'center',
                   }}>
 
-                    <Typography sx={{ fontFamily: 'Montserrat', textAlign: 'left', fontSize: '2.4vh' }}>Looks like you don’t have any data. Come back after filling out the surveys</Typography>
-                    <Box
-                      component="img"
-                      src={noSurveysImg}
-                      alt="Survey"
-                      sx={{
+{hasSurveyData ? (
+  <Box
+  sx={{
+    width: '5vh',
+    backgroundColor: 'white',
+    borderRadius: 3,
+    p: 2,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  }}
+>
+  <Typography variant="h6" color="black" sx={{ mb: 1 }}>
+    Weight
+  </Typography>
+  <Box
+    component="img"
+    //src="/chart-placeholder.png" // replace with actual chart
+    alt="Weight Chart"
+    sx={{ width: '100%', borderRadius: 2, mb: 2 }}
+  >
+    
+  </Box>
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+    <Button size="small">←</Button>
+    <Box sx={{ display: 'flex', gap: 1 }}>
+      <span>●</span>
+      <span>●</span>
+      <span>●</span>
+    </Box>
+    <Button size="small">→</Button>
+  </Box>
+</Box>
+) : (
+  <>
+    <Typography sx={{ fontFamily: 'Montserrat', textAlign: 'left', fontSize: '2.4vh' }}>
+      Looks like you don’t have any data. Come back after filling out the surveys
+    </Typography>
+    <Box component="img" src={noSurveysImg} alt="Survey" />
+  </>
+)}
 
-                      }}
-                    />
                   </Box>
 
-                  {/* <Box
-      sx={{
-        width: '5vh',
-        backgroundColor: 'white',
-        borderRadius: 3,
-        p: 2,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <Typography variant="h6" color="black" sx={{ mb: 1 }}>
-        Weight
-      </Typography>
-      <Box
-        component="img"
-        //src="/chart-placeholder.png" // replace with actual chart
-        alt="Weight Chart"
-        sx={{ width: '100%', borderRadius: 2, mb: 2 }}
-      >
-        
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Button size="small">←</Button>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <span>●</span>
-          <span>●</span>
-          <span>●</span>
-        </Box>
-        <Button size="small">→</Button>
-      </Box>
-    </Box> */}
                 </Paper>
 
               </Item>
