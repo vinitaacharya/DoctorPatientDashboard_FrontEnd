@@ -9,9 +9,25 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Modal from '@mui/material/Modal'; 
+import Typography from '@mui/material/Typography';
+
+
 
 
 function Doctorsignup(){
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
 
   const [values, setValues] = useState({
     first_name: '',
@@ -41,6 +57,7 @@ function Doctorsignup(){
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [age, setAge] = React.useState('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value);
@@ -251,37 +268,76 @@ function Doctorsignup(){
           {/* Left Section: Basic Info */}
             <div className="basic-info">
                   <h1>Other Information</h1>
-                    <div className='labels2'>
-                        <label className='def-label' htmlFor="email">Email: </label>
-                        <input type='text'
-                        name='email'
-                        className="form-control" 
-                        placeholder='Enter your email'
-                        value={values.email}
-                        onChange={e => setValues({...values, email: e.target.value})}/>
-                    </div>
-                    <div className='labels2'>
-                        <label className='def-label' htmlFor="password">Password: </label>
-                        <input type='text'
-                        name='password'
-                        className="form-control" 
-                        placeholder='Enter your password'
-                        value={values.password}
-                        onChange={e => setValues({...values, password: e.target.value})}/>
-                    </div>      
+                  <div className='labels2'>
+                  <label className='def-label' htmlFor="email">Email: </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={values.email}
+                    onChange={e => setValues({...values, email: e.target.value})}
+                    required
+                    pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                    title="Please enter a valid email address (e.g., user@example.com)"
+                    placeholder="Enter your email"
+                  />
+                </div>
+                <div className='labels2'>
+                  <label className='def-label'htmlFor="password">Password: </label>
+                  <input type='password'
+                    name='password'
+                    className="form-control" 
+                    placeholder='Enter your password'
+                    value={values.password}
+                    onChange={e => setValues({...values, password: e.target.value})}/>
+                </div>        
                     <div className='labels'> 
-                      <label className='terms'>Do you Accept the terms and conditions? 
-                              <Checkbox {...label}  />
-                      </label>
+                        <label className='terms' onClick={handleOpen}>Do you Accept the terms and conditions? 
+                          <Checkbox checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)}  />
+                        </label>
+                          <Modal
+                            onClose={handleClose}
+                            open={open}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                          >
+                            <Box sx={style} >
+                              <Typography id="modal-modal-title" variant="h5" component="h2" color="black">
+                                Terms and Conditions
+                              </Typography>
+                              <Box className='custom-scroll' style={{height: '50vh', overflowY: 'auto'}}>
+                                                  {/* <Box className="custom-scroll" sx={{ height: '30vh', width: '90%', margin: 'auto', overflowY: "auto" }}></Box> */}
+                                <Typography >
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                                Proin tristique vehicula elit ut commodo. Aenean et lorem dignissim, fringilla leo in,
+                                fermentum ex. Pellentesque mattis neque quis egestas ultricies. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                In vehicula accumsan consectetur. Quisque dapibus venenatis tincidunt. Curabitur commodo, ex a consequat auctor, diam nibh 
+                                dictum risus, nec scelerisque quam est eget sem. Etiam et posuere metus. Fusce maximus eleifend placerat.
+                                Curabitur quis faucibus magna. Proin vitae imperdiet lacus. Nulla efficitur ante eu nulla rutrum,
+                                a vehicula neque dapibus.
+                                </p>
+                                <br/>
+                                Donec pretium in orci et ultricies. Donec est libero, 
+                                facilisis vitae leo id, rhoncus ultricies nisl. Duis luctus, velit id finibus posuere, 
+                                ligula diam egestas ex, et tincidunt est sapien id dolor. Proin et odio ac mauris sodales ultricies. 
+                                Nam quis interdum leo. Nullam id porttitor dui, eget ornare sapien. Etiam ut turpis volutpat urna efficitur condimentum. 
+                                Proin ligula metus, imperdiet sed neque et, vehicula cursus erat. Maecenas in nibh a quam dictum tempus efficitur non erat. 
+                                Nulla sodales turpis augue, sed tempus ligula gravida et. Interdum et malesuada fames ac ante ipsum primis in faucibus. 
+                                In hac habitasse platea dictumst. Pellentesque eu diam quis purus iaculis ultrices. Cras vulputate rutrum odio non convallis.
+                                </Typography>
+                              </Box>
+
+                            </Box>
+                          </Modal>
                     </div>            
             </div>
 
           </div>
           
         </form>
-            <div className="herotext">
-            <div className="herobuttons">
-            <Button className="herobutton" onClick={() => navigate('/landing')}>Sign Up </Button>
+        <div className="signuptext">
+              <div className="signupbuttons">
+                <Button type='submit' className="herobutton">Sign Up</Button>
+                <Button className="herobutton" onClick={() => navigate('/landing')}> Back </Button>
             </div>
             </div>
       </div>

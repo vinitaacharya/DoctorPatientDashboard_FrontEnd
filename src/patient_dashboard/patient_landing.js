@@ -998,6 +998,9 @@ const handleDailySubmit = async (e) => {
                         </Typography>
                         <Button
                           variant="contained"
+                          onClick={() => navigate('/patient_dashboard/patient_appointment', {
+                            state: { appointmentId: appointment.patient_appt_id }
+                          })}
                           sx={{
                             backgroundColor: "#5A8BBE",
                             color: "#22252C",
@@ -1158,7 +1161,11 @@ const handleDailySubmit = async (e) => {
                               </Typography>
 
                               <Typography>
-                                {doctorInfo ? `${doctorInfo.description}` : "Loading..."}
+                              {doctorInfo
+                              ? doctorInfo.description.length > 75
+                                ? `${doctorInfo.description.slice(0, 75)}...`
+                                : doctorInfo.description
+                              : "Loading..."}
                               </Typography>
                               <Button onClick={openLearnMoreModal} variant="contained" sx={{ color: "white", borderRadius: 5, textTransform: "none", backgroundColor: "#5A8BBE", fontFamily: 'Montserrat', marginTop: '7px', fontSize: '1.3em' }}>
                                 Learn More
@@ -1238,7 +1245,7 @@ const handleDailySubmit = async (e) => {
 
                                   <Typography variant="body2" mt={2}>
                                     <strong>About:</strong><br />
-                                    Dr. Hillary Geller is a board-certified nutritionist and weight management specialist with over 10 years of experience helping patients achieve their health and fitness goals. She earned her medical degree from Johns Hopkins University and completed her residency in clinical nutrition at Harvard Medical School. Dr. Geller is passionate about creating personalized diet and exercise plans that fit each patient's lifestyle...
+                                    {doctorInfo.description}
                                   </Typography>
                                 </Box>
                               </Paper>
