@@ -7,10 +7,12 @@ import { styled } from '@mui/material/styles';
 import FlowerBackgroundImg from "./patient_landing_assets/FlowerBackground.png"
 import mealImg from "./patient_landing_assets/meals.png"
 import sadDoctorImg from "./patient_landing_assets/saddoc.png"
+import tempWeightImg from "./patient_landing_assets/tempWeightImg.png"
 import overviewSurveyImg from "./patient_landing_assets/overviewSurveyImg.png"
 import noSurveysImg from "./patient_landing_assets/NoSurveys.png"
 import { Select, MenuItem, InputLabel, Button, Typography, Modal, TextField, FormControl } from "@mui/material";
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
+import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 
@@ -23,7 +25,7 @@ import Rating from '@mui/material/Rating';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Plot from 'react-plotly.js';
-
+import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
   borderRadius: 30,
@@ -462,9 +464,22 @@ const handleDailySubmit = async (e) => {
   }, [patientId]);
 
 
+//medical chart carousel
+const images = [
+  tempWeightImg,
+  mealImg,
+  tempWeightImg,
+];
 
+const [currentIndex, setCurrentIndex] = useState(0);
 
+  const handlePrev = () => {
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
+  };
 
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
+  };
   return (
 
     <div style={{ display: "flex" }}>
@@ -494,7 +509,7 @@ const handleDailySubmit = async (e) => {
                   }}
                 >
                   {/* Left Section: Text, Image, Button */}
-                  <Box sx={{ height: '38vh', width: '35%', borderRadius: 3, background: 'rgba(238, 242, 254, 0.10)', p: 2, }}>
+                  <Box sx={{ height: '36vh', width: '35%', borderRadius: 3, background: 'rgba(238, 242, 254, 0.10)', p: 2, }}>
                     <Paper
                       sx={{
                         color: 'white',
@@ -508,7 +523,7 @@ const handleDailySubmit = async (e) => {
                       }}
                     >
 
-                      <Typography variant="h5" fontSize={'2.4vh'} fontFamily={'Montserrat'} paddingBottom={4} >
+                      <Typography variant="h5" fontSize={'2.2vh'} fontFamily={'Montserrat'} paddingBottom={4} >
                         Take your daily and weekly surveys
                       </Typography>
                       <Box
@@ -519,12 +534,12 @@ const handleDailySubmit = async (e) => {
                           width: 90,
                           height: 90,
                           borderRadius: '50%',
-                          mb: 2,
-                          mr: 2,
+                          mb: '1vh',
+                          mr: '2vh',
                         }}
                       />
                     </Paper>
-                    <Typography variant="body1" sx={{ width: '24vh', mb: '1vh', textAlign: 'left', fontFamily: 'Merriweather', fontSize: '1.5vh' }}>
+                    <Typography variant="body1" sx={{ width: '24vh', mb: '2vh', textAlign: 'left', fontFamily: 'Merriweather', fontSize: '1.4vh' }}>
                       By taking your daily and weekly surveys DPP is able to create progress updates so you can
                       track your fitness journey. Take your surveys now by clicking below!
                     </Typography>
@@ -534,13 +549,13 @@ const handleDailySubmit = async (e) => {
                       sx={{
                         background: 'rgba(238, 242, 254, 0.10)',
                         color: 'white',
-                        borderRadius: '25px',
+                        borderRadius: '2vh',
                         fontFamily: 'Montserrat',
                         textTransform: 'none',
                         boxShadow: 0,
                       }}
                     >
-                      Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4 }} />
+                      Survey <ArrowCircleRightOutlinedIcon sx={{ ml: '1vh' }} />
                     </Button>
 
                     {/* Survey options*/}
@@ -898,38 +913,64 @@ const handleDailySubmit = async (e) => {
                   }}>
 
 {hasSurveyData ? (
+
+
+<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  
+  {/* White Card */}
   <Box
-  sx={{
-    width: '5vh',
-    backgroundColor: 'white',
-    borderRadius: 3,
-    p: 2,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  }}
->
-  <Typography variant="h6" color="black" sx={{ mb: 1 }}>
-    Weight
-  </Typography>
-  <Box
-    component="img"
-    //src="/chart-placeholder.png" // replace with actual chart
-    alt="Weight Chart"
-    sx={{ width: '100%', borderRadius: 2, mb: 2 }}
+    sx={{
+      width: '400px',
+      backgroundColor: 'white',
+      borderRadius: '20px',
+      p: 2,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      boxShadow: 3,
+    }}
   >
-    
+    <Box
+      component="img"
+      src={images[currentIndex]}
+      alt="Chart"
+      sx={{
+        width: '100%',
+        height: 'auto',
+        borderRadius: 2,
+        objectFit: 'contain',
+      }}
+    />
   </Box>
+
+  {/* Navigation (outside the card) */}
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-    <Button size="small">←</Button>
-    <Box sx={{ display: 'flex', gap: 1 }}>
-      <span>●</span>
-      <span>●</span>
-      <span>●</span>
-    </Box>
-    <Button size="small">→</Button>
+    <IconButton size="small" onClick={handlePrev} sx={{ color: 'white' }}>
+      <ArrowCircleLeftOutlinedIcon  fontSize="large" />
+    </IconButton>
+ {/* Dots */}
+ <Box sx={{ display: 'flex', gap: 1 }}>
+          {images.map((_, index) => (
+            <span
+              key={index}
+              style={{
+                fontSize: '8px',
+                color: index === currentIndex ? 'blue' : 'lightgray',
+              }}
+            >
+              ●
+            </span>
+          ))}
+        </Box>
+
+        <IconButton size="small"  onClick={handleNext} sx={{ color: 'white' }}>
+          <ArrowCircleRightOutlinedIcon fontSize="large" />
+        </IconButton>
   </Box>
+
 </Box>
+
+
 ) : (
   <>
     <Typography sx={{ fontFamily: 'Montserrat', textAlign: 'left', fontSize: '2.4vh' }}>
