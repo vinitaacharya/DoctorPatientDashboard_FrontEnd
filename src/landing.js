@@ -78,6 +78,31 @@ function Landing() {
       }
     };
 
+    const handleLogin2 = async (email, password) => {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/login-doctor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+    
+        const data = await response.json();
+    
+        if (response.ok) {
+          // Save patient ID (and optionally, email or token)
+          console.log("Doctor ID returned from backend:", data.doctor_id); // ✅ debug line
+          localStorage.setItem("doctorId", data.patient_id);
+          // Redirect to dashboard
+          navigate("/doctor_dashboard/doctor_landing");
+        } else {
+          alert(data.error || "Login failed");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        alert("An error occurred. Please try again.");
+      }
+    };
+
 
   return (
     <div className="Landing">
@@ -113,10 +138,10 @@ function Landing() {
                           >
                             <Box sx={style}>
                               <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
-                                Patient Signup
+                                Patient Login
                               </Typography>
                                     <div className='labels'>
-                                        <label className = 'def-label' htmlFor="first_name">Email: </label>
+                                        <label className = 'def-label' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Email: </label>
                                         <input type='text'
                                         name='email'
                                         className="form-control" 
@@ -125,7 +150,7 @@ function Landing() {
                                         onChange={e => setValues({...values, email: e.target.value})}/>
                                     </div>
                                     <div className='labels'>
-                                        <label className = 'def-label' htmlFor="first_name">Password: </label>
+                                        <label className = 'def-label' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Password: </label>
                                         <input type='password'
                                         name='password'
                                         className="form-control" 
@@ -133,7 +158,7 @@ function Landing() {
                                         value={values.password}
                                         onChange={e => setValues({...values, password: e.target.value})}/>
                                     </div>
-                                    <button className="patientlogin btn-info" onClick={() => handleLogin(values.email, values.password)}>
+                                    <button className="patientlogin btn-info" style={{background: 'teal'}} onClick={() => handleLogin(values.email, values.password)}>
                                             Login
                                     </button>
                             </Box>
@@ -150,10 +175,10 @@ function Landing() {
                           >
                             <Box sx={style}>
                               <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
-                                Doctor Signup
+                                Doctor Login
                               </Typography>
                                     <div className='labels'>
-                                        <label htmlFor="first_name">Email: </label>
+                                        <label className = 'def-label' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Email: </label>
                                         <input type='text'
                                         name='email'
                                         className="form-control" 
@@ -162,7 +187,7 @@ function Landing() {
                                         onChange={e => setValues({...values, email: e.target.value})}/>
                                     </div>
                                     <div className='labels'>
-                                        <label htmlFor="first_name">Password: </label>
+                                        <label className = 'def-label' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Password: </label>
                                         <input type='text'
                                         name='password'
                                         className="form-control" 
@@ -170,7 +195,7 @@ function Landing() {
                                         value={values.password}
                                         onChange={e => setValues({...values, password: e.target.value})}/>
                                     </div>
-                                    <button className="patientlogin btn-info" onClick={() => navigate('/doctor_dashboard/doctor_landing')}>
+                                    <button className="patientlogin btn-info" onClick={() => handleLogin2(values.email, values.password)}>
                                             Login
                                     </button>
                             </Box>
