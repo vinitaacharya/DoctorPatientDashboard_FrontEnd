@@ -33,22 +33,22 @@ function Doctorsignup(){
     first_name: '',
     last_name: '',
     email: '',
+    password: '',           // was missing
     address: '',
-    district: '',
     city: '',
-    country: '',
+    state: '',
+    zip: '',
     phone: '',
     dob: '',
     gender: '',
-    zip: '',
-    medical_number: '',
-    exp: '',
-    school: '',
-    years: '',
-    pay: '',
+    license_num: '',
+    license_exp_date: '',
+    med_school: '',
+    years_of_practice: '',
+    payment_fee: '',
     specialty: ''
-
-})
+  });
+  
 
   const navigate = useNavigate()
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -57,12 +57,75 @@ function Doctorsignup(){
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [age, setAge] = React.useState('');
+  const [gender, setGender] = React.useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value);
   };
       
+    const handleChange2 = (event: SelectChangeEvent) => {
+      setGender(event.target.value);
+      setValues({...values, gender: event.target.value});
+    };
+
+  const savedoctor = (e) => {
+    e.preventDefault();
+  
+    if (!termsAccepted) {
+      alert("Please accept the terms and conditions");
+      return;
+    }
+  
+    setLoading(true);
+  
+    const fullData = {
+      first_name: values.first_name,
+      last_name: values.last_name,
+      email: values.email,
+      password: values.password,
+      description: "", // add if applicable
+      license_num: values.license_num,
+      license_exp_date: values.license_exp_date,
+      dob: values.dob,
+      med_school: values.med_school,
+      years_of_practice: values.years_of_practice,
+      specialty: values.specialty,
+      payment_fee: values.payment_fee,
+      gender: values.gender,
+      phone_number: values.phone,
+      address: values.address,
+      zipcode: values.zip,
+      city: values.city,
+      state: values.state
+    };
+    
+  
+    fetch("http://127.0.0.1:5000/register-doctor-with-survey", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(fullData)
+    })
+      .then(res => res.json())
+      .then(response => {
+        if (response.message) {
+          alert("Account and survey submitted successfully!");
+          navigate('/landing');
+        } else {
+          throw new Error(response.error || "Something went wrong");
+        }
+      })
+      .catch(async (error) => {
+        const errMsg = await error?.response?.json?.()?.error || "Couldnt create user, please double check the fields and try again. :)";
+        console.error("Error:", errMsg);
+        alert(errMsg);
+      })
+      .finally(() => setLoading(false));
+  };
 
 
   return (
@@ -75,7 +138,7 @@ function Doctorsignup(){
 
         <div className="signuptop">
 
-        <form className="form-container">
+        <form className="form-container" onSubmit={savedoctor}>
           <div className="info-container">
           {/* Left Section: Basic Info */}
             <div className="basic-info">
@@ -116,8 +179,8 @@ function Doctorsignup(){
                               className="form-control-select"
                               labelId="demo-simple-select-label"
                               id="demo-simple-select"
-                              value={age}
-                              onChange={handleChange}
+                              value={gender}
+                              onChange={handleChange2}
                               displayEmpty
                               renderValue={(selected) => selected ? selected : "Select Gender"}
                               
@@ -250,20 +313,18 @@ function Doctorsignup(){
                   </div>
             </div>
 
-        </form>
         {/* <div>
               <label htmlFor="phone">Phone:</label>
               <input type='text' name='phone' className="form-control" placeholder='Enter Phone'
               value={values.phone} onChange={e => setValues({...values, phone: e.target.value})}/>
         </div> */}
 
-      </div>
+
       
        
 
         <div className="doctortest">
 
-        <form className="form-container">
           <div className="info-container">
           {/* Left Section: Basic Info */}
             <div className="basic-info">
