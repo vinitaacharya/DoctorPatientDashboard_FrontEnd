@@ -11,6 +11,8 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Modal from '@mui/material/Modal'; 
 import Typography from '@mui/material/Typography';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 
 
@@ -60,6 +62,8 @@ function Doctorsignup(){
   const [gender, setGender] = React.useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+
   
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -137,9 +141,11 @@ function Doctorsignup(){
             <h2 className="title">Doctor Signup</h2>
         </div>
 
-        <div className="signuptop">
 
         <form className="form-container" onSubmit={savedoctor}>
+        
+        <div className="signuptop">
+
           <div className="info-container">
           {/* Left Section: Basic Info */}
             <div className="basic-info">
@@ -345,16 +351,27 @@ function Doctorsignup(){
                 </div>
                 <div className='labels2'>
                   <label className='def-label'htmlFor="password">Password: </label>
-                  <input type='password'
+                  <input
+                    type={showPassword ? "text" : "password"}
                     id="psw"
                     pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                     name='password'
-                    className="form-control" 
+                    className="form-control"
                     placeholder='Enter your password'
-                    title="Must contain at least one number and one 
-                    uppercase and lowercase letter, 
-                    and at least 8 or more characters" required
-                    onChange={e => setValues({...values, password: e.target.value})}/>
+                    title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+                    required
+                    value={values.password}
+                    onChange={e => setValues({...values, password: e.target.value})}
+                  />
+                  <Button
+                    onClick={() => setShowPassword(!showPassword)}
+                    size="small"
+                    variant="text"
+                    style={{ marginTop: '5px' }}
+                  >
+                    {showPassword ? <VisibilityIcon/> : <VisibilityOffIcon/>}
+                  </Button>
+
                 </div>        
                     <div className='labels'> 
                         <label className='terms' onClick={handleOpen}>Do you Accept the terms and conditions? 
@@ -395,11 +412,10 @@ function Doctorsignup(){
                             </Box>
                           </Modal>
                     </div>            
-            </div>
 
           </div>
 
-          </div>
+      </div>
           
         <div className="signuptext">
               <div className="signupbuttons">
@@ -407,10 +423,10 @@ function Doctorsignup(){
                 <Button className="herobutton" onClick={() => navigate('/landing')}> Back </Button>
               </div>
         </div>
-        </form>
-
+        </div>
       </div>
-            
+      </form>
+
     </div>
     </>
   );

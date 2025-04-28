@@ -11,6 +11,8 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Modal from '@mui/material/Modal'; 
 import Typography from '@mui/material/Typography';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 
 
@@ -75,6 +77,8 @@ function Patientsignup() {
   const [medicalConditions, setMedicalConditions] = useState([]);
   const [dietaryRestrictions, setDietaryRestrictions] = useState([]);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  
 
 
   const [loading, setLoading] = useState(false);
@@ -631,15 +635,26 @@ function Patientsignup() {
                 </div>
                 <div className='labels'>
                   <label className='def-label'htmlFor="password">Password: </label>
-                  <input type='password'
+                  <input
+                    type={showPassword ? "text" : "password"}
                     id="psw"
                     pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                     name='password'
-                    className="form-control" 
+                    className="form-control"
                     placeholder='Enter your password'
-                    title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required
+                    title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+                    required
                     value={values.password}
-                    onChange={e => setValues({...values, password: e.target.value})}/>
+                    onChange={e => setValues({...values, password: e.target.value})}
+                  />
+                  <Button
+                    onClick={() => setShowPassword(!showPassword)}
+                    size="small"
+                    variant="text"
+                    style={{ marginTop: '5px' }}
+                  >
+                    {showPassword ? <VisibilityIcon/> : <VisibilityOffIcon/>}
+                  </Button>
                 </div>      
                 <div className='labels'> 
                   <label className='terms' onClick={handleOpen}>Do you Accept the terms and conditions? 
