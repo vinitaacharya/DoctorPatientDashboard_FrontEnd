@@ -170,7 +170,7 @@ function Landing() {
                                         value={values.password}
                                         onChange={e => setValues({...values, password: e.target.value})}/>
                                     </div>
-                                    <button className="patientlogin btn-info" onClick={() => navigate('/patient_dashboard/patient_landing')}>
+                                    <button className="patientlogin btn-info" onClick={() => navigate('/doctor_dashboard/doctor_landing')}>
                                             Login
                                     </button>
                             </Box>
