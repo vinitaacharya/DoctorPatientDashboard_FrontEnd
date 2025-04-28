@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "./patient_navbar";
-import { Box, Typography, IconButton, Avatar, Grid } from "@mui/material";
+import { Checkbox, FormControlLabel,FormLabel, FormGroup, Box, Typography, IconButton, Avatar, Modal, TextField,Button,Grid } from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import AddIcon from '@mui/icons-material/Add';
@@ -28,6 +28,14 @@ const posts = [
 ];
 
 const Profile = () => {
+  const [openCreatePost, setOpenCreatePost] = React.useState(false);
+
+const handleOpenCreatePost = () => setOpenCreatePost(true);
+const handleCloseCreatePost = () => setOpenCreatePost(false);
+
+
+const [uploadedFileName, setUploadedFileName] = React.useState('');
+
   return (
     <Box display="flex">
       <Navbar />
@@ -78,6 +86,8 @@ const Profile = () => {
           {/* Add New Post Card */}
           <Grid item xs={12} sm={6} md={4}>
             <Box
+              onClick={handleOpenCreatePost}
+
               sx={{
                 height: '55vh',
                 maxWidth: '43vh',
@@ -98,6 +108,107 @@ const Profile = () => {
               <AddIcon sx={{ fontSize: 40 }} />
             </Box>
           </Grid>
+          <Modal open={openCreatePost} onClose={handleCloseCreatePost}>
+  <Box
+    sx={{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: "65vh",
+      bgcolor: '#F5F7FF',
+      borderRadius: '15px',
+      boxShadow: 24,
+      overflow: 'hidden', // so the header is connected
+    }}
+  >
+    {/* Header */}
+    <Box sx={{ bgcolor: '#5E4B8B', p:'.5vh', display: 'flex', alignItems: 'center' }}>
+      <Typography sx={{flexGrow:'1',textAlign:"center", color: 'white', fontWeight: 'bold', fontFamily: 'Montserrat' }}>
+        Create Post
+      </Typography>
+      <IconButton onClick={handleCloseCreatePost} sx={{ color: 'white' }}>
+        ✕
+      </IconButton>
+    </Box>
+
+    {/* Body */}
+    <Box sx={{ p: 3 }}>
+{/* Upload Button and File Name */}
+<Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+  <Button
+    variant="contained"
+    component="label"
+    sx={{ bgcolor: '#A0B9DA', width: '29%' ,textAlign:'center'}}
+  >
+    Upload Image File
+    <input 
+      hidden 
+      accept="image/*" 
+      type="file" 
+      onChange={(e) => {
+        if (e.target.files.length > 0) {
+          setUploadedFileName(e.target.files[0].name);
+        }
+      }}
+    />
+  </Button>
+
+  {/* File name shown to the right of button */}
+  {uploadedFileName && (
+    <Typography sx={{ fontSize: '0.9rem', color: '#5E4B8B', fontWeight: 'bold' }}>
+      {uploadedFileName}
+    </Typography>
+  )}
+</Box>
+
+
+<Box display={"flex"}> 
+<Typography sx={{ color: 'white',  fontFamily: 'Montserrat', bgcolor: '#A0B9DA', width: '44%' ,textAlign:'center', height:'6.7vh', borderRadius:'.5vh' }}>
+        Create Post
+</Typography>    
+  <TextField fullWidth label="Title" variant="outlined" sx={{ml:2, mb: 2 }} />
+</Box>
+
+
+<Box sx={{ mb: 2 , display:'flex'}}>
+  <FormLabel component="legend" sx={{mr:'2vh',color: 'white',  fontFamily: 'Montserrat', bgcolor: '#A0B9DA', width: '35%' ,textAlign:'center', height:'6.7vh', borderRadius:'.5vh' }}>Hashtags</FormLabel>
+  <FormGroup row> {/* row makes them horizontal! */}
+    <FormControlLabel control={<Checkbox />} label="Keto" />
+    <FormControlLabel control={<Checkbox />} label="Vegan" />
+    <FormControlLabel control={<Checkbox />} label="Paleo" />
+    <FormControlLabel control={<Checkbox />} label="Low-Carbs" />
+  </FormGroup>
+</Box>
+<Box display={'flex'}>
+<Typography sx={{ color: 'white',  fontFamily: 'Montserrat', bgcolor: '#A0B9DA', width: '45%' ,textAlign:'center', height:'6.7vh', borderRadius:'.5vh' }}>
+        Description
+</Typography> 
+      <TextField
+        fullWidth
+        label="Description"
+        multiline
+        rows={8}
+        variant="outlined"
+        sx={{ ml: '2vh' , mb:'2vh'}}
+      />
+</Box>
+      <Button
+        fullWidth
+        variant="contained"
+        sx={{
+          bgcolor: '#A0B9DA',
+          '&:hover': { bgcolor: '#8CAACF' },
+          borderRadius: '10px',
+          fontWeight: 'bold'
+        }}
+      >
+        POST
+      </Button>
+    </Box>
+  </Box>
+</Modal>
+
         </Grid>
       </Box>
     </Box>
