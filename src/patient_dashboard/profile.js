@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Navbar from "./patient_navbar";
 import { Checkbox, FormControlLabel,FormLabel, FormGroup, Box, Typography, IconButton, Avatar, Modal, TextField,Button,Grid } from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -36,6 +36,32 @@ const handleCloseCreatePost = () => setOpenCreatePost(false);
 
 const [uploadedFileName, setUploadedFileName] = React.useState('');
 
+const [patientInfo, setPatientInfo] = useState(null);
+
+useEffect(() => {
+  const fetchPatientInfo = async () => {
+    const id = localStorage.getItem("patientId");
+    if (!id) {
+      console.warn("No patient ID in localStorage");
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:5000/patient/${id}`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch patient info");
+      }
+
+      const data = await res.json();
+      setPatientInfo(data);
+      console.log("Patient info:", data);
+    } catch (error) {
+      console.error("Error fetching patient info:", error);
+    }
+  };
+
+  fetchPatientInfo();
+}, []);
   return (
     <Box display="flex">
       <Navbar />
@@ -59,9 +85,11 @@ const [uploadedFileName, setUploadedFileName] = React.useState('');
               alt="Profile"
               sx={{ width:'15vh', height: '15vh', margin: '0 auto' }}
             />
-            <Typography variant="h6" sx={{ color:'white', mt: 1, fontFamily: 'Montserrat', fontSize: '1.5em' }}>
-              JaneDoe123
-            </Typography>
+           
+          {patientInfo && (
+            <Typography  variant="h6" sx={{ color:'white', mt: 1, fontFamily: 'Montserrat', fontSize: '1.5em' }}>
+                {patientInfo.first_name} {patientInfo.last_name}
+            </Typography>)}           
           </Box>
         </Box>
         <Box sx={{backgroundColor:'#EEF2FE'}}>
