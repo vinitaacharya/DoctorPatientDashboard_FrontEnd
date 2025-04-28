@@ -7,6 +7,7 @@ import testImage from './reciepe photo.png'
 import { Favorite, ExpandMore, ChatBubbleOutline } from '@mui/icons-material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import LibraryAddOutlinedIcon from '@mui/icons-material/LibraryAddOutlined';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   IconButton as MuiIconButton
@@ -82,6 +83,7 @@ const handleCloseModal = () => setOpenModal(false);
      </div>      
      <Typography
   sx={{
+    flexGrow:1,
     maxHeight: '7vh',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -100,19 +102,54 @@ const handleCloseModal = () => setOpenModal(false);
         
           <Typography
             onClick={handleExpandClick}
-            sx={{fontSize: '0.8em', cursor: 'pointer' }}
+            sx={{flexGrow:1,fontSize: '0.8em', cursor: 'pointer' }}
           >
             {author}
           </Typography>
         
-      
-      <IconButton onClick={handleLike}>
-          {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
-        </IconButton>
-        <Typography variant="body2">{likes}</Typography>
-        <IconButton onClick={handleExpandClick}>
-          <ChatBubbleOutline /> <span>{comments.length}</span>
-        </IconButton>
+         <IconButton> <LibraryAddOutlinedIcon color='action' /></IconButton>
+          <Box position="relative" display="inline-flex">
+  <IconButton onClick={handleLike}>
+    {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
+  </IconButton>
+  {likes > 0 && (
+    <Typography
+      variant="caption"
+      sx={{
+        position: 'absolute',
+        top: 2,
+        right: 2,
+        fontSize: '0.7rem',
+        backgroundColor: 'transparent',
+        borderRadius: '50%',
+        padding: '0 4px',
+      }}
+    >
+      {likes}
+    </Typography>
+  )}
+</Box>
+
+<Box position="relative" display="inline-flex">
+  <IconButton onClick={handleExpandClick}>
+    <ChatBubbleOutline />
+  </IconButton>
+  {comments.length > 0 && (
+    <Typography
+      variant="caption"
+      sx={{
+        position: 'absolute',
+        right: -1,
+        fontSize: '0.7rem',
+        backgroundColor: 'transparent',
+        borderRadius: '50%',
+        px: 0.5,
+      }}
+    >
+      {comments.length}
+    </Typography>
+  )}
+</Box>
         </Box>
 
 
@@ -173,12 +210,47 @@ const handleCloseModal = () => setOpenModal(false);
           Comments
         </Typography>
         <Box display="flex" alignItems="center" gap={1}>
-          <IconButton onClick={handleLike}>
-            {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
-          </IconButton>
-          <Typography>{likes}</Typography>
-          <ChatBubbleOutline />
-          <Typography>{comments.length}</Typography>
+        <Box position="relative" display="inline-flex">
+  <IconButton onClick={handleLike}>
+    {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
+  </IconButton>
+  {likes > 0 && (
+    <Typography
+      variant="caption"
+      sx={{
+        position: 'absolute',
+        top: 2,
+        right: 2,
+        fontSize: '0.7rem',
+        backgroundColor: 'transparent',
+        borderRadius: '50%',
+        padding: '0 4px',
+      }}
+    >
+      {likes}
+    </Typography>
+  )}
+</Box>
+<Box position="relative" display="inline-flex">
+  <IconButton onClick={handleExpandClick}>
+    <ChatBubbleOutline />
+  </IconButton>
+  {comments.length > 0 && (
+    <Typography
+      variant="caption"
+      sx={{
+        position: 'absolute',
+        right: -1,
+        fontSize: '0.7rem',
+        backgroundColor: 'transparent',
+        borderRadius: '50%',
+        px: 0.5,
+      }}
+    >
+      {comments.length}
+    </Typography>
+  )}
+</Box>
         </Box>
       </Box>
 
