@@ -37,6 +37,8 @@ export default function MealPlanCard({ meal }) {
   const [newComment, setNewComment] = useState("");
   const [likes, setLikes] = useState(initialLikes);
   const [liked, setLiked] = useState(false);
+  const [added, setAdded] = useState(false);
+
   const [expanded, setExpanded] = useState(false);
   const handleExpandClick = () => setExpanded(!expanded);
   //const handleLike = () => setLikes(likes + 1);
@@ -55,6 +57,10 @@ export default function MealPlanCard({ meal }) {
     setLiked(!liked);
   };
 
+  const handleAddToMealPlan = () =>{
+    setAdded(!added);
+
+  };
   const handleExpand = () => {
     setExpanded(!expanded);
   };
@@ -107,7 +113,14 @@ const handleCloseModal = () => setOpenModal(false);
             {author}
           </Typography>
         
-         <IconButton> <LibraryAddOutlinedIcon color='action' /></IconButton>
+         <IconButton onClick={handleAddToMealPlan}
+  sx={{
+    backgroundColor: added ? 'lightgrey' : 'transparent', // 👈
+  
+  }}
+>
+  <LibraryAddOutlinedIcon color={'action'} />
+          </IconButton>
           <Box position="relative" display="inline-flex">
   <IconButton onClick={handleLike}>
     {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
