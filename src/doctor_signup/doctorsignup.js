@@ -33,22 +33,22 @@ function Doctorsignup(){
     first_name: '',
     last_name: '',
     email: '',
+    password: '',           // was missing
     address: '',
-    district: '',
     city: '',
-    country: '',
-    phone: '',
+    state: '',
+    zip: '',
+    phone_number: '',
     dob: '',
     gender: '',
-    zip: '',
-    medical_number: '',
-    exp: '',
-    school: '',
-    years: '',
-    pay: '',
+    license_num: '',
+    license_exp_date: '',
+    med_school: '',
+    years_of_practice: '',
+    payment_fee: '',
     specialty: ''
-
-})
+  });
+  
 
   const navigate = useNavigate()
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -57,12 +57,76 @@ function Doctorsignup(){
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [age, setAge] = React.useState('');
+  const [gender, setGender] = React.useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value);
   };
       
+    const handleChange2 = (event: SelectChangeEvent) => {
+      setGender(event.target.value);
+      setValues({...values, gender: event.target.value});
+    };
+
+  const savedoctor = (e) => {
+    e.preventDefault();
+  
+    if (!termsAccepted) {
+      alert("Please accept the terms and conditions");
+      return;
+    }
+  
+    setLoading(true);
+  
+    const fullData = {
+      first_name: values.first_name,
+      last_name: values.last_name,
+      email: values.email,
+      password: values.password,
+      description: "", // add if applicable
+      license_num: values.license_num,
+      license_exp_date: values.license_exp_date,
+      dob: values.dob,
+      med_school: values.med_school,
+      years_of_practice: values.years_of_practice,
+      specialty: values.specialty,
+      payment_fee: values.payment_fee,
+      gender: values.gender,
+      phone_number: values.phone,
+      address: values.address,
+      zipcode: values.zip,
+      city: values.city,
+      state: values.state
+    };
+    
+  
+    fetch("http://127.0.0.1:5000/register-doctor", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(fullData)
+    })
+      .then(res => res.json())
+      .then(response => {
+        if (response.message) {
+          alert("Account and survey submitted successfully!");
+          navigate('/landing');
+        } else {
+          throw new Error(response.error || "Something went wrong");
+        }
+      })
+      .catch(async (error) => {
+        const errMsg = await error?.response?.json?.()?.error || "Couldnt create user, please double check the fields and try again. :)";
+        console.error("Error:", errMsg);
+        alert(errMsg);
+        console.log(fullData)
+      })
+      .finally(() => setLoading(false));
+  };
 
 
   return (
@@ -75,7 +139,7 @@ function Doctorsignup(){
 
         <div className="signuptop">
 
-        <form className="form-container">
+        <form className="form-container" onSubmit={savedoctor}>
           <div className="info-container">
           {/* Left Section: Basic Info */}
             <div className="basic-info">
@@ -103,7 +167,7 @@ function Doctorsignup(){
                     <div className='horizontal-bar'>
                       <div className='labels'>
                           <label htmlFor="dob" className='short-label'>DOB: </label>
-                          <input type='text'
+                          <input type='date'
                           name='dob'
                           className="form-control-dob" 
                           placeholder='Enter DOB'
@@ -116,8 +180,8 @@ function Doctorsignup(){
                               className="form-control-select"
                               labelId="demo-simple-select-label"
                               id="demo-simple-select"
-                              value={age}
-                              onChange={handleChange}
+                              value={gender}
+                              onChange={handleChange2}
                               displayEmpty
                               renderValue={(selected) => selected ? selected : "Select Gender"}
                               
@@ -190,49 +254,49 @@ function Doctorsignup(){
             <div className="doctor-info">
                   <h1>Doctor Information</h1>
                     <div className='labels'>
-                        <label htmlFor="medical_number" className='medical-num'>Medical License Number: </label>
+                        <label htmlFor="license_num" className='medical-num'>Medical License Number: </label>
                         <input type='text'
-                        name='medical_number'
+                        name='license_num'
                         className="form-control" 
                         placeholder='Enter medical num'
-                        value={values.medical_number}
-                        onChange={e => setValues({...values, medical_number: e.target.value})}/>
+                        value={values.license_num}
+                        onChange={e => setValues({...values, license_num: e.target.value})}/>
                     </div>
                     <div className='labels'>
-                        <label htmlFor="exp" className='exp'>Medical License Exp: </label>
-                        <input type='text'
-                        name='exp'
+                        <label htmlFor="license_exp_date" className='exp'>Medical License Exp: </label>
+                        <input type='date'
+                        name='license_exp_date'
                         className="form-control-exp" 
                         placeholder='Enter exp'
-                        value={values.exp}
-                        onChange={e => setValues({...values, exp: e.target.value})}/>
+                        value={values.license_exp_date}
+                        onChange={e => setValues({...values, license_exp_date: e.target.value})}/>
                     </div>
                     <div className='labels'>
-                        <label htmlFor="school" className='school'>Medical School: </label>
+                        <label htmlFor="med_school" className='school'>Medical School: </label>
                         <input type='text'
-                        name='school'
+                        name='med_school'
                         className="form-control" 
                         placeholder='Enter Medical School'
-                        value={values.school}
-                        onChange={e => setValues({...values, school: e.target.value})}/>
+                        value={values.med_school}
+                        onChange={e => setValues({...values, med_school: e.target.value})}/>
                     </div>
                     <div className='labels'>
-                        <label htmlFor="years" className='years'>Years in Practice: </label>
+                        <label htmlFor="years_of_practice" className='years'>Years in Practice: </label>
                         <input type='text'
-                        name='years'
+                        name='years_of_practice'
                         className="form-control" 
                         placeholder='Enter num of years'
-                        value={values.years}
-                        onChange={e => setValues({...values, years: e.target.value})}/>
+                        value={values.years_of_practice}
+                        onChange={e => setValues({...values, years_of_practice: e.target.value})}/>
                     </div>
                     <div className='labels'>
-                        <label htmlFor="pay" className='med-label'>Payment Fee: </label>
+                        <label htmlFor="payment_fee" className='med-label'>Payment Fee: </label>
                         <input type='text'
-                        name='pay'
+                        name='payment_fee'
                         className="form-control" 
                         placeholder='Enter payment fee'
-                        value={values.pay}
-                        onChange={e => setValues({...values, pay: e.target.value})}/>
+                        value={values.payment_fee}
+                        onChange={e => setValues({...values, payment_fee: e.target.value})}/>
                     </div>
                     <div className='labels'>
                         <label htmlFor="specialty" className='med-label'>Specialty: </label>
@@ -250,20 +314,18 @@ function Doctorsignup(){
                   </div>
             </div>
 
-        </form>
         {/* <div>
               <label htmlFor="phone">Phone:</label>
               <input type='text' name='phone' className="form-control" placeholder='Enter Phone'
               value={values.phone} onChange={e => setValues({...values, phone: e.target.value})}/>
         </div> */}
 
-      </div>
+
       
        
 
         <div className="doctortest">
 
-        <form className="form-container">
           <div className="info-container">
           {/* Left Section: Basic Info */}
             <div className="basic-info">
@@ -284,10 +346,14 @@ function Doctorsignup(){
                 <div className='labels2'>
                   <label className='def-label'htmlFor="password">Password: </label>
                   <input type='password'
+                    id="psw"
+                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                     name='password'
                     className="form-control" 
                     placeholder='Enter your password'
-                    value={values.password}
+                    title="Must contain at least one number and one 
+                    uppercase and lowercase letter, 
+                    and at least 8 or more characters" required
                     onChange={e => setValues({...values, password: e.target.value})}/>
                 </div>        
                     <div className='labels'> 
@@ -332,14 +398,17 @@ function Doctorsignup(){
             </div>
 
           </div>
+
+          </div>
           
-        </form>
         <div className="signuptext">
               <div className="signupbuttons">
                 <Button type='submit' className="herobutton">Sign Up</Button>
                 <Button className="herobutton" onClick={() => navigate('/landing')}> Back </Button>
-            </div>
-            </div>
+              </div>
+        </div>
+        </form>
+
       </div>
             
     </div>

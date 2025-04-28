@@ -632,9 +632,12 @@ function Patientsignup() {
                 <div className='labels'>
                   <label className='def-label'htmlFor="password">Password: </label>
                   <input type='password'
+                    id="psw"
+                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                     name='password'
                     className="form-control" 
                     placeholder='Enter your password'
+                    title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required
                     value={values.password}
                     onChange={e => setValues({...values, password: e.target.value})}/>
                 </div>      
