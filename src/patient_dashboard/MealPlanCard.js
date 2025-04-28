@@ -144,6 +144,7 @@ const handleCloseModal = () => setOpenModal(false);
 </Box>
 
 <Box position="relative" display="inline-flex">
+ 
   <IconButton onClick={handleExpandClick}>
     <ChatBubbleOutline />
   </IconButton>
@@ -224,6 +225,14 @@ const handleCloseModal = () => setOpenModal(false);
         </Typography>
         <Box display="flex" alignItems="center" gap={1}>
         <Box position="relative" display="inline-flex">
+        <IconButton onClick={handleAddToMealPlan}
+  sx={{
+    backgroundColor: added ? 'lightgrey' : 'transparent', // 👈
+  
+  }}
+>
+  <LibraryAddOutlinedIcon color={'action'} />
+          </IconButton>     
   <IconButton onClick={handleLike}>
     {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
   </IconButton>
