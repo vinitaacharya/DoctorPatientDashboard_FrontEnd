@@ -1533,7 +1533,7 @@ const [currentIndex, setCurrentIndex] = useState(0);
                         <strong>Date:</strong> {new Date(pastAppointments[0].appointment_datetime).toLocaleString()}
                       </Typography>
                       <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
-                        <strong>Prescription:</strong> endpoint tbd
+                        <strong>Prescription:</strong>
                       </Typography>
                       <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
                         <strong>Status:</strong>
@@ -1559,7 +1559,7 @@ const [currentIndex, setCurrentIndex] = useState(0);
 
                       </Typography>
                       <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
-                        <strong>Pickup Location:</strong> endpoint tbd
+                        <strong>Pickup Location:</strong> {pharmacyInfo}
                       </Typography>
                       <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
                         <strong>Diet:</strong> {pastAppointments[0].meal_prescribed || "N/A"}
