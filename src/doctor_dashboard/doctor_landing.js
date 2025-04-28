@@ -26,6 +26,9 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Plot from 'react-plotly.js';
 import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
+import doctor_shrug from "./doctor_shrug.png"
+import doctor_happy from "./doctor_happy.png"
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
   borderRadius: 30,
@@ -180,6 +183,8 @@ useEffect(() => {
 
 
   const [hasSurveyData, setHasSurveyData] = useState(false);
+  const [toggleStatus, setToggleStatus] = useState(false);
+
 
   // Load survey status on mount
   useEffect(() => {
@@ -493,7 +498,7 @@ const [currentIndex, setCurrentIndex] = useState(0);
             {/* item 1 */}
             <Grid item xs={7} >
               <Item sx={{ color: 'white', background: 'linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)', borderRadius: 5, p: 2 }}>
-                <Typography sx={{ fontFamily: 'Montserrat', fontSize: '3.5vh', textAlign: "left", mb: '1.1vh' }} >Health Overview</Typography>
+                <Typography sx={{ fontFamily: 'Montserrat', fontSize: '3.5vh', textAlign: "left", mb: '1.1vh' }} >Your Information</Typography>
                 <Paper
                   //elevation={3}
                   sx={{
@@ -524,7 +529,7 @@ const [currentIndex, setCurrentIndex] = useState(0);
                     >
 
                       <Typography variant="h5" fontSize={'2.2vh'} fontFamily={'Montserrat'} paddingBottom={4} >
-                        Take your daily and weekly surveys
+                        Change your personal information
                       </Typography>
                       <Box
                         component="img"
@@ -540,11 +545,10 @@ const [currentIndex, setCurrentIndex] = useState(0);
                       />
                     </Paper>
                     <Typography variant="body1" sx={{ width: '24vh', mb: '2vh', textAlign: 'left', fontFamily: 'Merriweather', fontSize: '1.4vh' }}>
-                      By taking your daily and weekly surveys DPP is able to create progress updates so you can
-                      track your fitness journey. Take your surveys now by clicking below!
+                    If you have anything you want to update for your clients, 
+                    click this button and you can fix a few details.
                     </Typography>
                     <Button
-                      onClick={openSurveysModal}
                       variant="contained"
                       sx={{
                         background: 'rgba(238, 242, 254, 0.10)',
@@ -555,353 +559,18 @@ const [currentIndex, setCurrentIndex] = useState(0);
                         boxShadow: 0,
                       }}
                     >
-                      Survey <ArrowCircleRightOutlinedIcon sx={{ ml: '1vh' }} />
+                      Edit Info <ArrowCircleRightOutlinedIcon sx={{ ml: '1vh' }} />
                     </Button>
 
                     {/* Survey options*/}
 
-      <Modal
-      
-        open={openSurvey}
-        onClose={closeSurveysModal}
-        //aria-labelledby="modal-modal-title"
-        //aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-           {/* Close Icon */}
-    <IconButton 
-      onClick={closeSurveysModal}
-      sx={{
-        position: 'absolute',
-        top: 8,
-        right: 8,
-        color: 'grey.600', // or any color you prefer
-        zIndex: 1,
-      }}
-    >
-      <CloseIcon />
-    </IconButton>
-          <Typography  sx={{color:"black", fontSize:'4vh'}}>
-            Surveys
-          </Typography>
-          {doctorInfo && (
-            <Typography  sx={{color:"black", fontSize:'2vh'}}>
-                {doctorInfo.first_name} {doctorInfo.last_name}
-            </Typography>)}
-          
-          <Paper
-     sx={{
-      color:'white',
-      background:'transparent',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      boxShadow:0,
-      p:7,
-    }}
-     >
-          <Button 
-        onClick={openDailySurveysModal}
-        variant="contained"
-        fullWidth
-        sx={{
-          backgroundColor: '#719EC7',
-          color: 'white',
-          borderRadius: '25px',
-          fontWeight: 'bold',
-          textTransform: 'none',
-          margin:2,
-        }}
-      >
-        Daily Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4 }}  />
-      </Button>
-      <Button 
-        onClick={openWeeklySurveysModal}
-        variant="contained"
-        fullWidth
-        sx={{
-          backgroundColor: '#719EC7',
-          color: 'white',
-          borderRadius: '25px',
-          fontWeight: 'bold',
-          textTransform: 'none',
-        }}
-      >
-       Weekly Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4}}/>
-      </Button>
-      </Paper>
-        </Box>
-      </Modal>
+
     </Box>
 
 
                   {/* DailySurvey*/}
 
-    <Modal
-        open={openDailySurvey}
-        onClose={closeDailySurveysModal}
-        //aria-labelledby="modal-modal-title"
-        //aria-describedby="modal-modal-description"
-      >
-        <Box  sx={{
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: { xs: '90%', sm: '75%', md: '60%' },
-    maxWidth: 600,
-    bgcolor: '#EEF2FE',
-    boxShadow: 24,
-    borderRadius: 3,
-    p: 3,
-    maxHeight: '85vh',
-    overflowY: 'auto',
-  }}  >
-        {/* Close Icon */}
-        <IconButton 
-      onClick={closeDailySurveysModal}
-      sx={{
-        position: 'absolute',
-        top: 8,
-        right: 8,
-        color: 'grey.600', // or any color you prefer
-        zIndex: 1,
-      }}
-    >
-      <CloseIcon />
-    </IconButton>
-          <Typography  sx={{color:"black", fontSize:'4vh', paddingLeft:"1.5vh"}}>
-            Daily Survey
-          </Typography>
-          {doctorInfo && (
-          <Typography sx={{color:"black", fontSize:'2vh',paddingLeft:"1.5vh"}}>
-            {doctorInfo.first_name} {doctorInfo.last_name}
-          </Typography>
-)}
 
-
-                      <Paper
-                        sx={{
-                          background: "transparent",
-                          boxShadow: 0,
-                          p: 2,
-                        }}
-                      >
-                        <form onSubmit={handleDailySubmit} >
-                          <Typography fontSize='1.5vh' mb={1}>
-                            What is your heart rate?
-                          </Typography>
-                          <TextField
-                            fullWidth
-                            placeholder="Type here"
-                            value={heartRate}
-                            onChange={(e) => setHeartRate(e.target.value)}
-                            sx={{ mb: 2 }}
-                            size="small"
-
-                          />
-
-                          <Typography fontSize='1.5vh' mb={1}>
-                            How many glasses of water did you drink?
-                          </Typography>
-                          <TextField
-                            fullWidth
-                            placeholder="Type here"
-                            value={waterIntake}
-                            onChange={(e) => setWaterIntake(e.target.value)}
-                            sx={{ mb: 2 }}
-                            size="small"
-
-                          />
-
-                          <Typography fontSize='1.5vh' mb={1}>
-                            How many minutes of exercise did you do today?
-                          </Typography>
-                          <TextField
-                            size="small"
-                            fullWidth
-                            placeholder="Type here"
-                            value={exerciseMinutes}
-                            onChange={(e) => setExerciseMinutes(e.target.value)}
-                            sx={{ mb: 2 }}
-                          />
-
-                          <Typography fontSize='1.5vh' mb={1}>
-                            Did you follow your meal plan today?
-                          </Typography>
-                          <FormControl fullWidth sx={{ mb: 2 }}>
-                            <Select
-
-                              value={mealPlanFollowed}
-                              onChange={(e) => setMealPlanFollowed(e.target.value)}
-                              displayEmpty
-                              size="small"
-
-                            >
-                              <MenuItem value="" disabled ><em style={{ color: 'gray', opacity: 0.7 }}>Dropdown option</em></MenuItem>
-                              <MenuItem value="Yes">Yes</MenuItem>
-                              <MenuItem value="No">No</MenuItem>
-                            </Select>
-                          </FormControl>
-
-                          <Typography fontSize='1.5vh' mb={1}>
-                            How do you feel today?
-                          </Typography>
-                          <FormControl fullWidth sx={{ mb: 2 }}>
-                            <Select
-                              value={mood}
-                              onChange={(e) => setMood(e.target.value)}
-                              displayEmpty
-                              size="small"
-
-          >
-            <MenuItem value="" disabled><em style={{ color: 'gray', opacity: 0.7 }}>Dropdown option</em></MenuItem>
-            <MenuItem value="Good">Good</MenuItem>
-            <MenuItem value="Okay">Okay</MenuItem>
-            <MenuItem value="Bad">Bad</MenuItem>
-          </Select>
-        </FormControl>
-    
-        <Typography fontSize= '1.5vh' mb={1}>
-          What is your calorie intake for today?
-        </Typography>
-        <TextField
-          fullWidth
-          placeholder="Type here"
-          value={calorieIntake}
-          size="small"
-          onChange={(e) => setCalorieIntake(e.target.value)}
-          sx={{ mb: 2 }}
-        />
-    
-        <Button
-          type="submit"
-          variant="contained"
-          fullWidth
-          sx={{
-            mt: 2,
-            backgroundColor: '#719EC7',
-            borderRadius: '25px',
-            fontWeight: 'bold',
-            textTransform: 'none',
-          }}
-        >
-          Submit
-        </Button>
-      </form>
-  
-
-                      </Paper>
-                    </Box>
-                  </Modal>
-
-
-    {/* WeeklySurvey*/}
-    <Modal
-  open={openWeeklySurvey}
-  onClose={closeWeeklySurveysModal}
->
-<Box
-      sx={{
-        position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: { xs: '90%', sm: '75%', md: '60%' },
-    maxWidth: 400,
-    bgcolor: '#EEF2FE',
-    boxShadow: 24,
-    borderRadius: 3,
-    p: 3,
-    maxHeight: '90vh',
-    minHeight:'45vh',
-    overflowY: 'auto',
-  }} 
-      
-      component={Paper}
-    >
-       {/* Close Icon */}
-    <IconButton 
-      onClick={closeWeeklySurveysModal}
-      sx={{
-        position: 'absolute',
-        top: 8,
-        right: 8,
-        color: 'grey.600', // or any color you prefer
-        zIndex: 1,
-      }}
-    >
-      <CloseIcon />
-    </IconButton>
-      <Typography sx={{color:"black", fontSize:'4vh'}}>
-        Weekly Survey
-      </Typography>
-      {doctorInfo && (
-        <Typography sx={{color:"black", fontSize:'2vh'}}>
-          {doctorInfo.first_name} {doctorInfo.last_name}
-        </Typography>
-      )}
-      
-
-                      <form onSubmit={handleWeeklySubmit}>
-                        <Typography fontSize='1.5vh' mb={1} paddingTop={2}>
-                          Change in Weight
-                        </Typography>
-
-                        <Box display="flex" gap={1} mb={2} >
-                          <FormControl fullWidth>
-                            <Select
-                              value={weightChange}
-                              onChange={(e) => setWeightChange(e.target.value)}
-                              displayEmpty
-                              size="small"
-                            >
-                              <MenuItem value="" disabled><em style={{ color: 'gray', opacity: 0.7 }}>Select an Item</em></MenuItem>
-                              <MenuItem value="Gain">Gain</MenuItem>
-                              <MenuItem value="Loss">Loss</MenuItem>
-                              <MenuItem value="No Change">No Change</MenuItem>
-                            </Select>
-                          </FormControl>
-
-                          <TextField
-                            placeholder="Type here"
-                            value={weightAmount}
-                            onChange={(e) => setWeightAmount(e.target.value)}
-                            fullWidth
-                            size="small"
-                          />
-                        </Box>
-
-                        <Typography fontSize='1.5vh' mb={1}>
-                          Blood Pressure
-                        </Typography>
-                        <TextField
-                          fullWidth
-                          placeholder="Type here"
-                          size="small"
-
-                          value={bloodPressure}
-                          onChange={(e) => setBloodPressure(e.target.value)}
-                        />
-
-                        <Button
-                          onClick={closeWeeklySurveysModal}
-                          type="submit"
-                          variant="contained"
-                          fullWidth
-                          sx={{
-                            mt: 3,
-                            backgroundColor: '#719EC7',
-                            borderRadius: '25px',
-                            fontWeight: 'bold',
-                            textTransform: 'none',
-                          }}
-                        >
-                          Submit
-                        </Button>
-                      </form>
-                    </Box>
-                  </Modal>
                   {/* Right Section: Chart + Arrows */}
                   <Box sx={{
                     width: '43%',
@@ -912,73 +581,53 @@ const [currentIndex, setCurrentIndex] = useState(0);
                     alignItems: 'center',
                   }}>
 
-{hasSurveyData ? (
+<Box 
+  sx={{
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    height: '100%',
+    width: '100%',
+    gap: 2, // <-- fixes spacing nicely
+    textAlign: 'center'
+  }}
+>
+  <Typography sx={{ fontFamily: 'Montserrat', fontSize: '2.4vh' }}>
+    {toggleStatus 
+      ? "Looks like you're accepting patients now!" 
+      : "Looks like you're not accepting patients at this time!"
+    }
+  </Typography>
 
-
-<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-  
-  {/* White Card */}
   <Box
+    component="img"
+    src={toggleStatus ? doctor_happy : noSurveysImg}
+    alt="Status Image"
     sx={{
-      width: '400px',
-      backgroundColor: 'white',
-      borderRadius: '20px',
-      p: 2,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      boxShadow: 3,
+      width: 'auto',
+      maxHeight: '15vh',
+      objectFit: 'contain',
+    }}
+  />
+
+  <Button
+    onClick={() => setToggleStatus(!toggleStatus)}
+    variant="contained"
+    sx={{
+      background: 'rgba(238, 242, 254, 0.10)',
+      color: 'white',
+      borderRadius: '2vh',
+      fontFamily: 'Montserrat',
+      textTransform: 'none',
+      boxShadow: 0,
+      mt: '1vh'
     }}
   >
-    <Box
-      component="img"
-      src={images[currentIndex]}
-      alt="Chart"
-      sx={{
-        width: '100%',
-        height: 'auto',
-        borderRadius: 2,
-        objectFit: 'contain',
-      }}
-    />
-  </Box>
-
-  {/* Navigation (outside the card) */}
-  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-    <IconButton size="small" onClick={handlePrev} sx={{ color: 'white' }}>
-      <ArrowCircleLeftOutlinedIcon  fontSize="large" />
-    </IconButton>
- {/* Dots */}
- <Box sx={{ display: 'flex', gap: 1 }}>
-          {images.map((_, index) => (
-            <span
-              key={index}
-              style={{
-                fontSize: '8px',
-                color: index === currentIndex ? 'blue' : 'lightgray',
-              }}
-            >
-              ●
-            </span>
-          ))}
-        </Box>
-
-        <IconButton size="small"  onClick={handleNext} sx={{ color: 'white' }}>
-          <ArrowCircleRightOutlinedIcon fontSize="large" />
-        </IconButton>
-  </Box>
-
+    Change Status <ArrowCircleRightOutlinedIcon sx={{ ml: '1vh' }} />
+  </Button>
 </Box>
 
-
-) : (
-  <>
-    <Typography sx={{ fontFamily: 'Montserrat', textAlign: 'left', fontSize: '2.4vh' }}>
-      Looks like you don’t have any data. Come back after filling out the surveys
-    </Typography>
-    <Box component="img" src={noSurveysImg} alt="Survey" />
-  </>
-)}
 
                   </Box>
 
@@ -1094,7 +743,7 @@ const [currentIndex, setCurrentIndex] = useState(0);
                     Meal Plans
                   </Typography>
                   <Typography variant="h6" gutterBottom sx={{ fontFamily: "Montserrat", color: "#FEFEFD", fontSize: '2vh', textAlign: 'left', paddingLeft: '1.5vw', fontWeight: 'normal' }}>
-                    Come up with your own plans or follow along with doctor recommendations
+                    Come up with a meal plan for your patients
                   </Typography>
                   <Box
                     component="img"
@@ -1176,7 +825,7 @@ const [currentIndex, setCurrentIndex] = useState(0);
                       },
                     }}>
                     <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '2em' }}>
-                      Doctors & Booking
+                      Patients
                     </Typography>
                     <Box>
 
@@ -1467,7 +1116,7 @@ const [currentIndex, setCurrentIndex] = useState(0);
                       ) : (<>
                       <Box>
                           <Typography sx={{ fontFamily: 'Montserrat', fontSize: '1.3em', wieght: '600px'}}>
-                            Looks like you don’t have a doctor set. Click on ‘Find a Doctor’ to request one!
+                            Looks like you don’t have any patients yet.
                           </Typography>
                         <Box sx={{
                           display: 'flex',
@@ -1504,7 +1153,7 @@ const [currentIndex, setCurrentIndex] = useState(0);
                               width: '15vw'
                             }}
                           >
-                            Find A Doctor
+                            No Patients
                           </Button>
                         </Box>
                         </Box>
@@ -1525,7 +1174,7 @@ const [currentIndex, setCurrentIndex] = useState(0);
               <Item sx={{ background: "linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)", backgroundSize: "cover", fontFamily: 'Montserrat' }}>
                 <Box sx={{ position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2 }}>
                   <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '2em' }}>
-                    Appointment Overview
+                    Requested Appointments
                   </Typography>
                   {pastAppointments.length > 0 ? (
                     <>
@@ -1580,9 +1229,22 @@ const [currentIndex, setCurrentIndex] = useState(0);
                       />
                     </>
                   ) : (
-                    <Typography sx={{ fontSize: '1.2em' }}>
-                      Book and attend an appointment to view overview.
-                    </Typography>
+                  <Box 
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    height: '100%',
+                    width: '100%',
+                    gap: 2, // <-- fixes spacing nicely
+                    textAlign: 'center'
+                  }}
+                >
+                <Typography sx={{ fontFamily: 'Montserrat', fontSize: '3vh', mt: '100px' }}>
+                  All of the appointments patients request                    
+                </Typography>
+                </Box>
                   )}
                 </Box>
               </Item>

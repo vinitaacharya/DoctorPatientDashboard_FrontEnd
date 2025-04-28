@@ -24,7 +24,7 @@ const sidebarItems = [
 
 
 
-export default function Patient_Navbar() {
+export default function Doctor_Navbar() {
   const navigate = useNavigate();
   //direct to designated page
   const handleClick = (index) => {
@@ -34,20 +34,20 @@ export default function Patient_Navbar() {
       navigate("/landing");
     }
     if (index === 2) {
-      navigate("/patient_dashboard/patient_landing");
+      navigate("/doctor_dashboard/doctor_landing");
 
     }
     if (index === 3) {
       navigate("/community_homepage");
     }
     if (index === 4) {
-      navigate("/patient_medicalchart/patient_medicalchart")
+      navigate("/doctor_medicalchart/doctor_medicalchart")
     }
     if (index === 5) {
-      navigate("/patient_dashboard/patient_billing");
+      navigate("/doctor_dashboard/doctor_billing");
     }
     if (index === 6) {
-      navigate("/patient_dashboard/profile");
+      navigate("/doctor_dashboard/profile");
     }
   };
   return (
