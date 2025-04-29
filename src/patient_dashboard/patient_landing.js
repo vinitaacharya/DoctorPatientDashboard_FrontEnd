@@ -123,6 +123,19 @@ useEffect(() => {
   const [selectedApptId, setSelectedApptId] = useState(null);
   const [prescriptions, setPrescriptions] = useState([]);
 
+  const fetchPrescriptions = async (apptId) => {
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/patient/${apptId}/prescriptions`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch prescriptions");
+      }
+      const prescriptionsData = await res.json();
+      setPrescriptions(prescriptionsData);
+    } catch (error) {
+      console.error("Error fetching prescriptions:", error);
+    }
+  };
+
   useEffect(() => {
     console.log("useEffect ran");
     const fetchAppointments = async () => {
@@ -150,19 +163,6 @@ useEffect(() => {
         console.error("Error fetching appointments:", error);
       } finally {
         setLoading(false);
-      }
-    };
-
-    const fetchPrescriptions = async (apptId) => {
-      try {
-        const res = await fetch(`http://127.0.0.1:5000/patient/${apptId}/prescriptions`);
-        if (!res.ok) {
-          throw new Error("Failed to fetch prescriptions");
-        }
-        const prescriptionsData = await res.json();
-        setPrescriptions(prescriptionsData);
-      } catch (error) {
-        console.error("Error fetching prescriptions:", error);
       }
     };
 
@@ -495,6 +495,31 @@ const images = [
   mealImg,
   tempWeightImg,
 ];
+const handlePickup = async (prescriptionId) => {
+  try {
+    const res = await fetch('http://localhost:5000/prescription/pickup', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prescription_id: prescriptionId }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to update pickup status");
+    }
+
+    const result = await res.json();
+    console.log(result.message);
+
+    // Re-fetch prescriptions to update the UI
+    await fetchPrescriptions(selectedApptId);
+  } catch (error) {
+    console.error("Pickup error:", error);
+  }
+  
+};
+
 
 const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -1558,33 +1583,49 @@ const [currentIndex, setCurrentIndex] = useState(0);
                         <strong>Date:</strong> {new Date(pastAppointments[0].appointment_datetime).toLocaleString()}
                       </Typography>
                       {prescriptions.map((prescription, index) => (
-                        <Typography key={index} sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
-                          <strong>Prescription:</strong> {prescription.medicine_name}
-                        </Typography>
-                      ))}
-                      <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
-                        <strong>Status:</strong>
-                        <Button
-                          size="small"
-                          variant="contained"
-                          sx={{
-                            ml: 1,
-                            backgroundColor: '#5889BD',
-                            color: '#fff',
-                            textTransform: 'none',
-                            borderRadius: '16px',
-                            fontSize: '0.75rem',
-                            padding: '2px 12px',
-                            fontFamily: 'Montserrat',
-                            '&:hover': {
-                              backgroundColor: '#6c97c8',
-                            },
-                          }}
-                        >
-                          Picked up
-                        </Button>
+                        <Box key={index} sx={{ mb: 2 }}>
+                          <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                            <strong>Prescription:</strong> {prescription.medicine_name}
+                          </Typography>
 
-                      </Typography>
+                          <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                            <strong>Status:</strong>{' '}
+                            {!prescription.filled ? (
+                              // Pending, not filled yet
+                              <span>Pending</span>
+                            ) : prescription.picked_up ? (
+                              // Filled and picked up
+                              <span>Picked up</span>
+                            ) : (
+                              // Filled but not picked up
+                              <>
+                                Ready
+                                <Button
+                                  size="small"
+                                  variant="contained"
+                                  sx={{
+                                    ml: 1,
+                                    backgroundColor: '#5889BD',
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    borderRadius: '16px',
+                                    fontSize: '0.75rem',
+                                    padding: '2px 12px',
+                                    fontFamily: 'Montserrat',
+                                    '&:hover': {
+                                      backgroundColor: '#6c97c8',
+                                    },
+                                  }}
+                                  onClick={() => handlePickup(prescription.prescription_id)}
+                                >
+                                  Pick Up
+                                </Button>
+                              </>
+                            )}
+                          </Typography>
+                        </Box>
+                      ))}
+
                       <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
                         <strong>Pickup Location:</strong> {pharmacyInfo}
                       </Typography>
