@@ -8,6 +8,8 @@ import MealCard from "./MealPlanCard"; // Make sure MealCard is exported from me
 import food1 from "./reciepe photo.png"; // Or replace with relevant image
 import profileBackground from "./profile_assets/profile_background.png"
 import ProfileImg from "./profile_assets/profilePageImg.png"
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 const posts = [
   {
@@ -37,6 +39,11 @@ const handleCloseCreatePost = () => setOpenCreatePost(false);
 const [uploadedFileName, setUploadedFileName] = React.useState('');
 
 const [patientInfo, setPatientInfo] = useState(null);
+
+const [changeTab, setChangeTab] = React.useState(0);
+const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  setChangeTab(newValue);
+};
 
 useEffect(() => {
   const fetchPatientInfo = async () => {
@@ -92,17 +99,14 @@ useEffect(() => {
             </Typography>)}           
           </Box>
         </Box>
-        <Box sx={{backgroundColor:'#EEF2FE'}}>
+        <Box sx={{backgroundColor:'#EEF2FE', minHeight:'70vh'}}>
         {/* Tab Icons */}
-        <Box display="flex" justifyContent="center" gap={4} mb={4} pt={4}>
-          <IconButton sx={{ backgroundColor: '#fff', borderRadius: '12px' }}>
-            <GridOnIcon />
-          </IconButton>
-          <IconButton>
-            <FavoriteBorderIcon />
-          </IconButton>
-        </Box>
-
+        <Tabs value={changeTab} onChange={handleChange} aria-label="icon tabs example" centered>
+      <Tab icon={<GridOnIcon />} aria-label="grid" />
+      <Tab icon={<FavoriteBorderIcon />} aria-label="favorite" />
+    </Tabs>
+    {changeTab === 0 && (
+      <>
         {/* Posts Grid */}
         <Grid container spacing={3}>
           {posts.map((post, index) => (
@@ -237,7 +241,32 @@ useEffect(() => {
   </Box>
 </Modal>
 
-        </Grid>
+        </Grid></>
+      )}
+{changeTab === 1 && (
+  <Grid container spacing={3} justifyContent="center" alignItems="center" sx={{ minHeight: '50vh' }}>
+    <Grid item xs={12} textAlign="center">
+      <Box
+        sx={{
+          backgroundColor: '#F5F7FF',
+          border: '2px dashed #A0B9DA',
+          borderRadius: '15px',
+          padding: '5vh',
+          display: 'inline-block',
+        }}
+      >
+        <FavoriteBorderIcon sx={{ fontSize: 60, color: '#A0B9DA', mb: 2 }} />
+        <Typography variant="h5" sx={{ color: '#5E4B8B', fontFamily: 'Montserrat', fontWeight: 'bold' }}>
+          No Liked Posts Yet
+        </Typography>
+        <Typography sx={{ color: '#7A7A7A', mt: 1, fontFamily: 'Montserrat' }}>
+          Start exploring and like some posts!
+        </Typography>
+      </Box>
+    </Grid>
+  </Grid>
+)}
+
       </Box>
     </Box>
     </Box>
