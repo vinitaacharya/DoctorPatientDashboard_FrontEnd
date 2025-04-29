@@ -113,7 +113,7 @@ function Patient_Billing() {
       totalPrescriptionCharge:"$50",
       charge: "$50",
       credit: "$0",
-      currentBill: "$50",
+      currentBill: "$100",
     },
     {
       
@@ -124,7 +124,7 @@ function Patient_Billing() {
       totalPrescriptionCharge:"$150",
       charge: "$50",
       credit: "$0",
-      currentBill: "$200",
+      currentBill: "$300",
     },
   ]);
 
