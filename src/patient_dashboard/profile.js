@@ -13,21 +13,28 @@ import Tab from '@mui/material/Tab';
 
 const posts = [
   {
-    author:'Vinita Acharya',
-    title: "Cauliflower Fried Rice",
-    tags: ["#Keto"],
-    description: "Fried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less rice...Fried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less rice",
+    author: 'Vinita Acharya',
+    title: 'Cauliflower Fried Rice',
+    tags: ['#Keto'],
+    description: 'Fried rice is a classic...',
     image: food1,
-    comments:['hi', 'vinitaaa'],
+    comments: [
+      { firstName: 'Vinita', lastName: 'Acharya', text: 'hi' },
+      { firstName: 'Vinita', lastName: 'Acharya', text: 'vinitaaa' }
+    ],
   },
   {
-    author:'Doctor Joe',
-    title: "Marry Me Tofu",
-    tags: ["#Keto"," #Vegan"],
-    description: "Because tofu is so versatile, why not give this plant-based protein a romantic spin...",
+    author: 'Vinita Acharya',
+    title: 'Marry Me Tofu',
+    tags: ['#Keto', '#Vegan'],
+    description: 'Tofu is versatile...',
     image: food1,
+    comments: [
+      { firstName: 'Joe', lastName: 'Smith', text: 'love this!' }
+    ],
   },
 ];
+
 
 const Profile = () => {
   const [openCreatePost, setOpenCreatePost] = React.useState(false);
@@ -109,12 +116,18 @@ useEffect(() => {
       <>
         {/* Posts Grid */}
         <Grid container spacing={3}>
-          {posts.map((post, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <MealCard meal={post}/>
-        
-            </Grid>
-          ))}
+        {patientInfo && posts.map((post, index) => (
+  <Grid item xs={12} sm={6} md={4} key={index}>
+    <MealCard
+      meal={post}
+      patientInfo={{
+        firstName: patientInfo.first_name,
+        lastName: patientInfo.last_name,
+      }}
+    />
+  </Grid>
+))}
+
           {/* Add New Post Card */}
           <Grid item xs={12} sm={6} md={4}>
             <Box

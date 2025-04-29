@@ -15,8 +15,8 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 
 
-export default function MealPlanCard({ meal }) {
-
+export default function MealPlanCard({ meal, patientInfo}) {
+  
   const {
     image = '',
     title = 'Untitled',
@@ -24,8 +24,11 @@ export default function MealPlanCard({ meal }) {
     description = 'No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description',
     author = 'Unknown',
     likes: initialLikes = 0,
-    comments:initialcomments = ['hi', 'hello'],
-    fullRecipe = '',
+    comments: initialcomments = [
+      { firstName: 'John', lastName: 'Doe', text: 'hi' },
+      { firstName: 'Jane', lastName: 'Smith', text: 'hello' },
+    ],
+        fullRecipe = '',
     user = {},
     ingredients = [],
     directions = [],
@@ -33,21 +36,29 @@ export default function MealPlanCard({ meal }) {
 
   //const [expanded, setExpanded] = useState(false);
   //const [likes, setLikes] = useState(meal.likes);
-  const [comments, setComments] = useState(initialcomments);
+  const [comments, setComments] = useState(meal.comments || []);
   const [newComment, setNewComment] = useState("");
   const [likes, setLikes] = useState(initialLikes);
   const [liked, setLiked] = useState(false);
   const [added, setAdded] = useState(false);
 
   const [expanded, setExpanded] = useState(false);
+
   const handleExpandClick = () => setExpanded(!expanded);
   //const handleLike = () => setLikes(likes + 1);
   const handleAddComment = () => {
-    if (newComment.trim()) {
-      setComments([...comments, newComment]);
-      setNewComment('');
-    }
+    if (newComment.trim() === "") return;
+
+    const fullName = `${patientInfo.firstName} ${patientInfo.lastName}`;
+    const updatedComments = [
+      ...comments,
+      { firstName: patientInfo.firstName, lastName: patientInfo.lastName, text: newComment }
+    ];
+    setComments(updatedComments);
+    setNewComment("");
   };
+  
+  
   const handleLike = () => {
     if (liked) {
       setLikes(likes - 1);
@@ -70,7 +81,6 @@ const [openModal, setOpenModal] = useState(false);
 const handleOpenModal = () => setOpenModal(true);
 const handleCloseModal = () => setOpenModal(false);
 
-
   return (
     <>
     <Card sx={{ maxWidth: '43vh', height:'55vh', mx:4, my:2 }}>
@@ -91,6 +101,7 @@ const handleCloseModal = () => setOpenModal(false);
   sx={{
     flexGrow:1,
     maxHeight: '7vh',
+    minHeight:'7vh',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     display: '-webkit-box',
@@ -103,7 +114,7 @@ const handleCloseModal = () => setOpenModal(false);
   {description}
 </Typography>
 
-<Box mt={3} display="flex" alignItems="center" gap={1}>
+<Box flexGrow={1} mt={3} display="flex" alignItems="center" gap={1}>
         {<Avatar sx={{height:'3vh', width:'3vh'}} src={user.avatar} />}
         
           <Typography
@@ -129,7 +140,7 @@ const handleCloseModal = () => setOpenModal(false);
     <Typography
       variant="caption"
       sx={{
-        position: 'absolute',
+         position: 'absolute',
         top: 2,
         right: 2,
         fontSize: '0.7rem',
@@ -289,19 +300,24 @@ const handleCloseModal = () => setOpenModal(false);
           gap: 1,
         }}
       >
-        {comments.map((comment, index) => (
-          <Box
-            key={index}
-            sx={{
-              backgroundColor: '#f5f5f5',
-              p: 1,
-              borderRadius: 2,
-              fontSize: '0.9em',
-            }}
-          >
-            {comment}
-          </Box>
-        ))}
+{comments.map((comment, index) => (
+  <Box
+    key={index}
+    sx={{
+      backgroundColor: '#f5f5f5',
+      p: 1,
+      borderRadius: 2,
+      fontSize: '0.9em',
+      display:'flex',
+    }}
+  >
+    <Typography  sx={{ fontWeight: 'bold', pr:'1vh' }}>
+      {comment.firstName} {comment.lastName}
+    </Typography>
+    <Typography >{comment.text}</Typography>
+  </Box>
+))}
+
       </Box>
 
       {/* Input */}
