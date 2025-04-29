@@ -119,8 +119,12 @@ useEffect(() => {
   const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const patientId = localStorage.getItem("patientId");
+  const [overview, setOverview] = useState([]);
+  const [selectedApptId, setSelectedApptId] = useState(null);
+  const [prescriptions, setPrescriptions] = useState([]);
 
   useEffect(() => {
+    console.log("useEffect ran");
     const fetchAppointments = async () => {
       try {
         const upcomingRes = await fetch(`http://127.0.0.1:5000/appointmentsupcoming/${patientId}`);
@@ -135,6 +139,13 @@ useEffect(() => {
 
         setUpcomingAppointments(upcomingData);
         setPastAppointments(pastData);
+        
+        if (pastData && pastData.length > 0) {
+          const apptId = pastData[0].patient_appt_id;
+          setSelectedApptId(apptId);
+          // Fetch prescriptions for this appointment
+          await fetchPrescriptions(apptId);
+        }
       } catch (error) {
         console.error("Error fetching appointments:", error);
       } finally {
@@ -142,9 +153,23 @@ useEffect(() => {
       }
     };
 
+    const fetchPrescriptions = async (apptId) => {
+      try {
+        const res = await fetch(`http://127.0.0.1:5000/patient/${apptId}/prescriptions`);
+        if (!res.ok) {
+          throw new Error("Failed to fetch prescriptions");
+        }
+        const prescriptionsData = await res.json();
+        setPrescriptions(prescriptionsData);
+      } catch (error) {
+        console.error("Error fetching prescriptions:", error);
+      }
+    };
+
     fetchAppointments();
   }, [patientId]);
 
+  
   //console.log("Patient ID:", patientId);
 
   //surveys modal
@@ -1532,9 +1557,11 @@ const [currentIndex, setCurrentIndex] = useState(0);
                       <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
                         <strong>Date:</strong> {new Date(pastAppointments[0].appointment_datetime).toLocaleString()}
                       </Typography>
-                      <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
-                        <strong>Prescription:</strong>
-                      </Typography>
+                      {prescriptions.map((prescription, index) => (
+                        <Typography key={index} sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                          <strong>Prescription:</strong> {prescription.medicine_name}
+                        </Typography>
+                      ))}
                       <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
                         <strong>Status:</strong>
                         <Button
