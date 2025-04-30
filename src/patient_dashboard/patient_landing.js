@@ -307,6 +307,53 @@ const handleDailySubmit = async (e) => {
     }
   };
 
+//Disable Survey
+const [dailySubmitted, setDailySubmitted] = useState(false);
+const [weeklySubmitted, setWeeklySubmitted] = useState(false);
+useEffect(() => {
+  const checkSurveyStatus = async () => {
+    const patientId = localStorage.getItem("patient_id");
+    const todayDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    const currentWeek = getWeekNumber(new Date());
+
+    try {
+      // Fetch daily surveys
+      const dailyRes = await fetch(`/daily-surveys/${patientId}`);
+      const dailyData = await dailyRes.json();
+
+      const hasDailyToday = dailyData.some(survey => {
+        return survey.date.startsWith(todayDate);
+      });
+
+      setDailySubmitted(hasDailyToday);
+
+      // Fetch weekly surveys
+      const weeklyRes = await fetch(`/weekly-surveys/${patientId}`);
+      const weeklyData = await weeklyRes.json();
+
+      const hasWeeklyThisWeek = weeklyData.some(survey => {
+        const surveyWeek = getWeekNumber(new Date(survey.week_start));
+        return surveyWeek === currentWeek;
+      });
+
+      setWeeklySubmitted(hasWeeklyThisWeek);
+
+    } catch (error) {
+      console.error("Error fetching surveys:", error);
+    }
+  };
+
+  checkSurveyStatus();
+}, []);
+function getWeekNumber(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
+
 
   //Learn More Modal
   const [openLearnMore, setOpenLearnMore] = useState(false);
@@ -654,6 +701,8 @@ const [currentIndex, setCurrentIndex] = useState(0);
         onClick={openDailySurveysModal}
         variant="contained"
         fullWidth
+        disabled={dailySubmitted}
+
         sx={{
           backgroundColor: '#719EC7',
           color: 'white',
@@ -665,10 +714,16 @@ const [currentIndex, setCurrentIndex] = useState(0);
       >
         Daily Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4 }}  />
       </Button>
+      {dailySubmitted && (
+        <Typography variant="body2" color="gray" sx={{ mb: 2 }}>
+          You've already submitted today's survey.
+        </Typography>
+      )}
       <Button 
         onClick={openWeeklySurveysModal}
         variant="contained"
         fullWidth
+        disabled={weeklySubmitted}
         sx={{
           backgroundColor: '#719EC7',
           color: 'white',
@@ -679,6 +734,11 @@ const [currentIndex, setCurrentIndex] = useState(0);
       >
        Weekly Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4}}/>
       </Button>
+      {weeklySubmitted && (
+        <Typography variant="body2" color="gray">
+          You've already submitted this week's survey.
+        </Typography>
+      )}
       </Paper>
         </Box>
       </Modal>
