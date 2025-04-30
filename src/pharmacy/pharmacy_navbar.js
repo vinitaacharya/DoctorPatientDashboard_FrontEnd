@@ -30,11 +30,11 @@ export default function Pharmacy_Nav() {
 
     }
     if (index === 2) {
-      //
+      navigate("/pharmacy/pharmacy_pickup");
 
     }
     if (index === 3) {
-      //
+      navigate("/pharmacy/pharmacy_landing");
     }
   };
   return (
