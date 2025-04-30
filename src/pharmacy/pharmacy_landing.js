@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 import { Typography } from "@mui/material";
 import backImg from "./assets/purpback.png"
+import {TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from "@mui/material";
 
 const sectionStyle = {
     padding: "20px",
@@ -25,6 +26,49 @@ const gradientCardStyle = {
 };
 
 function Pharmacy_Landing() {
+    const [pharmacyInfo, setPharmacyInfo] = useState(null);
+    const [pharmacyStock, setPharmacyStock] = useState([]);
+
+    useEffect(() => {
+        const fetchPharmacyInfo = async () => {
+            const id = localStorage.getItem("pharmacyId");
+            if (!id) {
+                console.warn("No pharmacy ID in localStorage");
+                return;
+            }
+
+            try {
+                const res = await fetch(`http://localhost:5000/pharmacy/${id}`);
+                if (!res.ok) {
+                    throw new Error("Failed to fetch patient info");
+                }
+
+                const data = await res.json();
+                setPharmacyInfo(data);
+                console.log("Pharmacy info:", data);
+                    
+                fetch(`/stock/${id}`)
+                    .then(res => res.json())
+                    .then(data => {
+                    if (!data.error) {
+                        setPharmacyStock(data);
+                    } else {
+                        setPharmacyStock([]);
+                    }
+                    })
+                    .catch(err => {
+                    console.error("Error fetching pharmacy stock:", err);
+                    setPharmacyStock([]);
+                });
+            } catch (error) {
+                console.error("Error fetching pharmacy info:", error);
+            }
+        };
+
+        fetchPharmacyInfo();
+    }, []);
+
+
     return (
         <div style={{ display: "flex", height: "100vh" }}>
             <Pharmacy_Navbar />
@@ -46,7 +90,26 @@ function Pharmacy_Landing() {
                                 <Typography variant="h6" sx={{ marginBottom: 2, fontFamily: 'Montserrat', textAlign: 'center', margin: 'auto', fontSize: '1.8em' }}>
                                     Pharmacy Inventory
                                 </Typography>
-                                <Typography variant="body1">[Inventory Table]</Typography>
+                                <Box className="custom-scroll" sx={{ width: 'fit-content', textAlign: 'center', margin: 'auto', height: '35vh', overflowY: 'auto' }}>
+                                    <TableContainer>
+                                        <Table>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell sx={{ fontFamily: 'Montserrat', borderBottom: '3px' }}><strong>Medication Name</strong></TableCell>
+                                                    <TableCell sx={{ fontFamily: 'Montserrat', borderBottom: '3px' }}><strong>Quantity</strong></TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {pharmacyStock.map(item => (
+                                                    <TableRow key={item.medicine_id}>
+                                                        <TableCell sx={{ fontFamily: 'Merriweather', borderBottom: '3px' }}>{item.medicine_name}</TableCell>
+                                                        <TableCell sx={{ fontFamily: 'Merriweather', borderBottom: '3px' }}>{item.stock_count}</TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </Box>
                             </Paper>
                         </Grid>
                         <Grid item xs={12} md={8}>
