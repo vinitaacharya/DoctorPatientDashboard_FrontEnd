@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -10,16 +10,39 @@ import {
   CardMedia,
   Avatar,
   IconButton,
-  Grid
+  Grid,
+  Divider
 } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import Divider from '@mui/material/Divider';
-import NavBar from './patient_dashboard/patient_navbar'; // Assuming you already have this
-import CommunityImg from './community_homepage_img.png'
+
+import PatientNavbar from './patient_dashboard/patient_navbar';
+import DoctorNavbar from './doctor_dashboard/doctor_navbar';
+import CommunityImg from './community_homepage_img.png';
 
 export default function CommunityForum() {
+  const [isDoctor, setIsDoctor] = useState(true); // 👈 clearer flag
+
+  useEffect(() => {
+    console.log("localStorage snapshot:", { 
+      doctorId: localStorage.getItem("doctorId"), 
+      patientId: localStorage.getItem("patientId") 
+    });
+    
+    const patientId = localStorage.getItem("patientId");
+    console.log("tets",patientId)
+    const doctorId = localStorage.getItem("doctorId");
+    console.log("docs",doctorId)
+
+    if (doctorId && doctorId !== 'undefined') {
+      console.log('in here')
+      setIsDoctor(true);  // 👈 doctor is logged in
+    } else {
+      setIsDoctor(false); // 👈 patient is logged in
+    }
+  }, []);
+
   const posts = [
     {
       title: 'Cauliflower Fried Rice',
@@ -43,8 +66,8 @@ export default function CommunityForum() {
 
   return (
     
-    <Box sx={{  }}>
-      <NavBar />
+    <Box >
+       {isDoctor ? <DoctorNavbar /> : <PatientNavbar />}
 
       <Box sx={{  p: 4 ,p: 3, display: 'flex', backgroundColor: '#e6eeff', borderRadius: '3vh', m: '3vh', minHeight: '100vh',ml:'15vh' }}>
         {/* Header */}

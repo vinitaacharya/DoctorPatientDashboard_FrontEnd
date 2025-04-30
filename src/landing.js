@@ -71,6 +71,8 @@ function Landing() {
           // Save patient ID (and optionally, email or token)
           console.log("Patient ID returned from backend:", data.patient_id); // ✅ debug line
           localStorage.setItem("patientId", data.patient_id);
+          localStorage.removeItem("doctorId");
+
           // Redirect to dashboard
           navigate("/patient_dashboard/patient_landing");
         } else {
@@ -95,7 +97,8 @@ function Landing() {
         if (response.ok) {
           // Save patient ID (and optionally, email or token)
           console.log("Doctor ID returned from backend:", data.doctor_id); // ✅ debug line
-          localStorage.setItem("doctorId", data.patient_id);
+          localStorage.setItem("doctorId", data.doctor_id);
+          localStorage.removeItem("patientId");
           // Redirect to dashboard
           navigate("/doctor_dashboard/doctor_landing");
         } else {
