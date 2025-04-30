@@ -47,6 +47,10 @@ function Landing() {
     const handleOpenDoctorLogin = () => setOpenDoctorLogin(true);
     const handleCloseDoctorLogin = () => setOpenDoctorLogin(false);
 
+    const [openPharmacyLogin, setOpenPharmacyLogin] = React.useState(false);
+    const handleOpenPharmacyLogin = () => setOpenPharmacyLogin(true);
+    const handleClosePharmacyLogin = () => setOpenPharmacyLogin(false);
+
       const [values, setValues] = useState({
         email: '',
         password: ''
@@ -103,6 +107,31 @@ function Landing() {
       }
     };
 
+    const handleLogin3 = async (email, password) => {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/login-pharmacy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+    
+        const data = await response.json();
+    
+        if (response.ok) {
+          // Save patient ID (and optionally, email or token)
+          console.log("Doctor ID returned from backend:", data.doctor_id); // ✅ debug line
+          localStorage.setItem("pharmacyId", data.pharmacy_id);
+          // Redirect to dashboard
+          navigate("/pharmacy/pharmacy_landing");
+        } else {
+          alert(data.error || "Login failed");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        alert("An error occurred. Please try again.");
+      }
+    };
+
 
   return (
     <div className="Landing">
@@ -124,7 +153,7 @@ function Landing() {
                   {/*opens first popup asking if youre a doctor/patient*/}
                   <Box sx={style}>
                     <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
-                      Are you a patient or a doctor?
+                      Are you a patient or a doctor? Or logging into a pharmacy?
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
 
@@ -188,7 +217,7 @@ function Landing() {
                                     </div>
                                     <div className='labels'>
                                         <label className = 'def-label' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Password: </label>
-                                        <input type='text'
+                                        <input type='password'
                                         name='password'
                                         className="form-control" 
                                         placeholder='Enter Password'
@@ -196,6 +225,42 @@ function Landing() {
                                         onChange={e => setValues({...values, password: e.target.value})}/>
                                     </div>
                                     <button className="patientlogin btn-info" onClick={() => handleLogin2(values.email, values.password)}>
+                                            Login
+                                    </button>
+                            </Box>
+                          </Modal>
+                          
+                          {/*Selecting pharmacy*/} 
+                          <Button className="patientlgn btn-info" onClick={handleOpenPharmacyLogin}> Pharmacy </Button>
+                          <Modal
+                            open={openPharmacyLogin}
+                            onClose={handleClosePharmacyLogin}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                          >
+                            <Box sx={style}>
+                              <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
+                                Pharmacy Login
+                              </Typography>
+                                    <div className='labels'>
+                                        <label className = 'def-label' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Email: </label>
+                                        <input type='text'
+                                        name='email'
+                                        className="form-control" 
+                                        placeholder='Enter Email'
+                                        value={values.email}
+                                        onChange={e => setValues({...values, email: e.target.value})}/>
+                                    </div>
+                                    <div className='labels'>
+                                        <label className = 'def-label' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Password: </label>
+                                        <input type='password'
+                                        name='password'
+                                        className="form-control" 
+                                        placeholder='Enter Password'
+                                        value={values.password}
+                                        onChange={e => setValues({...values, password: e.target.value})}/>
+                                    </div>
+                                    <button className="patientlogin btn-info" style={{background: 'teal'}} onClick={() => handleLogin3(values.email, values.password)}>
                                             Login
                                     </button>
                             </Box>
