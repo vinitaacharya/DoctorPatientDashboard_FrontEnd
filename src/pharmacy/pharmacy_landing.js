@@ -1,50 +1,78 @@
-import React, { useState, useEffect, useRef } from "react"; 
-import Pharmacy_Navbar from "./pharmacy_navbar"; 
+import React, { useState, useEffect, useRef } from "react";
+import Pharmacy_Navbar from "./pharmacy_navbar";
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 import { Typography } from "@mui/material";
+import backImg from "./assets/purpback.png"
 
-
-const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: '#fff',
-    borderRadius:30,
-    height:'47vh',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    //padding: theme.spacing(2),
-    color: (theme.vars ?? theme).palette.text.secondary,
-    ...theme.applyStyles('dark', {
-        backgroundColor: '#1A2027',
-    }),
-}));
-
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: '#EEF2FE',
-    boxShadow: 24,
-    borderRadius: 3,
-    p: 4,
-};
-
-function Pharmacy_Landing() {
+const sectionStyle = {
+    padding: "20px",
+    borderRadius: "30px",
+    backgroundColor: "#EEF2FE",
+    height: "100%",
+    
+  };
+  
+  const gradientCardStyle = {
+    ...sectionStyle,
+    backgroundImage: `url(${backImg})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    color: "#fff",
+    backdropFilter: 'blur(100px)',
+  };
+  
+  function Pharmacy_Landing() {
     return (
-        <div style={{ display: "flex" }}>
-            <Pharmacy_Navbar />
-            <div style={{ marginLeft: "3px", flexGrow: 1, padding: "20px" }}>
-                <Box sx={{ flexGrow: 1, p: 3, backgroundColor: "#EEF2FE", height: "90vh", marginTop: "5vh", paddingTop: "0px", paddingLeft: 0, paddingRight:0, borderTopLeftRadius: 30, borderTopRightRadius: 30, borderBottomLeftRadius: 30, borderBottomRightRadius: 30, width: "85vw", margin: 'auto'}}>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#FFF', fontFamily: "Montserrat", width: "100%", backgroundColor:"#5889BD", borderTopLeftRadius: 30, borderTopRightRadius: 30, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, paddingBottom: '1vh', paddingTop: '1vh'}}>
-                    Stock Inventory
-                </Typography>
-                </Box>
-            </div>
-        </div>
-    )
-}
-export default Pharmacy_Landing;
+      <div style={{ display: "flex", height: "100vh" }}>
+        <Pharmacy_Navbar />
+  
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh", // <-- ensures full height
+            padding: 3,
+            gap: 3,
+          }}
+        >
+          <Box sx={{ flex: "0 0 45%" }}>
+            <Grid container spacing={3} sx={{ height: "100%" }}>
+              <Grid item xs={12} md={4}>
+                <Paper style={sectionStyle}>
+                  <Typography variant="h6" sx={{ marginBottom: 2, fontFamily: 'Montserrat', textAlign: 'center', margin: 'auto', fontSize: '1.8em'}}>
+                    Pharmacy Inventory
+                  </Typography>
+                  <Typography variant="body1">[Inventory Table]</Typography>
+                </Paper>
+              </Grid>
+              <Grid item xs={12} md={8}>
+                <Paper style={gradientCardStyle}>
+                  <Typography variant="h6" sx={{marginBottom: 2, fontFamily: 'Montserrat', textAlign: 'center', margin: 'auto', fontSize: '1.8em'}}>
+                    Medication Requests
+                  </Typography>
+                  <Typography variant="body1">[Medication Requests]</Typography>
+                </Paper>
+              </Grid>
+            </Grid>
+          </Box>
+  
+          <Box sx={{ flex: "0 0 50%"}}>
+            <Paper style={{ ...sectionStyle, height: "100%", background: 'linear-gradient(109.86deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)', color: 'white'}}>
+              <Typography variant="h6" sx={{  marginBottom: 2, fontFamily: 'Montserrat', fontSize: '1.8em'}}>
+                Description
+              </Typography>
+              <Typography variant="body1">[Description Table]</Typography>
+            </Paper>
+          </Box>
+  
+          <Box sx={{ flex: "1 1 auto" }} />
+        </Box>
+      </div>
+    );
+  }
+  
+  export default Pharmacy_Landing;
