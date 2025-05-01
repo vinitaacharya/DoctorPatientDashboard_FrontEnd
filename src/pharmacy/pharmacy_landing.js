@@ -151,13 +151,14 @@ function Pharmacy_Landing() {
     };
 
     useEffect(() => {
+        if (!pharmacyInfo) return;
+    
         const fetchRequests = async () => {
-            if (!pharmacyInfo) return;
             try {
                 const response = await fetch(`http://localhost:5000/unfilled_prescriptions/${pharmacyInfo.pharmacy_id}`);
                 if (response.ok) {
                     const data = await response.json();
-                    setRequests(data); // Set the requests data from the API
+                    setRequests(data);
                 } else {
                     const errorData = await response.json();
                     alert(`Error fetching requests: ${errorData.error}`);
@@ -167,8 +168,16 @@ function Pharmacy_Landing() {
             }
         };
     
-        fetchRequests(); // Fetch requests when the component mounts
-    }, [pharmacyInfo]); 
+        // Fetch immediately on load
+        fetchRequests();
+    
+        // Set up interval for periodic refresh
+        const intervalId = setInterval(fetchRequests, 10000); // Refresh every 10 seconds
+    
+        // Clear interval on component unmount
+        return () => clearInterval(intervalId);
+    }, [pharmacyInfo]);
+    
     
 
 
