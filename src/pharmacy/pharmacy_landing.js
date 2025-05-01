@@ -25,25 +25,6 @@ const gradientCardStyle = {
     backdropFilter: 'blur(100px)',
 };
 
-const mockRequests = [
-    {
-        prescription_id: 1,
-        doctor_name: "Dr. Hillary Geller",
-        patient_name: "Lilly Anne",
-        medication: "Phentermine",
-        quantity: 30,
-        filled: false,
-    },
-    {
-        prescription_id: 2,
-        doctor_name: "Dr. Spencer Reid",
-        patient_name: "Jon Brown",
-        medication: "Phentermine",
-        quantity: 30,
-        filled: false,
-    },
-];
-
 const mockDescriptions = [
     {
         name: "Phentermine (Adipex-P, Lomaira)",
@@ -126,11 +107,7 @@ function Pharmacy_Landing() {
 
 
     const [requests, setRequests] = useState([]);
-
-    useEffect(() => {
-        // Replace this with RabbitMQ-sourced data in the future
-        setRequests(mockRequests);
-    }, []);
+    
 
     const handleFill = async (prescription_id) => {
         try {
@@ -151,14 +128,49 @@ function Pharmacy_Landing() {
                             : req
                     )
                 );
+                const response = await fetch(`http://localhost:5000/unfilled_prescriptions/${pharmacyInfo.pharmacy_id}`);
+                const data = await response.json();
+                setRequests(data);
+
+                const stockRes = await fetch(`/stock/${pharmacyInfo.pharmacy_id}`);
+                const stockData = await stockRes.json();
+                setPharmacyStock(stockData);
             } else {
-                const err = await response.json();
-                alert(`Error: ${err.error}`);
+                const errorData = await response.json();
+    
+            if (errorData.error === "Not enough stock to fill this prescription.") {
+                alert(`❌ Cannot fill prescription:\nRequired: ${errorData.required_quantity}, Available: ${errorData.available_stock}`);
+            } else {
+                alert(`⚠️ Error: ${errorData.error}`);
+            }
+            return;
             }
         } catch (error) {
             console.error("Fill error:", error);
         }
     };
+
+    useEffect(() => {
+        const fetchRequests = async () => {
+            if (!pharmacyInfo) return;
+            try {
+                const response = await fetch(`http://localhost:5000/unfilled_prescriptions/${pharmacyInfo.pharmacy_id}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setRequests(data); // Set the requests data from the API
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error fetching requests: ${errorData.error}`);
+                }
+            } catch (error) {
+                console.error('Error fetching requests:', error);
+            }
+        };
+    
+        fetchRequests(); // Fetch requests when the component mounts
+    }, [pharmacyInfo]); 
+    
+
 
     return (
         <div style={{ display: "flex", height: "100vh" }}>
@@ -208,6 +220,7 @@ function Pharmacy_Landing() {
                                 <Typography variant="h6" sx={{ marginBottom: 2, fontFamily: 'Montserrat', textAlign: 'center', margin: 'auto', fontSize: '1.8em', color: 'white' }}>
                                     Medication Requests
                                 </Typography>
+                                <Box className="custom-scroll" sx={{ width: 'fit-content', textAlign: 'center', margin: 'auto', height: '35vh', overflowY: 'auto'}}>
                                 <TableContainer sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}>
                                 <Table sx={{ borderRadius: 2,  color: 'white', bordercolor: 'white', border: '1px solid white',}}>
                                     <TableHead sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}>
@@ -241,6 +254,7 @@ function Pharmacy_Landing() {
                                     </TableBody>
                                 </Table>
                                 </TableContainer>
+                                </Box>
                             </Paper>
                         </Grid>
                     </Grid>
