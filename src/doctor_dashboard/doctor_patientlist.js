@@ -73,7 +73,7 @@ function Doctor_Patientlist() {
                       {pat.first_name} {pat.last_name}
                     </Typography>
                     <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em' }}>
-                      <strong>Email:</strong> {pat.email}
+                      <strong>Email:</strong> {pat.patient_email}
                     </Typography>
                     <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em' }}>
                       <strong>Gender:</strong> {pat.gender || "N/A"}
