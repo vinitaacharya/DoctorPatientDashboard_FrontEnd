@@ -85,6 +85,42 @@ const labelMap = {
 };
 
 function Patient_Landing() {
+
+  const [openCancelModal, setOpenCancelModal] = useState(false);
+  const [appointmentToCancel, setAppointmentToCancel] = useState(null);
+  
+  const openCancelModalFor = (appointmentId) => {
+    setAppointmentToCancel(appointmentId);
+    setOpenCancelModal(true);
+  };
+  
+  const closeCancelModal = () => {
+    setAppointmentToCancel(null);
+    setOpenCancelModal(false);
+  };
+  const handleCancelAppointment = async () => {
+    if (!appointmentToCancel) return;
+  
+    try {
+      const response = await fetch(`/cancel-appointment/${appointmentToCancel}`, {
+        method: 'DELETE',
+      });
+  
+      if (response.ok) {
+        setUpcomingAppointments(prev =>
+          prev.filter(appt => appt.patient_appt_id !== appointmentToCancel)
+        );
+      } else {
+        alert("Failed to cancel the appointment.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Something went wrong.");
+    } finally {
+      closeCancelModal();
+    }
+  };
+  
   
 const [patientInfo, setPatientInfo] = useState(null);
 
@@ -1150,8 +1186,24 @@ const [currentIndex, setCurrentIndex] = useState(0);
                           paddingTop: "1.2vh",
                           paddingBottom: "1vh",
                           marginBottom: "2vh",
+                          position: "relative"
                         }}
                       >
+                        {showUpcoming && (
+                          <IconButton
+                            aria-label="cancel"
+                            size="small"
+                            onClick={() => openCancelModalFor(appointment.patient_appt_id)}
+                            sx={{
+                              position: "absolute",
+                              top: "8px",
+                              right: "8px",
+                              color: "#555",
+                            }}
+                          >
+                            <CloseIcon />
+                          </IconButton>
+                        )}
                         <Typography
                           variant="subtitle1"
                           fontWeight="medium"
@@ -1221,6 +1273,51 @@ const [currentIndex, setCurrentIndex] = useState(0);
                       <ArrowForwardIcon sx={{ color: '#5A8BBE' }} />
                     </IconButton>
                   </Box>
+                  <Modal open={openCancelModal}>
+  <Box sx={{ ...style, display: 'flex', flexDirection: 'column', alignItems: "center" }}>
+    <Typography sx={{ color: "black", fontSize: '4vh', p: 2 }}>
+      Are you sure you want to cancel this appointment?
+    </Typography>
+    <Typography sx={{ color: "black", fontSize: '3.5vh', p: 2 }}>
+      This action cannot be reversed.
+    </Typography>
+
+    <Button
+      onClick={handleCancelAppointment}
+      variant="contained"
+      sx={{
+        alignContent: 'center',
+        backgroundColor: '#D15254',
+        color: 'black',
+        borderRadius: '25px',
+        fontWeight: 'bold',
+        textTransform: 'none',
+        marginTop: '2vh',
+        marginBottom: '2vh',
+        width: '30vh',
+        fontFamily: 'Merriweather',
+      }}
+    >
+      Cancel Appointment
+    </Button>
+
+    <Button
+      onClick={closeCancelModal}
+      variant="contained"
+      sx={{
+        backgroundColor: '#719EC7',
+        color: 'white',
+        borderRadius: '25px',
+        fontWeight: 'bold',
+        textTransform: 'none',
+        width: '30vh',
+        fontFamily: 'Merriweather',
+      }}
+    >
+      Close
+    </Button>
+  </Box>
+</Modal>
 
                 </Box>
 
