@@ -260,7 +260,8 @@ const handleDailySubmit = async (e) => {
       setMood("");
       setCalorieIntake("");
 
-      closeDailySurveysModal(); // Close modal on success
+      closeDailySurveysModal();
+      setDailySubmitted(true);
     } else {
       console.error('Failed to submit daily survey');
     }
@@ -321,6 +322,8 @@ console.log("patient", patientId)
         setWeightAmount("");
         setBloodPressure("");
         closeWeeklySurveysModal(); // Close modal on success
+        setWeeklySubmitted(true);
+
       } else {
         console.error('Failed to submit weekly survey');
       }
