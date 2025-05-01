@@ -122,7 +122,6 @@ function Landing() {
     
         if (response.ok) {
           // Save patient ID (and optionally, email or token)
-          console.log("Doctor ID returned from backend:", data.doctor_id); // ✅ debug line
           localStorage.setItem("pharmacyId", data.pharmacy_id);
           // Redirect to dashboard
           navigate("/pharmacy/pharmacy_landing");

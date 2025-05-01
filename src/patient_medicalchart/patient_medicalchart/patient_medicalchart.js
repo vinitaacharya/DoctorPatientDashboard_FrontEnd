@@ -19,6 +19,29 @@ function Patient_Chart() {
     const [weeklyInfo, setWeeklyInfo] = useState(null);
     const patientId = localStorage.getItem("patientId");
     const [isEditing, setIsEditing] = useState(false);
+    const [originalPatientInfo, setOriginalPatientInfo] = useState(null);
+
+
+    const [patientInfo, setPatientInfo] = useState({
+        first_name: '',
+        last_name: '',
+        dob: '',
+        gender: '',
+        height: '',
+        weight: '',
+        blood_type: '',
+        dietary_restrictions: '',
+        medical_conditions: '',
+        family_history: '',
+        past_procedures: '',
+        mobile_number: '',
+        patient_address: '',
+        patient_zipcode: '',
+        patient_city: '',
+        patient_state: '',
+        patient_email: '',
+        patient_id: null
+      });
     
     
     useEffect(() => {
@@ -76,6 +99,8 @@ function Patient_Chart() {
             if (!res.ok) throw new Error("Failed to fetch patient info");
             const data = await res.json();
             setPatientInfo(data);
+            setOriginalPatientInfo(data);  // store original
+            
             console.log("Chart:", data);
           } catch (error) {
             console.error("Error fetching patient info:", error);
@@ -142,47 +167,60 @@ function Patient_Chart() {
         marker: { color: 'red' }
         };
 
-        const [patientInfo, setPatientInfo] = useState({
-            first_name: '',
-            last_name: '',
-            dob: '',
-            gender: '',
-            height: '',
-            weight: '',
-            blood_type: '',
-            dietary_restrictions: '',
-            medical_conditions: '',
-            family_history: '',
-            past_procedures: '',
-            mobile_number: '',
-            patient_address: '',
-            patient_zipcode: '',
-            patient_city: '',
-            patient_state: '',
-            patient_email: '',
-            patient_id: null
-          });
 
-          const handleSave = async () => {
-            try {
-              const response = await fetch('http://localhost:5000/edit-patient', {
-                method: 'PUT',
+        const formatDate = (rawDate) => {
+            const date = new Date(rawDate);
+            const year = date.getFullYear();
+            const month = (`0${date.getMonth() + 1}`).slice(-2); // add leading zero
+            const day = (`0${date.getDate()}`).slice(-2);
+            return `${year}-${month}-${day}`;
+          };
+          
+
+        const handleSave = async () => {
+        try {
+          const payload = {
+            patient_id: patientInfo.patient_id,
+            email: patientInfo.patient_email,
+            password: "placeholder",
+            phone: patientInfo.mobile_number,
+            dob: formatDate(patientInfo.dob),
+            gender: patientInfo.gender,
+            height: patientInfo.height,
+            weight: patientInfo.weight,
+            blood_type: patientInfo.blood_type,
+            dietary_restrictions: patientInfo.dietary_restrictions,
+            activity: 0,
+            health_conditions: patientInfo.medical_conditions,
+            family_history: patientInfo.family_history,
+            past_procedures: patientInfo.past_procedures,
+            address: patientInfo.patient_address,
+            zipcode: patientInfo.patient_zipcode,
+            city: patientInfo.patient_city,
+            state: patientInfo.patient_state
+          };
+          
+          
+              const response = await fetch("http://localhost:5000/edit-patient", {
+                method: "PUT",
                 headers: {
-                  'Content-Type': 'application/json'
+                  "Content-Type": "application/json"
                 },
-                body: JSON.stringify(patientInfo)
+                body: JSON.stringify(payload)
               });
           
               const result = await response.json();
-              if (!response.ok) throw new Error(result.error || 'Failed to update patient');
+              if (!response.ok) throw new Error(result.error || "Failed to update patient");
           
-              alert('Patient information updated successfully!');
+              alert("Patient information updated successfully!");
               setIsEditing(false);
             } catch (err) {
-              console.error('Update error:', err);
-              alert('Error updating patient info.');
+              console.error("Update error:", err);
+              alert("Error updating patient info.");
             }
           };
+          
+          
           
           
 
@@ -236,7 +274,7 @@ function Patient_Chart() {
                         <Grid container spacing={4}>
                             {/* LEFT COLUMN */}
                             <Grid item xs={12} md={6}>
-                            {/* <Typography>
+                            <Typography>
                                 <strong>Patient Name:</strong>{" "}
                                 {isEditing ? (
                                     <>
@@ -257,19 +295,8 @@ function Patient_Chart() {
                                 ) : (
                                     `${patientInfo.first_name || ''} ${patientInfo.last_name || ''}`
                                 )}
-                            </Typography> */}
-                            <Typography><strong>DOB: </strong>
-                            {isEditing ? (
-                                <input
-                                value={patientInfo.dob}
-                                onChange={(e) =>
-                                    setPatientInfo({ ...patientInfo, dob: e.target.value })
-                                }
-                                />
-                            ) : (
-                                patientInfo.dob
-                            )}
                             </Typography>
+                            <Typography><strong>DOB: </strong>{patientInfo.dob}</Typography>
                             <Typography><strong>Gender: </strong>
                             {isEditing ? (
                                 <input
@@ -306,17 +333,7 @@ function Patient_Chart() {
                                 patientInfo.weight
                             )}
                             </Typography>
-                            <Typography>
-                            <strong>Blood Type: </strong>
-                            {isEditing ? (
-                                <input
-                                value={patientInfo.blood_type}
-                                onChange={(e) => setPatientInfo({ ...patientInfo, blood_type: e.target.value })}
-                                />
-                            ) : (
-                                patientInfo.blood_type
-                            )}
-                            </Typography>
+                            <Typography><strong>Blood Type: </strong>{patientInfo.blood_type}</Typography>
                             <Typography>
                             <strong>Dietary Restrictions: </strong>
                             {isEditing ? (
@@ -362,9 +379,24 @@ function Patient_Chart() {
                                 patientInfo.past_procedures
                             )}
                             </Typography>
-                            <Button variant="outlined" sx={{ mt: 2 }} onClick={() => setIsEditing(!isEditing)}>
-                                    {isEditing ? "Cancel" : "Edit"}
-                                    </Button>
+                            <Button
+                            variant="outlined"
+                            sx={{ mt: 2 }}
+                            onClick={() => {
+                                if (isEditing) {
+                                // Revert to original values when canceling
+                                setPatientInfo(originalPatientInfo);
+                                } else {
+                                // Take a snapshot before entering edit mode
+                                setOriginalPatientInfo(patientInfo);
+                                }
+                                setIsEditing(!isEditing);
+                            }}
+                            >
+                            {isEditing ? "Cancel" : "Edit"}
+                            </Button>
+
+
                                     {isEditing && (
                                     <Button variant="contained" sx={{ mt: 2, ml: 2 }} onClick={handleSave}>
                                         Save
@@ -430,7 +462,7 @@ function Patient_Chart() {
                             </Box>
 
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                            {/* <Typography>
+                            <Typography>
                             <strong>Email:</strong>{" "}
                             {isEditing ? (
                                 <input
@@ -440,7 +472,7 @@ function Patient_Chart() {
                             ) : (
                                 patientInfo.patient_email
                             )}
-                            </Typography> */}
+                            </Typography>
                             </Box>
 
                             {/* <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
