@@ -280,15 +280,33 @@ const handleDailySubmit = async (e) => {
   const handleWeeklySubmit = async (e) => {
     e.preventDefault();
 
+    let parsedWeightAmount = parseFloat(weightAmount) || 0;
+
+    if (weightChange === "Loss") {
+      parsedWeightAmount = -Math.abs(parsedWeightAmount);
+    } else if (weightChange === "Gain") {
+      parsedWeightAmount = Math.abs(parsedWeightAmount);
+    } else {
+      parsedWeightAmount = 0;
+    }
+    // 2. Calculate most recent Sunday (week_start)
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const diffToSunday = dayOfWeek;   // How many days to subtract to get to last Sunday
+  const lastSunday = new Date(today);
+  lastSunday.setDate(today.getDate() - diffToSunday);
+  lastSunday.setHours(0, 0, 0, 0); // Reset time to 00:00:00
+console.log("patient", patientId)
+  const weekStart = lastSunday.toISOString().split('T')[0]; // ✅ '2024-09-01'
   const weeklyData = {
-    patient_id:patientId,
-    weight_change:weightChange ,
-    weight_amount:weightAmount,
-    blood_pressure:bloodPressure
-  };
+      patient_id: patientId,
+      week_start: weekStart,
+      weight_change: parsedWeightAmount,
+      blood_pressure: bloodPressure
+    };
 //replace fetch with correct url
   try {
-    const response = await fetch('http://localhost:5000/weekly-surveys', {
+    const response = await fetch('http://localhost:5000/weekly-survey', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -298,6 +316,10 @@ const handleDailySubmit = async (e) => {
 
       if (response.ok) {
         console.log('Weekly survey submitted successfully');
+        // Clear form fields
+        setWeightChange("");
+        setWeightAmount("");
+        setBloodPressure("");
         closeWeeklySurveysModal(); // Close modal on success
       } else {
         console.error('Failed to submit weekly survey');
@@ -306,6 +328,60 @@ const handleDailySubmit = async (e) => {
       console.error('Error submitting weekly survey:', error);
     }
   };
+
+//Disable Survey
+const [dailySubmitted, setDailySubmitted] = useState(false);
+const [weeklySubmitted, setWeeklySubmitted] = useState(false);
+useEffect(() => {
+  const checkSurveyStatus = async () => {
+    const today = new Date();
+    const todayDateOnly = today.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+    const currentWeekStart = getWeekStart(today); // Get the start of this week (Sunday)
+
+    try {
+      // Daily survey check
+      const dailyRes = await fetch(`/daily-surveys/${patientId}`);
+      const dailyData = await dailyRes.json();
+
+      const hasDailyToday = dailyData.some(survey => {
+        const surveyDate = new Date(survey.date);
+        const surveyDateOnly = surveyDate.toISOString().split('T')[0];
+        return surveyDateOnly === todayDateOnly;
+      });
+      console.log("Today (local):", new Date().toLocaleDateString());
+      dailyData.forEach(survey => {
+        console.log("Survey date:", new Date(survey.date).toLocaleDateString());
+      });
+      setDailySubmitted(hasDailyToday);
+
+         // Weekly survey check
+         const weeklyRes = await fetch(`/weekly-surveys/${patientId}`);
+         const weeklyData = await weeklyRes.json();
+   
+         const hasWeeklyThisWeek = weeklyData.some(survey => {
+           const surveyWeekStart = new Date(survey.week_start);
+           // Check if the week_start is within the current week (starting from Sunday)
+           return surveyWeekStart.toISOString().split('T')[0] === currentWeekStart;
+         });
+   
+         setWeeklySubmitted(hasWeeklyThisWeek);
+   
+       } catch (error) {
+         console.error("Error fetching surveys:", error);
+       }
+  };
+
+  checkSurveyStatus();
+}, []);
+
+
+function getWeekStart(date) {
+  const startOfWeek = new Date(date);
+  startOfWeek.setDate(date.getDate() - date.getDay()); // Set to Sunday (start of the week)
+  startOfWeek.setHours(0, 0, 0, 0); // Set to start of the day (midnight)
+  return startOfWeek.toISOString().split('T')[0]; // Return 'YYYY-MM-DD' format
+}
+
 
 
   //Learn More Modal
@@ -654,6 +730,8 @@ const [currentIndex, setCurrentIndex] = useState(0);
         onClick={openDailySurveysModal}
         variant="contained"
         fullWidth
+        disabled={dailySubmitted}
+
         sx={{
           backgroundColor: '#719EC7',
           color: 'white',
@@ -665,10 +743,16 @@ const [currentIndex, setCurrentIndex] = useState(0);
       >
         Daily Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4 }}  />
       </Button>
+      {dailySubmitted && (
+        <Typography variant="body2" color="gray" sx={{ mb: 2 }}>
+          You've already submitted today's survey.
+        </Typography>
+      )}
       <Button 
         onClick={openWeeklySurveysModal}
         variant="contained"
         fullWidth
+        disabled={weeklySubmitted}
         sx={{
           backgroundColor: '#719EC7',
           color: 'white',
@@ -679,6 +763,11 @@ const [currentIndex, setCurrentIndex] = useState(0);
       >
        Weekly Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4}}/>
       </Button>
+      {weeklySubmitted && (
+        <Typography variant="body2" color="gray">
+          You've already submitted this week's survey.
+        </Typography>
+      )}
       </Paper>
         </Box>
       </Modal>
@@ -935,7 +1024,6 @@ const [currentIndex, setCurrentIndex] = useState(0);
                         />
 
                         <Button
-                          onClick={closeWeeklySurveysModal}
                           type="submit"
                           variant="contained"
                           fullWidth
