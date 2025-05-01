@@ -91,6 +91,8 @@ function Doctor_Landing() {
   
 const [doctorInfo, setDoctorInfo] = useState(null);
 
+
+
 useEffect(() => {
   const fetchDoctorInfo = async () => {
     const id = localStorage.getItem("doctorId");
@@ -115,6 +117,15 @@ useEffect(() => {
 
   fetchDoctorInfo();
 }, []);
+
+useEffect(() => {
+  if (doctorInfo && doctorInfo.accepting_patients !== undefined) {
+    setToggleStatus(doctorInfo.accepting_patients == 1);
+  }
+}, [doctorInfo]);
+
+
+
   
   const [value, setValue] = React.useState(2);
 
@@ -183,7 +194,7 @@ useEffect(() => {
 
 
   const [hasSurveyData, setHasSurveyData] = useState(false);
-  const [toggleStatus, setToggleStatus] = useState(false);
+  const [toggleStatus, setToggleStatus] = useState(null); // start as null so you know it's not loaded yet
 
 
   // Load survey status on mount
@@ -441,32 +452,28 @@ const handleDailySubmit = async (e) => {
   // Replace with actual doctor ID logic
 
 
+  const [patientList, setPatientList] = useState([]);
+
   useEffect(() => {
-    const fetchDoctorInfo = async () => {
+    const fetchAllPatients = async () => {
+      if (!doctorId) return;
+  
       try {
-        const res = await fetch(`http://localhost:5000/doctor/${doctorId}`);
-        const doctorData = await res.json();
-
-        if (doctorData.doctor_id) {
-          const doctorRes = await fetch(`http://localhost:5000/doctor/${doctorData.doctor_id}`);
-          const doctorData = await doctorRes.json();
-          setDoctorInfo(doctorData);
-        }
-
-        // ✅ New: Fetch pharmacy info from the doctor data
-        if (doctorData.pharmacy_id) {
-          const pharmacyRes = await fetch(`http://localhost:5000/pharmacy/${doctorData.pharmacy_id}`);
-          const pharmacyData = await pharmacyRes.json();
-          const { pharmacy_name, address, zipcode, city } = pharmacyData;
-          setPharmacyInfo(`${pharmacy_name}, ${address}, ${zipcode}, ${city}`);
-        }
+        const res = await fetch(`http://localhost:5000/doc_patients/${doctorId}`);
+        if (!res.ok) throw new Error("Failed to fetch patients");
+        
+        const data = await res.json();
+        setPatientList(data); // array of patient objects
+        console.log("All patients:", data);
       } catch (error) {
-        console.error("Failed to fetch doctor or pharmacy info:", error);
+        console.error("Error fetching patients:", error);
       }
     };
-
-    fetchDoctorInfo();
+  
+    fetchAllPatients();
   }, [doctorId]);
+  
+  
 
 
 //medical chart carousel
@@ -485,6 +492,70 @@ const [currentIndex, setCurrentIndex] = useState(0);
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
   };
+
+  //Status Change API
+
+// const toggleDoctorStatus = async (doctorId, newStatus) => {
+//   try {
+//     const response = await fetch('http://127.0.0.1:5000/update-doctor-status', {
+//       method: 'PATCH',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({ doctor_id: doctorId, status: newStatus }),
+//     });
+
+//     const data = await response.json();
+
+//     if (response.ok) {
+//       alert("Doctor status updated successfully");
+//     } else {
+//       alert(data.error || "Failed to update status");
+//     }
+//   } catch (error) {
+//     console.error("Status update error:", error);
+//     alert("An error occurred. Please try again.");
+//   }
+// };
+
+const toggleDoctorStatus = async (doctorId, newStatus) => {
+  try {
+    const response = await fetch(`http://localhost:5000/doctor-accepting-status/${doctorId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accepting_patients: newStatus }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setToggleStatus(newStatus === 1); // update local state
+      console.log("Doctor status updated");
+    } else {
+      alert(data.error || "Failed to update status");
+    }
+  } catch (error) {
+    console.error("Status update error:", error);
+    alert("An error occurred. Please try again.");
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   return (
 
     <div style={{ display: "flex" }}>
@@ -612,7 +683,7 @@ const [currentIndex, setCurrentIndex] = useState(0);
   />
 
   <Button
-    onClick={() => setToggleStatus(!toggleStatus)}
+  onClick={() => toggleDoctorStatus(doctorId, toggleStatus ? 0 : 1)}  // ✅ updates backend
     variant="contained"
     sx={{
       background: 'rgba(238, 242, 254, 0.10)',
@@ -1066,8 +1137,8 @@ const [currentIndex, setCurrentIndex] = useState(0);
                               </Box>
                             </Modal>
 
-                            <Button variant="contained" onClick={() => navigate('/doctor_dashboard/doctor_doctorlist')} sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto' }}>
-                              See More Doctors
+                            <Button variant="contained" onClick={() => navigate('/doctor_dashboard/doctor_patientlist')} sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto' }}>
+                              See Your patients
                             </Button>
                             <Button onClick={openDeleteCurrentDoctorModal} variant="contained" sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto' }}>
                               Delete Current Doctor
