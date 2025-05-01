@@ -24,6 +24,26 @@ const gradientCardStyle = {
     color: "#fff",
     backdropFilter: 'blur(100px)',
 };
+
+const mockRequests = [
+    {
+        prescription_id: 1,
+        doctor_name: "Dr. Hillary Geller",
+        patient_name: "Lilly Anne",
+        medication: "Phentermine",
+        quantity: 30,
+        filled: false,
+    },
+    {
+        prescription_id: 2,
+        doctor_name: "Dr. Spencer Reid",
+        patient_name: "Jon Brown",
+        medication: "Phentermine",
+        quantity: 30,
+        filled: false,
+    },
+];
+
 const mockDescriptions = [
     {
         name: "Phentermine (Adipex-P, Lomaira)",
@@ -105,6 +125,41 @@ function Pharmacy_Landing() {
     }, []);
 
 
+    const [requests, setRequests] = useState([]);
+
+    useEffect(() => {
+        // Replace this with RabbitMQ-sourced data in the future
+        setRequests(mockRequests);
+    }, []);
+
+    const handleFill = async (prescription_id) => {
+        try {
+            const response = await fetch('http://localhost:5000/prescription/fill', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prescription_id }),
+            });
+
+            if (response.ok) {
+                // Mark as filled locally for now
+                setRequests(prev =>
+                    prev.map(req =>
+                        req.prescription_id === prescription_id
+                            ? { ...req, filled: true }
+                            : req
+                    )
+                );
+            } else {
+                const err = await response.json();
+                alert(`Error: ${err.error}`);
+            }
+        } catch (error) {
+            console.error("Fill error:", error);
+        }
+    };
+
     return (
         <div style={{ display: "flex", height: "100vh" }}>
             <Pharmacy_Navbar />
@@ -126,7 +181,7 @@ function Pharmacy_Landing() {
                                 <Typography variant="h6" sx={{ marginBottom: 2, fontFamily: 'Montserrat', textAlign: 'center', margin: 'auto', fontSize: '1.8em' }}>
                                     Pharmacy Inventory
                                 </Typography>
-                                <Box className="custom-scroll" sx={{ width: 'fit-content', textAlign: 'center', margin: 'auto', height: '35vh', overflowY: 'auto' }}>
+                                <Box className="custom-scroll" sx={{ width: 'fit-content', textAlign: 'center', margin: 'auto', height: '35vh', overflowY: 'auto'}}>
                                     <TableContainer>
                                         <Table>
                                             <TableHead>
@@ -150,10 +205,42 @@ function Pharmacy_Landing() {
                         </Grid>
                         <Grid item xs={12} md={8}>
                             <Paper style={gradientCardStyle}>
-                                <Typography variant="h6" sx={{ marginBottom: 2, fontFamily: 'Montserrat', textAlign: 'center', margin: 'auto', fontSize: '1.8em' }}>
+                                <Typography variant="h6" sx={{ marginBottom: 2, fontFamily: 'Montserrat', textAlign: 'center', margin: 'auto', fontSize: '1.8em', color: 'white' }}>
                                     Medication Requests
                                 </Typography>
-                                <Typography variant="body1">[Medication Requests]</Typography>
+                                <TableContainer sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}>
+                                <Table sx={{ borderRadius: 2,  color: 'white', bordercolor: 'white', border: '1px solid white',}}>
+                                    <TableHead sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}>
+                                        <TableRow sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}>
+                                            <TableCell sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}><strong>Doctor Name</strong></TableCell>
+                                            <TableCell sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}><strong>Patient Name</strong></TableCell>
+                                            <TableCell sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}><strong>Medication</strong></TableCell>
+                                            <TableCell sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}><strong>Quantity</strong></TableCell>
+                                            <TableCell sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}><strong>Fill</strong></TableCell>
+                                        </TableRow>
+                                    </TableHead >
+                                    <TableBody sx={{color: 'white', bordercolor: 'white'}}>
+                                        {requests.map((req) => (
+                                            <TableRow key={req.prescription_id} sx={{color: 'white', bordercolor: 'white'}}>
+                                                <TableCell sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}>{req.doctor_name}</TableCell>
+                                                <TableCell sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}>{req.patient_name}</TableCell>
+                                                <TableCell sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}>{req.medication}</TableCell>
+                                                <TableCell sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}>{req.quantity}</TableCell>
+                                                <TableCell sx={{color: 'white', bordercolor: 'white', border: '1px solid white',}}>
+                                                    <Button
+                                                        variant="contained"
+                                                        color="primary"
+                                                        disabled={req.filled}
+                                                        onClick={() => handleFill(req.prescription_id)}
+                                                    >
+                                                        {req.filled ? "Filled" : "Fill"}
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                                </TableContainer>
                             </Paper>
                         </Grid>
                     </Grid>
@@ -164,23 +251,23 @@ function Pharmacy_Landing() {
                         <Typography variant="h6" sx={{ marginBottom: 2, fontFamily: 'Montserrat', fontSize: '1.8em' }}>
                             Description
                         </Typography>
-                        <TableContainer sx={{borderColor: 'white', color: 'white'}}>
+                        <TableContainer sx={{ borderColor: 'white', color: 'white' }}>
                             <Table sx={{ minWidth: 650, borderColor: 'white', color: 'white' }} size="small">
-                                <TableHead sx={{borderColor: 'white', color: 'white'}}>
-                                    <TableRow sx={{borderColor: 'white'}}>
-                                        <TableCell sx={{ color: 'white', fontWeight: 'bold', borderColor: 'white'}}>Medication Name</TableCell>
-                                        <TableCell sx={{ color: 'white', fontWeight: 'bold', borderColor: 'white'}}>Benefits</TableCell>
-                                        <TableCell sx={{ color: 'white', fontWeight: 'bold', borderColor: 'white'}}>Side Affects</TableCell>
-                                        <TableCell sx={{ color: 'white', fontWeight: 'bold', borderColor: 'white'}}>Description</TableCell>
+                                <TableHead sx={{ borderColor: 'white', color: 'white' }}>
+                                    <TableRow sx={{ borderColor: 'white' }}>
+                                        <TableCell sx={{ color: 'white', fontWeight: 'bold', borderColor: 'white' }}>Medication Name</TableCell>
+                                        <TableCell sx={{ color: 'white', fontWeight: 'bold', borderColor: 'white' }}>Benefits</TableCell>
+                                        <TableCell sx={{ color: 'white', fontWeight: 'bold', borderColor: 'white' }}>Side Affects</TableCell>
+                                        <TableCell sx={{ color: 'white', fontWeight: 'bold', borderColor: 'white' }}>Description</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                <TableBody sx={{borderColor: 'white', color: 'white'}}>
+                                <TableBody sx={{ borderColor: 'white', color: 'white' }}>
                                     {mockDescriptions.map((med, index) => (
-                                        <TableRow key={index} sx={{borderColor: 'white', color: 'white'}}>
-                                            <TableCell sx={{ color: 'white', borderColor: 'white'}}>{med.name}</TableCell>
-                                            <TableCell sx={{ color: 'white', borderColor: 'white'}}>{med.benefits}</TableCell>
-                                            <TableCell sx={{ color: 'white', borderColor: 'white'}}>{med.side_effects}</TableCell>
-                                            <TableCell sx={{ color: 'white', borderColor: 'white'}}>{med.description}</TableCell>
+                                        <TableRow key={index} sx={{ borderColor: 'white', color: 'white' }}>
+                                            <TableCell sx={{ color: 'white', borderColor: 'white' }}>{med.name}</TableCell>
+                                            <TableCell sx={{ color: 'white', borderColor: 'white' }}>{med.benefits}</TableCell>
+                                            <TableCell sx={{ color: 'white', borderColor: 'white' }}>{med.side_effects}</TableCell>
+                                            <TableCell sx={{ color: 'white', borderColor: 'white' }}>{med.description}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
