@@ -41,7 +41,7 @@ export default function Doctor_Navbar() {
       navigate("/community_homepage");
     }
     if (index === 4) {
-      navigate("/doctor_medicalchart/doctor_medicalchart")
+      navigate("/doctor_dashboard/profile");
     }
     if (index === 5) {
       navigate("/doctor_dashboard/doctor_billing");

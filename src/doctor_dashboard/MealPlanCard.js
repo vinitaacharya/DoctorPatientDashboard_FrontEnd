@@ -7,6 +7,7 @@ import testImage from './reciepe photo.png'
 import { Favorite, ExpandMore, ChatBubbleOutline } from '@mui/icons-material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import LibraryAddOutlinedIcon from '@mui/icons-material/LibraryAddOutlined';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   IconButton as MuiIconButton
@@ -14,8 +15,8 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 
 
-export default function MealPlanCard({ meal }) {
-
+export default function MealPlanCard({ meal, patientInfo}) {
+  
   const {
     image = '',
     title = 'Untitled',
@@ -23,8 +24,11 @@ export default function MealPlanCard({ meal }) {
     description = 'No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description available.No description',
     author = 'Unknown',
     likes: initialLikes = 0,
-    comments:initialcomments = ['hi', 'hello'],
-    fullRecipe = '',
+    comments: initialcomments = [
+      { firstName: 'John', lastName: 'Doe', text: 'hi' },
+      { firstName: 'Jane', lastName: 'Smith', text: 'hello' },
+    ],
+        fullRecipe = '',
     user = {},
     ingredients = [],
     directions = [],
@@ -32,19 +36,29 @@ export default function MealPlanCard({ meal }) {
 
   //const [expanded, setExpanded] = useState(false);
   //const [likes, setLikes] = useState(meal.likes);
-  const [comments, setComments] = useState(initialcomments);
+  const [comments, setComments] = useState(meal.comments || []);
   const [newComment, setNewComment] = useState("");
   const [likes, setLikes] = useState(initialLikes);
   const [liked, setLiked] = useState(false);
+  const [added, setAdded] = useState(false);
+
   const [expanded, setExpanded] = useState(false);
+
   const handleExpandClick = () => setExpanded(!expanded);
   //const handleLike = () => setLikes(likes + 1);
   const handleAddComment = () => {
-    if (newComment.trim()) {
-      setComments([...comments, newComment]);
-      setNewComment('');
-    }
+    if (newComment.trim() === "") return;
+
+    const fullName = `${patientInfo.firstName} ${patientInfo.lastName}`;
+    const updatedComments = [
+      ...comments,
+      { firstName: patientInfo.firstName, lastName: patientInfo.lastName, text: newComment }
+    ];
+    setComments(updatedComments);
+    setNewComment("");
   };
+  
+  
   const handleLike = () => {
     if (liked) {
       setLikes(likes - 1);
@@ -54,6 +68,10 @@ export default function MealPlanCard({ meal }) {
     setLiked(!liked);
   };
 
+  const handleAddToMealPlan = () =>{
+    setAdded(!added);
+
+  };
   const handleExpand = () => {
     setExpanded(!expanded);
   };
@@ -62,7 +80,6 @@ export default function MealPlanCard({ meal }) {
 const [openModal, setOpenModal] = useState(false);
 const handleOpenModal = () => setOpenModal(true);
 const handleCloseModal = () => setOpenModal(false);
-
 
   return (
     <>
@@ -82,7 +99,9 @@ const handleCloseModal = () => setOpenModal(false);
      </div>      
      <Typography
   sx={{
+    flexGrow:1,
     maxHeight: '7vh',
+    minHeight:'7vh',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     display: '-webkit-box',
@@ -95,24 +114,67 @@ const handleCloseModal = () => setOpenModal(false);
   {description}
 </Typography>
 
-<Box mt={3} display="flex" alignItems="center" gap={1}>
+<Box flexGrow={1} mt={3} display="flex" alignItems="center" gap={1}>
         {<Avatar sx={{height:'3vh', width:'3vh'}} src={user.avatar} />}
         
           <Typography
             onClick={handleExpandClick}
-            sx={{fontSize: '0.8em', cursor: 'pointer' }}
+            sx={{flexGrow:1,fontSize: '0.8em', cursor: 'pointer' }}
           >
             {author}
           </Typography>
         
-      
-      <IconButton onClick={handleLike}>
-          {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
-        </IconButton>
-        <Typography variant="body2">{likes}</Typography>
-        <IconButton onClick={handleExpandClick}>
-          <ChatBubbleOutline /> <span>{comments.length}</span>
-        </IconButton>
+         <IconButton onClick={handleAddToMealPlan}
+  sx={{
+    backgroundColor: added ? 'lightgrey' : 'transparent', // 👈
+  
+  }}
+>
+  <LibraryAddOutlinedIcon color={'action'} />
+          </IconButton>
+          <Box position="relative" display="inline-flex">
+  <IconButton onClick={handleLike}>
+    {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
+  </IconButton>
+  {likes > 0 && (
+    <Typography
+      variant="caption"
+      sx={{
+         position: 'absolute',
+        top: 2,
+        right: 2,
+        fontSize: '0.7rem',
+        backgroundColor: 'transparent',
+        borderRadius: '50%',
+        padding: '0 4px',
+      }}
+    >
+      {likes}
+    </Typography>
+  )}
+</Box>
+
+<Box position="relative" display="inline-flex">
+ 
+  <IconButton onClick={handleExpandClick}>
+    <ChatBubbleOutline />
+  </IconButton>
+  {comments.length > 0 && (
+    <Typography
+      variant="caption"
+      sx={{
+        position: 'absolute',
+        right: -1,
+        fontSize: '0.7rem',
+        backgroundColor: 'transparent',
+        borderRadius: '50%',
+        px: 0.5,
+      }}
+    >
+      {comments.length}
+    </Typography>
+  )}
+</Box>
         </Box>
 
 
@@ -173,12 +235,55 @@ const handleCloseModal = () => setOpenModal(false);
           Comments
         </Typography>
         <Box display="flex" alignItems="center" gap={1}>
-          <IconButton onClick={handleLike}>
-            {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
-          </IconButton>
-          <Typography>{likes}</Typography>
-          <ChatBubbleOutline />
-          <Typography>{comments.length}</Typography>
+        <Box position="relative" display="inline-flex">
+        <IconButton onClick={handleAddToMealPlan}
+  sx={{
+    backgroundColor: added ? 'lightgrey' : 'transparent', // 👈
+  
+  }}
+>
+  <LibraryAddOutlinedIcon color={'action'} />
+          </IconButton>     
+  <IconButton onClick={handleLike}>
+    {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
+  </IconButton>
+  {likes > 0 && (
+    <Typography
+      variant="caption"
+      sx={{
+        position: 'absolute',
+        top: 2,
+        right: 2,
+        fontSize: '0.7rem',
+        backgroundColor: 'transparent',
+        borderRadius: '50%',
+        padding: '0 4px',
+      }}
+    >
+      {likes}
+    </Typography>
+  )}
+</Box>
+<Box position="relative" display="inline-flex">
+  <IconButton onClick={handleExpandClick}>
+    <ChatBubbleOutline />
+  </IconButton>
+  {comments.length > 0 && (
+    <Typography
+      variant="caption"
+      sx={{
+        position: 'absolute',
+        right: -1,
+        fontSize: '0.7rem',
+        backgroundColor: 'transparent',
+        borderRadius: '50%',
+        px: 0.5,
+      }}
+    >
+      {comments.length}
+    </Typography>
+  )}
+</Box>
         </Box>
       </Box>
 
@@ -195,19 +300,24 @@ const handleCloseModal = () => setOpenModal(false);
           gap: 1,
         }}
       >
-        {comments.map((comment, index) => (
-          <Box
-            key={index}
-            sx={{
-              backgroundColor: '#f5f5f5',
-              p: 1,
-              borderRadius: 2,
-              fontSize: '0.9em',
-            }}
-          >
-            {comment}
-          </Box>
-        ))}
+{comments.map((comment, index) => (
+  <Box
+    key={index}
+    sx={{
+      backgroundColor: '#f5f5f5',
+      p: 1,
+      borderRadius: 2,
+      fontSize: '0.9em',
+      display:'flex',
+    }}
+  >
+    <Typography  sx={{ fontWeight: 'bold', pr:'1vh' }}>
+      {comment.firstName} {comment.lastName}
+    </Typography>
+    <Typography >{comment.text}</Typography>
+  </Box>
+))}
+
       </Box>
 
       {/* Input */}
