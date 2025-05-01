@@ -3,7 +3,7 @@ import Patient_Navbar from "./patient_navbar";
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
-import { Typography, Button, Divider } from "@mui/material";
+import { Typography, Button, Divider, FormControl, TextField } from "@mui/material";
 import food1 from "./meals/food1.png";
 import Modal from '@mui/material/Modal';
 import IconButton from '@mui/material/IconButton';
@@ -168,7 +168,7 @@ function Patient_Mealplan() {
     };
     
 
-
+  
     
     const handleChange = (event: SelectChangeEvent) => {
         setDay(event.target.value);
@@ -180,7 +180,24 @@ function Patient_Mealplan() {
     })
 
 
-      
+    //create new plan modal
+    const [title, setTitle] = React.useState("");
+
+    const [openNewPlanModal, setOpenNewPlanModal] = React.useState(false);
+    const handleOpenNewPlanModal = () => setOpenNewPlanModal(true);
+    const handleCloseNewPlanModal = () => setOpenNewPlanModal(false);
+    const style = {
+      width: 400,
+          bgcolor: '#f0f4ff',
+          borderRadius: 4,
+          boxShadow: 24,
+          p: "6vh",
+          mx: 'auto',
+          mt: '10vh',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2
+    };
   return (
     <div style={{ display: "flex" }}>
       <Patient_Navbar />
@@ -194,7 +211,64 @@ function Patient_Mealplan() {
               <RoundedPanel sx={{ width: '40%' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={2.4}>
                   <Typography variant="h6" sx={{fontSize: '2em'}}>Meal Plans</Typography>
-                  <Button variant="contained" sx={{ backgroundColor: '#5A8BBE', borderRadius:'30px', fontFamily:'Montserrat', textTransform: 'none', fontSize:'1.05em', marginRight: '.5vw'}}>Create Plan</Button>
+                  <Button onClick={handleOpenNewPlanModal} variant="contained" sx={{ backgroundColor: '#5A8BBE', borderRadius:'30px', fontFamily:'Montserrat', textTransform: 'none', fontSize:'1.05em', marginRight: '.5vw'}}>Create Plan</Button>
+                  <Modal open={openNewPlanModal} onClose={handleCloseNewPlanModal}>
+  <Box
+    sx={{
+      ...style,
+      position: 'relative', // Needed for absolute positioning of close button
+    }}
+  >
+    <IconButton
+      onClick={handleCloseNewPlanModal}
+      sx={{
+        position: 'absolute',
+        top: 16,
+        right: 16,
+        color: 'grey.600',
+      }}
+    >
+      <CloseIcon />
+    </IconButton>
+
+    <Typography
+      sx={{
+        textAlign: 'center',
+        fontSize: '3vh',
+        fontWeight: 'bold',
+        mb: 2,
+      }}
+    >
+      Create New Meal Plan
+    </Typography>
+
+    <FormControl fullWidth>
+      <TextField
+        placeholder="Enter New Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        fullWidth
+        size="small"
+        sx={{ mb: 2 }}
+      />
+      <Button
+        onClick={handleCloseNewPlanModal}
+        variant="contained"
+        fullWidth
+        sx={{
+          backgroundColor: '#719EC7',
+          color: 'white',
+          borderRadius: '25px',
+          fontWeight: 'bold',
+          textTransform: 'none',
+        }}
+      >
+        Submit
+      </Button>
+    </FormControl>
+  </Box>
+</Modal>
+
                 </Box>
                 <Box className = 'custom-scroll' sx={{height: '70vh',overflowY: 'auto', paddingRight: '.5vw'}}>
                 {mealPlans.map((plan, index) => (
