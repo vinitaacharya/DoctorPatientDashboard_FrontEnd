@@ -291,6 +291,9 @@ function Landing() {
                     <button className="doctorbtn btn-info" onClick={() => navigate('/doctorsignup')}>
                         Doctor
                     </button>
+                    <button className="patientbtn btn-info" onClick={() => navigate('/pharmacysignup')}>
+                        Pharmacy
+                    </button>
                     </Typography>
                   </Box>
                 </Modal>

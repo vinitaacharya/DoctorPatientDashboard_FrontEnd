@@ -18,7 +18,6 @@ function Patient_Chart() {
     const [dailyInfo, setDailyInfo] = useState(null);
     const [weeklyInfo, setWeeklyInfo] = useState(null);
     const patientId = localStorage.getItem("patientId");
-    const [patientInfo, setPatientInfo] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     
     
@@ -73,16 +72,17 @@ function Patient_Chart() {
     useEffect(() => {
         const fetchPatientInfo = async () => {
           try {
-            const res = await fetch(`/init-patient-survey/${patientId}`);
+            const res = await fetch(`http://localhost:5000/init-patient-survey/${patientId}`);
             if (!res.ok) throw new Error("Failed to fetch patient info");
             const data = await res.json();
             setPatientInfo(data);
+            console.log("Chart:", data);
           } catch (error) {
             console.error("Error fetching patient info:", error);
           }
         };
         fetchPatientInfo();
-      }, []);
+      }, [patientId]);
       
 
     const weightChartData = {
@@ -142,6 +142,50 @@ function Patient_Chart() {
         marker: { color: 'red' }
         };
 
+        const [patientInfo, setPatientInfo] = useState({
+            first_name: '',
+            last_name: '',
+            dob: '',
+            gender: '',
+            height: '',
+            weight: '',
+            blood_type: '',
+            dietary_restrictions: '',
+            medical_conditions: '',
+            family_history: '',
+            past_procedures: '',
+            mobile_number: '',
+            patient_address: '',
+            patient_zipcode: '',
+            patient_city: '',
+            patient_state: '',
+            patient_email: '',
+            patient_id: null
+          });
+
+          const handleSave = async () => {
+            try {
+              const response = await fetch('http://localhost:5000/edit-patient', {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(patientInfo)
+              });
+          
+              const result = await response.json();
+              if (!response.ok) throw new Error(result.error || 'Failed to update patient');
+          
+              alert('Patient information updated successfully!');
+              setIsEditing(false);
+            } catch (err) {
+              console.error('Update error:', err);
+              alert('Error updating patient info.');
+            }
+          };
+          
+          
+
 
     return(
         <div>
@@ -192,7 +236,7 @@ function Patient_Chart() {
                         <Grid container spacing={4}>
                             {/* LEFT COLUMN */}
                             <Grid item xs={12} md={6}>
-                            <Typography>
+                            {/* <Typography>
                                 <strong>Patient Name:</strong>{" "}
                                 {isEditing ? (
                                     <>
@@ -211,61 +255,192 @@ function Patient_Chart() {
                                     />
                                     </>
                                 ) : (
-                                    `${patientInfo?.first_name || ''} ${patientInfo?.last_name || ''}`
-                                )}
-                            </Typography>
-
-                            {/* <Typography>
-                                <strong>DOB:</strong> 
-                                {isEditing ? (
-                                    <input
-                                    value={patientInfo?.dob || ''}
-                                    onChange={(e) =>
-                                        setPatientInfo({ ...patientInfo, dob: e.target.value })
-                                    }
-                                    />
-                                ) : (
-                                    `${patientInfo?.dob}`
+                                    `${patientInfo.first_name || ''} ${patientInfo.last_name || ''}`
                                 )}
                             </Typography> */}
-                            <Typography><strong>DOB:</strong> 1/1/99</Typography>
-                            <Typography><strong>Gender:</strong> Female</Typography>
-                            <Typography><strong>Height:</strong> 5'3"</Typography>
-                            <Typography><strong>Weight:</strong> 140lbs</Typography>
-                            <Typography><strong>Blood Type:</strong> O+</Typography>
-                            <Typography><strong>Allergies:</strong> N/A</Typography>
-                            <Typography><strong>Fitness Level:</strong> N/A</Typography>
-                            <Typography><strong>Health Conditions:</strong> N/A</Typography>
-                            <Typography><strong>Family History:</strong> N/A</Typography>
-                            <Typography><strong>Past Procedures:</strong> N/A</Typography>
-                            <Button variant="outlined" sx={{ mt: 2 }}>Edit</Button>
-                            </Grid>
+                            <Typography><strong>DOB: </strong>
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.dob}
+                                onChange={(e) =>
+                                    setPatientInfo({ ...patientInfo, dob: e.target.value })
+                                }
+                                />
+                            ) : (
+                                patientInfo.dob
+                            )}
+                            </Typography>
+                            <Typography><strong>Gender: </strong>
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.gender}
+                                onChange={(e) =>
+                                    setPatientInfo({ ...patientInfo, gender: e.target.value })
+                                }
+                                />
+                            ) : (
+                                patientInfo.gender
+                            )}                            
+                            </Typography>
+                            <Typography>
+                            <strong>Height:</strong>{" "}
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.height}
+                                onChange={(e) =>
+                                    setPatientInfo({ ...patientInfo, height: e.target.value })
+                                }
+                                />
+                            ) : (
+                                patientInfo.height
+                            )}
+                            </Typography>
+                            <Typography>
+                            <strong>Weight: </strong>
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.weight}
+                                onChange={(e) => setPatientInfo({ ...patientInfo, weight: e.target.value })}
+                                />
+                            ) : (
+                                patientInfo.weight
+                            )}
+                            </Typography>
+                            <Typography>
+                            <strong>Blood Type: </strong>
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.blood_type}
+                                onChange={(e) => setPatientInfo({ ...patientInfo, blood_type: e.target.value })}
+                                />
+                            ) : (
+                                patientInfo.blood_type
+                            )}
+                            </Typography>
+                            <Typography>
+                            <strong>Dietary Restrictions: </strong>
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.dietary_restrictions}
+                                onChange={(e) => setPatientInfo({ ...patientInfo, dietary_restrictions: e.target.value })}
+                                />
+                            ) : (
+                                patientInfo.dietary_restrictions
+                            )}
+                            </Typography>
+                            {/* <Typography><strong>Fitness Level: </strong> </Typography> */}
+                            <Typography>
+                            <strong>Health Conditions: </strong>
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.medical_conditions}
+                                onChange={(e) => setPatientInfo({ ...patientInfo, medical_conditions: e.target.value })}
+                                />
+                            ) : (
+                                patientInfo.medical_conditions
+                            )}
+                            </Typography>
+                            <Typography>
+                            <strong>Family History: </strong>
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.family_history}
+                                onChange={(e) => setPatientInfo({ ...patientInfo, family_history: e.target.value })}
+                                />
+                            ) : (
+                                patientInfo.family_history
+                            )}
+                            </Typography>
+                            <Typography>
+                            <strong>Past Procedures: </strong>
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.past_procedures}
+                                onChange={(e) => setPatientInfo({ ...patientInfo, past_procedures: e.target.value })}
+                                />
+                            ) : (
+                                patientInfo.past_procedures
+                            )}
+                            </Typography>
+                            <Button variant="outlined" sx={{ mt: 2 }} onClick={() => setIsEditing(!isEditing)}>
+                                    {isEditing ? "Cancel" : "Edit"}
+                                    </Button>
+                                    {isEditing && (
+                                    <Button variant="contained" sx={{ mt: 2, ml: 2 }} onClick={handleSave}>
+                                        Save
+                                    </Button>
+                                    )}                            </Grid>
 
                             {/* RIGHT COLUMN */}
                             <Grid item xs={12} md={6}>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                <Typography><strong>Phone:</strong> (000) 000-0000</Typography>
-                                <Button variant="outlined" size="small">Edit</Button>
+                            <Typography>
+                            <strong>Phone:</strong>{" "}
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.mobile_number}
+                                onChange={(e) => setPatientInfo({ ...patientInfo, mobile_number: e.target.value })}
+                                />
+                            ) : (
+                                patientInfo.mobile_number
+                            )}
+                            </Typography>
                             </Box>
 
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                <Typography><strong>Address:</strong> 123 Road</Typography>
-                                <Button variant="outlined" size="small">Edit</Button>
+                            <Typography>
+                            <strong>Address:</strong>{" "}
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.patient_address}
+                                onChange={(e) => setPatientInfo({ ...patientInfo, patient_address: e.target.value })}
+                                />
+                            ) : (
+                                patientInfo.patient_address
+                            )}
+                            </Typography>
                             </Box>
 
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                <Typography><strong>Zip code:</strong> 00000 </Typography>
-                                <Button variant="outlined" size="small">Edit</Button>
+                            <Typography>
+                            <strong>Zip code:</strong>{" "}
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.patient_zipcode}
+                                onChange={(e) => setPatientInfo({ ...patientInfo, patient_zipcode: e.target.value })}
+                                />
+                            ) : (
+                                patientInfo.patient_zipcode
+                            )}
+                            </Typography>
                             </Box>
 
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                <Typography><strong>City:</strong> City </Typography>
-                                <Button variant="outlined" size="small">Edit</Button>
+                            <Typography>
+                            <strong>City:</strong>{" "}
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.patient_city}
+                                onChange={(e) => setPatientInfo({ ...patientInfo, patient_city: e.target.value })}
+                                />
+                            ) : (
+                                patientInfo.patient_city
+                            )}
+                            </Typography>
                             </Box>
 
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                <Typography><strong>Email:</strong> email@example.com</Typography>
-                                <Button variant="outlined" size="small">Edit</Button>
+                            {/* <Typography>
+                            <strong>Email:</strong>{" "}
+                            {isEditing ? (
+                                <input
+                                value={patientInfo.patient_email}
+                                onChange={(e) => setPatientInfo({ ...patientInfo, patient_email: e.target.value })}
+                                />
+                            ) : (
+                                patientInfo.patient_email
+                            )}
+                            </Typography> */}
                             </Box>
 
                             {/* <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>

@@ -4,6 +4,7 @@ import Landing from "./landing";
 import Patient_Landing from "./patient_dashboard/patient_landing";
 import Patientsignup from './patient_signup/patientsignup';
 import Doctorsignup from './doctor_signup/doctorsignup';
+import Pharmacysignup from './pharmacy_signup/pharmacysignup';
 import Patient_Doctorlist from './patient_dashboard/patient_doctorlist';
 import Patient_Billing from './patient_dashboard/patient_billing';
 import Patient_Mealplan from './patient_dashboard/patient_mealplan';
@@ -55,6 +56,7 @@ function App() {
           <Route path="/pharmacy/pharmacy_pickup" element={<Pharmacy_PickUp />} />
           <Route path="/patientsignup" element={<Patientsignup />} />
           <Route path="/doctorsignup" element={<Doctorsignup/>} />
+          <Route path="/pharmacysignup" element={<Pharmacysignup/>} />
           <Route path="/patient_medicalchart/patient_medicalchart" element={<Patient_Chart/>} />
           <Route path="/patient_dashboard/patient_mealplan" element={<Patient_Mealplan/>} />
           <Route path="/MealPlanCard" element={<MealPlanCard/>} />
@@ -64,7 +66,6 @@ function App() {
           <Route path="/doctor_dashboard/doctor_landing" element={<Doctor_Landing />} />
           <Route path="/doctor_dashboard/doctor_patientlist" element={<Doctor_Patientlist />} />
           <Route path="/doctor_dashboard/doctor_appointment" element={<Doctor_Appointment/>} />
-
           <Route path="/doctor_dashboard/doctor_mealplan" element={<Doctor_Mealplan/>}/>
         </Routes>
       </div>
