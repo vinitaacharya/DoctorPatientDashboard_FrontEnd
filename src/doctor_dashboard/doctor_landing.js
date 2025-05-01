@@ -623,7 +623,7 @@ const toggleDoctorStatus = async (doctorId, newStatus) => {
                     click this button and you can fix a few details.
                     </Typography>
                     <Button
-                      variant="contained"
+                      onClick={() => navigate('/doctor_dashboard/doctor_medicalchart')}                      variant="contained"
                       sx={{
                         background: 'rgba(238, 242, 254, 0.10)',
                         color: 'white',

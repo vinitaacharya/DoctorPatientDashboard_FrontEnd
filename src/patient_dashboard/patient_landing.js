@@ -62,28 +62,6 @@ const StyledRating = styled(Rating)({
 });
 
 
-
-
-
-const data = {
-  appointmentDate: '01/04/25',
-  prescription: 'Fakemed',
-  status: 'Ready',
-  pickedUp: true,
-  pickupLocation: 'Newark CVS',
-  diet: 'Keto',
-  notes: 'Drink lots of water and avoid any heavy carbs',
-  rating: 0,
-};
-const labelMap = {
-  appointmentDate: 'Appointment Date',
-  prescription: 'Prescription',
-  status: 'Status',
-  pickupLocation: 'Pickup Location',
-  diet: 'Diet',
-  notes: 'Notes',
-};
-
 function Patient_Landing() {
 
   const [openCancelModal, setOpenCancelModal] = useState(false);
@@ -645,6 +623,69 @@ const [currentIndex, setCurrentIndex] = useState(0);
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
   };
+
+  const [ratingValue, setRatingValue] = useState(0);
+  const [isRated, setIsRated] = useState(pastAppointments[0]?.appt_rating !== null && pastAppointments[0]?.appt_rating !== undefined);
+  
+  // Function to handle rating submission
+  const handleRateAppointment = async (value) => {
+    const appointmentId = pastAppointments[0]?.patient_appt_id;
+    if (!appointmentId) return;
+  
+    try {
+      const response = await fetch('/appointment/rate', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          appt_id: appointmentId,
+          rating: value,
+        }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        setIsRated(true);  // Set isRated to true after rating is submitted
+        setRatingValue(value);
+        alert('Thank you for your feedback!'); 
+      } else {
+        const error = await response.json();
+        alert(`Failed to rate appointment: ${error.error}`);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('An unexpected error occurred.');
+    }
+  };
+
+  useEffect(() => {
+    if (pastAppointments.length > 0) {
+      const appointmentId = pastAppointments[0]?.patient_appt_id;
+
+      const checkRatingStatus = async () => {
+        try {
+          const response = await fetch(`/appointment/status/${appointmentId}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data?.appt_rating){
+              setIsRated(true);
+              setRatingValue(data.appt_rating);
+            }else{
+              setIsRated(false);
+            }
+          } else {
+            console.error("Error fetching appointment rating status");
+          }
+        } catch (error) {
+          console.error("Error checking rating status", error);
+        }
+      };
+
+      checkRatingStatus(); // Call the function to check rating status
+    }
+  }, [pastAppointments]);
+
   return (
 
     <div style={{ display: "flex" }}>
@@ -1827,13 +1868,23 @@ const [currentIndex, setCurrentIndex] = useState(0);
                       <Typography component="legend" sx={{ fontSize: '1.2em', fontWeight: 'bold', mt: 2 }}>
                         Rate Your Appointment:
                       </Typography>
-                      <StyledRating
-                        name="customized-color"
-                        defaultValue={0}
-                        precision={1}
-                        icon={<FavoriteIcon fontSize="inherit" sx={{ fontSize: '2vw' }} />}
-                        emptyIcon={<FavoriteBorderIcon fontSize="inherit" sx={{ fontSize: '2vw', color: '#FEFEFD' }} />}
-                      />
+                      {isRated ? (
+                        <Typography sx={{ fontSize: '1.2em', fontFamily: 'montserrat' }}>
+                          You rated this appointment <strong>{pastAppointments[0].appt_rating}</strong> out of 5.
+                        </Typography>
+                      ) : (
+                        <StyledRating
+                          name="customized-color"
+                          defaultValue={0}
+                          precision={1}
+                          icon={<FavoriteIcon fontSize="inherit" sx={{ fontSize: '2vw' }} />}
+                          emptyIcon={<FavoriteBorderIcon fontSize="inherit" sx={{ fontSize: '2vw', color: '#FEFEFD' }} />}
+                          onChange={(event, newValue) => {
+                            setRatingValue(newValue);
+                            handleRateAppointment(newValue);
+                          }}
+                        />
+                      )}
                     </>
                   ) : (
                     <Typography sx={{ fontSize: '1.2em' }}>

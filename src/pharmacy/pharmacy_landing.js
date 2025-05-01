@@ -285,9 +285,9 @@ function Pharmacy_Landing() {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody sx={{ borderColor: 'white', color: 'white' }}>
-                                    {mockDescriptions.map((med, index) => (
+                                    {medDescriptions.map((med, index) => (
                                         <TableRow key={index} sx={{ borderColor: 'white', color: 'white' }}>
-                                            <TableCell sx={{ color: 'white', borderColor: 'white' }}>{med.name}</TableCell>
+                                            <TableCell sx={{ color: 'white', borderColor: 'white' }}>{med.medicine_name}</TableCell>
                                             <TableCell sx={{ color: 'white', borderColor: 'white' }}>{med.benefits}</TableCell>
                                             <TableCell sx={{ color: 'white', borderColor: 'white' }}>{med.side_effects}</TableCell>
                                             <TableCell sx={{ color: 'white', borderColor: 'white' }}>{med.description}</TableCell>
