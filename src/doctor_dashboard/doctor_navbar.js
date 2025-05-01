@@ -16,9 +16,9 @@ const sidebarItems = [
   { icon:<img src={LogoutImg} className="heart" style={{ width:'7vh'}}/>, text: "Log Out"  },
   { icon:<img src={HomeImg} className="home_button" style={{width:'5.5vh'}}/>, text: "Medical Chart" },
   { icon:<img src={UsersImg} className="community_button" style={{width:'5.5vh'}} />, text: "Medical Chart" },
-  { icon:<img src={ClipBoardImg} className="medical_chart_button" style={{width:'5.5vh'}}/>, text: "Medical Chart" },
-  { icon:<img src={DollarSignImg} className="expenses_button" style={{width:'5.5vh'}}/>, text: "Medical Chart" },
-  { icon:<Avatar alt="Remy Sharp" src={ProfileImg} style={{width:'7.5vh', height:'7.5vh', }} />},];
+  //{ icon:<img src={ClipBoardImg} className="medical_chart_button" style={{width:'5.5vh'}}/>, text: "Medical Chart" },
+  //{ icon:<img src={DollarSignImg} className="expenses_button" style={{width:'5.5vh'}}/>, text: "Medical Chart" },
+  { icon:<Avatar alt="Remy Sharp" src={ProfileImg} style={{width:'7.5vh', height:'7.5vh' }} />},];
 
 
 
@@ -76,10 +76,10 @@ export default function Doctor_Navbar() {
             {index == 1 && (
              <div style={{height:'10vh'}}></div>
             )}
-            {index == 5 && (
-             <div style={{height:'11vh'}}></div>
+            {index == 3 && (
+             <div style={{height:'30vh'}}></div>
             )}
-            {index ==0 ||index == 5 || index == 1 || index !=sidebarItems.length-1 && (
+            {index ==0 ||index == 3 || index == 1 || index !=sidebarItems.length-1 && (
               <Divider sx={{width:"50%", marginY:'1vh', marginLeft:3}}/>
             )}
 
