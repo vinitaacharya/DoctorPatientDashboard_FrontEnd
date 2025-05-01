@@ -28,6 +28,7 @@ import Plot from 'react-plotly.js';
 import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
 import doctor_shrug from "./doctor_shrug.png"
 import doctor_happy from "./doctor_happy.png"
+import patient_help from "./patient_help.png"
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -137,8 +138,8 @@ useEffect(() => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const upcomingRes = await fetch(`http://127.0.0.1:5000/appointmentsupcoming/${doctorId}`);
-        const pastRes = await fetch(`http://127.0.0.1:5000/appointmentspast/${doctorId}`);
+        const upcomingRes = await fetch(`/doc-upcoming/${doctorId}`);
+        const pastRes = await fetch(`/doc-past/${doctorId}`);
 
         if (!upcomingRes.ok || !pastRes.ok) {
           throw new Error("Failed to fetch appointments");
@@ -146,7 +147,8 @@ useEffect(() => {
 
         const upcomingData = await upcomingRes.json();
         const pastData = await pastRes.json();
-
+        console.log("upcoming data",upcomingData);
+        console.log("Past data",pastData);
         setUpcomingAppointments(upcomingData);
         setPastAppointments(pastData);
       } catch (error) {
@@ -155,7 +157,7 @@ useEffect(() => {
         setLoading(false);
       }
     };
-
+    
     fetchAppointments();
   }, [doctorId]);
 
@@ -560,6 +562,7 @@ const toggleDoctorStatus = async (doctorId, newStatus) => {
 
     <div style={{ display: "flex" }}>
       {/* Sidebar/Navbar */}
+      
       <Doctor_Navbar />
 
       <div style={{ marginLeft: "3px", flexGrow: 1, padding: "20px" }}>
@@ -760,7 +763,7 @@ const toggleDoctorStatus = async (doctorId, newStatus) => {
                         <Button
                           variant="contained"
                           onClick={() => navigate('/doctor_dashboard/doctor_appointment', {
-                            state: { appointmentId: appointment.doctor_appt_id }
+                            state: { appointmentId: appointment.patient_appt_id }
                           })}
                           sx={{
                             backgroundColor: "#5A8BBE",
@@ -905,7 +908,7 @@ const toggleDoctorStatus = async (doctorId, newStatus) => {
                           <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                             <Box
                               component="img"
-                              src={doc1}
+                              src={patient_help}
                               alt="Doctor"
                               sx={{
                                 maxHeight: '20vh',
@@ -916,272 +919,20 @@ const toggleDoctorStatus = async (doctorId, newStatus) => {
                                 fontFamily: 'Montserrat'
                               }}
                             />
-                            <Box sx={{fontFamily: 'Montserrat'}}>
-                              <Typography sx={{fontWeight: 'bold', fontSize:'1.3em'}}>
-                                {doctorInfo ? `Dr. ${doctorInfo.first_name} ${doctorInfo.last_name}` : "Loading..."}
-                              </Typography>
-
-                              <Typography>
-                              {doctorInfo
-                              ? doctorInfo.description.length > 75
-                                ? `${doctorInfo.description.slice(0, 75)}...`
-                                : doctorInfo.description
-                              : "Loading..."}
-                              </Typography>
-                              <Button onClick={openLearnMoreModal} variant="contained" sx={{ color: "white", borderRadius: 5, textTransform: "none", backgroundColor: "#5A8BBE", fontFamily: 'Montserrat', marginTop: '7px', fontSize: '1.3em' }}>
-                                Learn More
-                              </Button>
-                            </Box>
                           </Box>
                           {/* Learn More Model*/}
 
-                          <Modal open={openLearnMore} onClose={closeLearnMoreModal}>
-                            <Box
-                              sx={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                height: '100vh',
-                              }}
-                            >
-                              <Paper
-                                sx={{
-                                  position: 'relative',
-                                  width: 600,
-                                  p: 4,
-                                  borderRadius: 3,
-                                  boxShadow: 5,
-                                  bgcolor: '#EEF2FE',
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  gap: 3,
-                                }}
-                              >
-                                {/* Close Icon */}
-                                <IconButton
-                                  onClick={closeLearnMoreModal}
-                                  sx={{
-                                    position: 'absolute',
-                                    top: 12,
-                                    right: 12,
-                                  }}
-                                >
-                                  <CloseIcon />
-                                </IconButton>
 
-                                {/* Profile Image */}
-                                <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                                  <Box
-                                    component="img"
-                                    src={doc1}
-                                    alt="Doctor"
-                                    sx={{
-                                      maxHeight: '20vh',
-                                      width: '10vw',
-                                      borderRadius: "30px",
-                                      objectFit: "cover",
-                                      mr: 2,
-                                    }}
-                                  />
-                                  <Box>
-                                    <Typography variant="h6" fontWeight="bold" sx={{fontFamily: 'Montserrat'}}>
-                                      Dr. {doctorInfo.first_name} {doctorInfo.last_name}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                      <strong>Specialization:</strong> {doctorInfo.specialty || "N/A"}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                      <strong>Years of Experience:</strong> {doctorInfo.years_of_practice} years
-                                    </Typography>
-                                    <Typography variant="body2">
-                                      <strong>Appointment Fee:</strong> {doctorInfo.payment_fee}
-                                    </Typography>
-                                  </Box>
-                                </Box>
-
-
-                                {/* Content */}
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-
-
-                                  <Typography variant="body2" mt={2}>
-                                    <strong>About:</strong><br />
-                                    {doctorInfo.description}
-                                  </Typography>
-                                </Box>
-                              </Paper>
-                            </Box>
-                          </Modal>
 
                           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                            <Button
-                              onClick={handleOpenBookAppt}
-                              variant="contained"
-                              sx={{
-                                backgroundColor: '#719EC7',
-                                color: 'white',
-                                textTransform: 'none',
-                                borderRadius: 5,
-                                fontFamily: 'Montserrat',
-                                fontSize: '1.2em',
-                                width: '75%',
-                                margin: 'auto',
-                              }}
-                            >
-                              Book Appointment
-                            </Button>
-                            <Modal open={openBookAppt} onClose={handleCloseBookAppt}>
-                              <Box sx={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%)',
-                                width: '90%',
-                                maxWidth: 500,
-                                bgcolor: 'white',
-                                borderRadius: '20px',
-                                boxShadow: 24,
-                                p: 4,
-                              }}>
-                                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                                  <Typography variant="h5" sx={{ fontFamily: 'Montserrat' }}>Book Appointment</Typography>
-                                  <IconButton onClick={handleCloseBookAppt}>
-                                    <CloseIcon />
-                                  </IconButton>
-                                </Box>
-
-                                <Typography fontWeight="bold" mb={2}>Dr. Hillary Geller</Typography>
-
-                                <TextField
-                                  label="Reason for Visit"
-                                  fullWidth
-                                  value={apptReason}
-                                  onChange={(e) => setApptReason(e.target.value)}
-                                  sx={{ mb: 2 }}
-                                />
-
-                                <TextField
-                                  label="Current Medications"
-                                  fullWidth
-                                  value={medications}
-                                  onChange={(e) => setMedications(e.target.value)}
-                                  sx={{ mb: 2 }}
-                                />
-
-                                <TextField
-                                  label="Exercise Frequency"
-                                  fullWidth
-                                  value={exercise}
-                                  onChange={(e) => setExercise(e.target.value)}
-                                  sx={{ mb: 2 }}
-                                />
 
 
-                                {/* Date and time selectors (replace with date picker if needed) */}
-                                <Typography sx={{ fontSize: '0.9em', fontWeight: 'bold', mt: 2 }}>Pick Date</Typography>
-                                <TextField
-                                  type="date"
-                                  fullWidth
-                                  value={selectedDate.toISOString().split('T')[0]}
-                                  onChange={(e) => setSelectedDate(new Date(e.target.value))}
-                                  sx={{ mb: 2 }}
-                                />
-
-                                <Typography sx={{ fontSize: '0.9em', fontWeight: 'bold' }}>Time</Typography>
-                                <TextField
-                                  type="time"
-                                  fullWidth
-                                  value={selectedTime}
-                                  onChange={(e) => setSelectedTime(e.target.value)}
-                                  sx={{ mb: 2 }}
-                                />
-
-                                <Typography sx={{ fontSize: '0.9em', fontStyle: 'italic', mb: 2 }}>
-                                  Pharmacy: {pharmacyInfo || "Loading..."}
-                                </Typography>
-
-
-                                <Box display="flex" justifyContent="space-between">
-                                  <Button
-                                    onClick={handleCreateAppointment}
-                                    variant="contained"
-                                    sx={{
-                                      backgroundColor: '#5A8BBE',
-                                      borderRadius: '25px',
-                                      textTransform: 'none',
-                                      fontWeight: 'bold',
-                                      fontFamily: 'Montserrat',
-                                      width: '48%',
-                                    }}
-                                  >
-                                    Request
-                                  </Button>
-
-
-
-                                  <Button
-                                    onClick={handleCloseBookAppt}
-                                    variant="contained"
-                                    sx={{
-                                      backgroundColor: '#D15254',
-                                      borderRadius: '25px',
-                                      textTransform: 'none',
-                                      fontWeight: 'bold',
-                                      fontFamily: 'Montserrat',
-                                      width: '48%',
-                                    }}
-                                  >
-                                    Cancel
-                                  </Button>
-                                </Box>
-                              </Box>
-                            </Modal>
 
                             <Button variant="contained" onClick={() => navigate('/doctor_dashboard/doctor_patientlist')} sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto' }}>
                               See Your patients
                             </Button>
-                            <Button onClick={openDeleteCurrentDoctorModal} variant="contained" sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto' }}>
-                              Delete Current Doctor
-                            </Button>
-                            <Modal open={openDeleteCurrentDoctor} >
-                              <Box sx={{ ...style, display: 'flex', flexDirection: 'column', alignItems: "center", }}>
 
-                                <Typography sx={{ color: "black", fontSize: '4vh', p: 2 }}> Are you sure you want to delete your current doctor? </Typography>
-                                <Typography sx={{ color: "black", fontSize: '4vh', p: 2 }}> This action cannot be reveresed! </Typography>
-                                <Button
-                                  onClick={handleDeleteCurrentDoctor}
-                                  variant="contained"
-                                  sx={{
-                                    alignContent: 'center',
-                                    backgroundColor: '#D15254',
-                                    color: 'black',
-                                    borderRadius: '25px',
-                                    fontWeight: 'bold',
-                                    textTransform: 'none',
-                                    marginTop: '2vh',
-                                    marginBottom: '2vh',
-                                    width: '30vh',
-                                    fontFamily: 'Merriweather',
 
-                                  }}
-                                >DELETE</Button>
-                                <Button
-                                  onClick={closeDeleteCurrentDoctorModal}
-                                  variant="contained"
-                                  sx={{
-                                    backgroundColor: '#719EC7',
-                                    color: 'white',
-                                    borderRadius: '25px',
-                                    fontWeight: 'bold',
-                                    textTransform: 'none',
-                                    width: '30vh',
-                                    fontFamily: 'Merriweather',
-                                  }}
-                                >Close
-                                </Button>
-
-                              </Box>
-                            </Modal>
                           </Box>
                         </>
                       ) : (<>
