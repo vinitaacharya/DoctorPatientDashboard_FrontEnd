@@ -1,5 +1,5 @@
-import React from "react";
-import Navbar from "./patient_navbar";
+import React, { useState, useEffect, useRef } from "react";
+import Navbar from "./doctor_navbar";
 import { Checkbox, FormControlLabel,FormLabel, FormGroup, Box, Typography, IconButton, Avatar, Modal, TextField,Button,Grid } from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import GridOnIcon from '@mui/icons-material/GridOn';
@@ -8,24 +8,33 @@ import MealCard from "./MealPlanCard"; // Make sure MealCard is exported from me
 import food1 from "./reciepe photo.png"; // Or replace with relevant image
 import profileBackground from "./profile_assets/profile_background.png"
 import ProfileImg from "./profile_assets/profilePageImg.png"
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 const posts = [
   {
-    author:'Vinita Acharya',
-    title: "Cauliflower Fried Rice",
-    tags: ["#Keto"],
-    description: "Fried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less rice...Fried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less riceFried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less rice",
+    author: 'Vinita Acharya',
+    title: 'Cauliflower Fried Rice',
+    tags: ['#Keto'],
+    description: 'Fried rice is a classic...',
     image: food1,
-    comments:['hi', 'vinitaaa'],
+    comments: [
+      { firstName: 'Vinita', lastName: 'Acharya', text: 'hi' },
+      { firstName: 'Vinita', lastName: 'Acharya', text: 'vinitaaa' }
+    ],
   },
   {
-    author:'Doctor Joe',
-    title: "Marry Me Tofu",
-    tags: ["#Keto"," #Vegan"],
-    description: "Because tofu is so versatile, why not give this plant-based protein a romantic spin...",
+    author: 'Vinita Acharya',
+    title: 'Marry Me Tofu',
+    tags: ['#Keto', '#Vegan'],
+    description: 'Tofu is versatile...',
     image: food1,
+    comments: [
+      { firstName: 'Joe', lastName: 'Smith', text: 'love this!' }
+    ],
   },
 ];
+
 
 const Profile = () => {
   const [openCreatePost, setOpenCreatePost] = React.useState(false);
@@ -36,6 +45,37 @@ const handleCloseCreatePost = () => setOpenCreatePost(false);
 
 const [uploadedFileName, setUploadedFileName] = React.useState('');
 
+const [patientInfo, setPatientInfo] = useState(null);
+
+const [changeTab, setChangeTab] = React.useState(0);
+const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  setChangeTab(newValue);
+};
+
+useEffect(() => {
+  const fetchPatientInfo = async () => {
+    const id = localStorage.getItem("doctorId");
+    if (!id) {
+      console.warn("No patient ID in localStorage");
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:5000/doctor/${id}`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch patient info");
+      }
+
+      const data = await res.json();
+      setPatientInfo(data);
+      console.log("Patient info:", data);
+    } catch (error) {
+      console.error("Error fetching patient info:", error);
+    }
+  };
+
+  fetchPatientInfo();
+}, []);
   return (
     <Box display="flex">
       <Navbar />
@@ -59,30 +99,35 @@ const [uploadedFileName, setUploadedFileName] = React.useState('');
               alt="Profile"
               sx={{ width:'15vh', height: '15vh', margin: '0 auto' }}
             />
-            <Typography variant="h6" sx={{ color:'white', mt: 1, fontFamily: 'Montserrat', fontSize: '1.5em' }}>
-              JaneDoe123
-            </Typography>
+           
+          {patientInfo && (
+            <Typography  variant="h6" sx={{ color:'white', mt: 1, fontFamily: 'Montserrat', fontSize: '1.5em' }}>
+                {patientInfo.first_name} {patientInfo.last_name}
+            </Typography>)}           
           </Box>
         </Box>
-        <Box sx={{backgroundColor:'#EEF2FE'}}>
+        <Box sx={{backgroundColor:'#EEF2FE', minHeight:'70vh'}}>
         {/* Tab Icons */}
-        <Box display="flex" justifyContent="center" gap={4} mb={4} pt={4}>
-          <IconButton sx={{ backgroundColor: '#fff', borderRadius: '12px' }}>
-            <GridOnIcon />
-          </IconButton>
-          <IconButton>
-            <FavoriteBorderIcon />
-          </IconButton>
-        </Box>
-
+        <Tabs value={changeTab} onChange={handleChange} aria-label="icon tabs example" centered>
+      <Tab icon={<GridOnIcon />} aria-label="grid" />
+      <Tab icon={<FavoriteBorderIcon />} aria-label="favorite" />
+    </Tabs>
+    {changeTab === 0 && (
+      <>
         {/* Posts Grid */}
         <Grid container spacing={3}>
-          {posts.map((post, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <MealCard meal={post}/>
-        
-            </Grid>
-          ))}
+        {patientInfo && posts.map((post, index) => (
+  <Grid item xs={12} sm={6} md={4} key={index}>
+    <MealCard
+      meal={post}
+      patientInfo={{
+        firstName: patientInfo.first_name,
+        lastName: patientInfo.last_name,
+      }}
+    />
+  </Grid>
+))}
+
           {/* Add New Post Card */}
           <Grid item xs={12} sm={6} md={4}>
             <Box
@@ -209,7 +254,32 @@ const [uploadedFileName, setUploadedFileName] = React.useState('');
   </Box>
 </Modal>
 
-        </Grid>
+        </Grid></>
+      )}
+{changeTab === 1 && (
+  <Grid container spacing={3} justifyContent="center" alignItems="center" sx={{ minHeight: '50vh' }}>
+    <Grid item xs={12} textAlign="center">
+      <Box
+        sx={{
+          backgroundColor: '#F5F7FF',
+          border: '2px dashed #A0B9DA',
+          borderRadius: '15px',
+          padding: '5vh',
+          display: 'inline-block',
+        }}
+      >
+        <FavoriteBorderIcon sx={{ fontSize: 60, color: '#A0B9DA', mb: 2 }} />
+        <Typography variant="h5" sx={{ color: '#5E4B8B', fontFamily: 'Montserrat', fontWeight: 'bold' }}>
+          No Liked Posts Yet
+        </Typography>
+        <Typography sx={{ color: '#7A7A7A', mt: 1, fontFamily: 'Montserrat' }}>
+          Start exploring and like some posts!
+        </Typography>
+      </Box>
+    </Grid>
+  </Grid>
+)}
+
       </Box>
     </Box>
     </Box>
