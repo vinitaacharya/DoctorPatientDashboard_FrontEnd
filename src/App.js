@@ -17,6 +17,7 @@ import Patient_Appointment from './patient_dashboard/patient_appointment';
 import Community_Homepage from './community_homepage';
 import Doctor_Landing from "./doctor_dashboard/doctor_landing";
 import Doctor_Patientlist from './doctor_dashboard/doctor_patientlist';
+import Doctor_Appointment from './doctor_dashboard/doctor_appointment';
 
 function App() {
   const[data, setData] = useState([{}])
@@ -61,6 +62,8 @@ function App() {
           <Route path="/community_homepage" element={<Community_Homepage/>} />
           <Route path="/doctor_dashboard/doctor_landing" element={<Doctor_Landing />} />
           <Route path="/doctor_dashboard/doctor_patientlist" element={<Doctor_Patientlist />} />
+          <Route path="/doctor_dashboard/doctor_appointment" element={<Doctor_Appointment/>} />
+
         </Routes>
       </div>
       </Router>

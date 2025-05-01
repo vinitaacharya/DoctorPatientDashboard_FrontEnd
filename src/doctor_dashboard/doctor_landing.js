@@ -137,8 +137,8 @@ useEffect(() => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const upcomingRes = await fetch(`http://127.0.0.1:5000/appointmentsupcoming/${doctorId}`);
-        const pastRes = await fetch(`http://127.0.0.1:5000/appointmentspast/${doctorId}`);
+        const upcomingRes = await fetch(`/doc-upcoming/${doctorId}`);
+        const pastRes = await fetch(`/doc-past/${doctorId}`);
 
         if (!upcomingRes.ok || !pastRes.ok) {
           throw new Error("Failed to fetch appointments");
@@ -146,7 +146,8 @@ useEffect(() => {
 
         const upcomingData = await upcomingRes.json();
         const pastData = await pastRes.json();
-
+        console.log("upcoming data",upcomingData);
+        console.log("Past data",pastData);
         setUpcomingAppointments(upcomingData);
         setPastAppointments(pastData);
       } catch (error) {
@@ -155,7 +156,7 @@ useEffect(() => {
         setLoading(false);
       }
     };
-
+    
     fetchAppointments();
   }, [doctorId]);
 
@@ -560,6 +561,7 @@ const toggleDoctorStatus = async (doctorId, newStatus) => {
 
     <div style={{ display: "flex" }}>
       {/* Sidebar/Navbar */}
+      
       <Doctor_Navbar />
 
       <div style={{ marginLeft: "3px", flexGrow: 1, padding: "20px" }}>
@@ -760,7 +762,7 @@ const toggleDoctorStatus = async (doctorId, newStatus) => {
                         <Button
                           variant="contained"
                           onClick={() => navigate('/doctor_dashboard/doctor_appointment', {
-                            state: { appointmentId: appointment.doctor_appt_id }
+                            state: { appointmentId: appointment.patient_appt_id }
                           })}
                           sx={{
                             backgroundColor: "#5A8BBE",

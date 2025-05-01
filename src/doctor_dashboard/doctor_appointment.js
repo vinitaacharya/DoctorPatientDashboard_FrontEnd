@@ -10,6 +10,35 @@ import doc1 from "./doctorim/doctor1.png";
 import pat1 from "./nav_assets/Profile.png"
 import { useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import Modal from '@mui/material/Modal';
+import Button from '@mui/material/Button';
+import { useNavigate } from "react-router-dom";
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+
+
+
+
+const buttonStyle = {
+  borderRadius: "30px",
+  border: "none",
+  backgroundColor: "#5889BD",
+  color: "#EEF2FE",
+  // backgroundColor: "#86e88d",
+  // color: "#5889BD",
+  textAlign: "center",
+  fontFamily: "Montserrat",
+  fontSize: "0.9rem", // Avoid extremely small .45em
+  boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)", // use `boxShadow` instead of `filter`
+  padding: "5px 10px",
+  fontWeight: 600,
+  width: "10vw",
+  height: "5vh",
+  marginLeft: "1vw",
+  "&:hover": {
+    backgroundColor: "#dce3fa",
+  }
+};
 
 
 
@@ -110,7 +139,7 @@ function Doctor_Appointment() {
         const data = await res.json();
         const formattedData = {
           doctor: data.doctor_name,
-          doctorName: data.doctor_name,
+          patientName: data.patient_name,
           age: data.age,
           gender: data.gender,
           height: data.survey_height,
@@ -167,11 +196,73 @@ function Doctor_Appointment() {
     setChatMessages(prev => [...prev, newMsg]);
     setNewMessage("");
     
+    console.log("AppointmentID", appointmentId);
     // TODO: send to backend
   };
+
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const [values, setValues] = useState({
+        pills: '',
+        quantity: ''
+    })
+
+    const handleLogin = async (email, password) => {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/login-patient', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+    
+        const data = await response.json();
+    
+        if (response.ok) {
+          // Save patient ID (and optionally, email or token)
+          console.log("Patient ID returned from backend:", data.patient_id); // ✅ debug line
+          localStorage.setItem("patientId", data.patient_id);
+          localStorage.removeItem("doctorId");
+
+          // Redirect to dashboard
+          navigate("/patient_dashboard/patient_landing");
+        } else {
+          alert(data.error || "Login failed");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        alert("An error occurred. Please try again.");
+      }
+    };
+
+    const navigate = useNavigate()
+
+    const [pills, setPills] = useState(null); // or use 0 if preferred
+    
+    const handleChange = (event: SelectChangeEvent) => {
+        setPills(event.target.value);
+        setValues({...values, perscription: event.target.value});
+    };
+
+    const [medications, setMedications] = useState([]);
+
+    useEffect(() => {
+      fetch('http://localhost:5000/all_meds')
+        .then(res => res.json())
+        .then(data => setMedications(data))
+        .catch(err => console.error('Error fetching meds:', err));
+    }, []);
+
+    
+
+
     return (
         <div style={{ display: "flex" }}>
-          <doctor_Navbar />
+          
+          <Doctor_Navbar />
+
+          
           <Grid container spacing={3} sx={{ padding: 3 }}>
         
         {/* Appointment Info */}
@@ -181,7 +272,7 @@ function Doctor_Appointment() {
             {appointmentData ? (
               <>
                 <Typography sx={{fontSize: "1.3em"}}><strong>Doctor:</strong> {appointmentData.doctor}</Typography>
-                <Typography sx={{fontSize: "1.3em"}}><strong>doctor Name:</strong> {appointmentData.doctorName}</Typography>
+                <Typography sx={{fontSize: "1.3em"}}><strong>Patient Name:</strong> {appointmentData.patientName}</Typography>
                 <Typography sx={{fontSize: "1.3em"}}><strong>DOB:</strong> {appointmentData.dob}</Typography>
                 <Typography sx={{fontSize: "1.3em"}}><strong>Gender:</strong> {appointmentData.gender}</Typography>
                 <Typography sx={{fontSize: "1.3em"}}><strong>Height:</strong> {appointmentData.height}</Typography>
@@ -190,7 +281,89 @@ function Doctor_Appointment() {
                 <Typography sx={{fontSize: "1.3em"}}><strong>Pre-existing conditions:</strong> {appointmentData.conditions}</Typography>
                 <Typography sx={{fontSize: "1.3em"}}><strong>Reason for visit:</strong> {appointmentData.reason}</Typography>
                 <Typography sx={{ mt: 2, fontSize: "1.3em"}}><strong>Notes:</strong> {appointmentData.notes}</Typography>
-                <Typography sx={{fontSize: "1.3em"}}><strong>Prescription:</strong> {appointmentData.prescription}</Typography>
+                <Typography sx={{fontSize: "1.3em"}}>
+                  <strong>Prescription:</strong>
+                  <Button sx={buttonStyle} onClick={handleOpen}> Perscribe </Button>
+                  <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                  >
+                    <Box sx={style}>
+                      <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
+                        Prescription
+                      </Typography>
+
+                      <div className='labels'>
+                        <label htmlFor="medication" className='gender-label'>Medicine: </label>
+                        <Select
+                          className="form-control-select"
+                          value={pills || ''}
+                          onChange={(e) => {
+                            const selectedId = parseInt(e.target.value);
+                            setPills(selectedId);
+                            setValues({ ...values, prescription: selectedId });
+                          }}
+                          displayEmpty
+                          renderValue={(selected) => {
+                            const med = medications.find(m => m.medicine_id === selected);
+                            return med ? med.medicine_name : "Select Medication";
+                          }}
+                        >
+                          {medications.map((med) => (
+                            <MenuItem key={med.medicine_id} value={med.medicine_id}>
+                              {med.medicine_name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </div>
+
+                      <div className='labels'>
+                        <label className='def-label' style={{ background: "#54a0ff", color: "white" }} htmlFor="quantity">Quantity: </label>
+                        <input
+                          type='number'
+                          name='quantity'
+                          className="form-control"
+                          placeholder='Enter Quantity'
+                          value={values.quantity}
+                          onChange={e => setValues({ ...values, quantity: e.target.value })}
+                        />
+                      </div>
+
+                      <button
+                        className="patientlogin btn-info"
+                        style={{ background: 'teal' }}
+                        onClick={async () => {
+                          try {
+                            const res = await fetch('http://localhost:5000/prescriptions', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                appt_id: appointmentId,
+                                medicine_id: pills,
+                                quantity: parseInt(values.quantity)
+                              }),
+                            });
+                            const data = await res.json();
+                            if (res.ok) {
+                              alert("Prescription submitted successfully!");
+                              handleClose();
+                            } else {
+                              alert(data.error || "Failed to submit prescription.");
+                            }
+                          } catch (err) {
+                            console.error("Prescription error:", err);
+                            alert("An error occurred submitting the prescription.");
+                          }
+                        }}
+                      >
+                        Send
+                      </button>
+                    </Box>
+                  </Modal>
+
+                </Typography>
                 <Typography sx={{fontSize: "1.3em"}}><strong>Meal Plan:</strong> {appointmentData.mealPlan}</Typography>
               </>
             ) : (
@@ -212,7 +385,7 @@ function Doctor_Appointment() {
                     text={msg.text}
                     time={msg.time}
                     isUser={msg.sender === "doctor"}
-                    avatar={msg.sender === "doctor" ? {doc1} : {pat1}}
+                    avatar={msg.sender === "doctor" ? doc1 : pat1}
                     />
                 ))}
             </Box>
