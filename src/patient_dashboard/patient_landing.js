@@ -312,22 +312,27 @@ const [dailySubmitted, setDailySubmitted] = useState(false);
 const [weeklySubmitted, setWeeklySubmitted] = useState(false);
 useEffect(() => {
   const checkSurveyStatus = async () => {
-    const patientId = localStorage.getItem("patient_id");
-    const todayDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-    const currentWeek = getWeekNumber(new Date());
+    const today = new Date();
+    const todayDateOnly = today.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+    const currentWeek = getWeekNumber(today);
 
     try {
-      // Fetch daily surveys
+      // Daily survey check
       const dailyRes = await fetch(`/daily-surveys/${patientId}`);
       const dailyData = await dailyRes.json();
 
       const hasDailyToday = dailyData.some(survey => {
-        return survey.date.startsWith(todayDate);
+        const surveyDate = new Date(survey.date);
+        const surveyDateOnly = surveyDate.toISOString().split('T')[0];
+        return surveyDateOnly === todayDateOnly;
       });
-
+      console.log("Today (local):", new Date().toLocaleDateString());
+      dailyData.forEach(survey => {
+        console.log("Survey date:", new Date(survey.date).toLocaleDateString());
+      });
       setDailySubmitted(hasDailyToday);
 
-      // Fetch weekly surveys
+      // Weekly survey check
       const weeklyRes = await fetch(`/weekly-surveys/${patientId}`);
       const weeklyData = await weeklyRes.json();
 
@@ -345,6 +350,8 @@ useEffect(() => {
 
   checkSurveyStatus();
 }, []);
+
+
 function getWeekNumber(date) {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
   const dayNum = d.getUTCDay() || 7;
