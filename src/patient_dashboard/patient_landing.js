@@ -280,15 +280,33 @@ const handleDailySubmit = async (e) => {
   const handleWeeklySubmit = async (e) => {
     e.preventDefault();
 
+    let parsedWeightAmount = parseFloat(weightAmount) || 0;
+
+    if (weightChange === "Loss") {
+      parsedWeightAmount = -Math.abs(parsedWeightAmount);
+    } else if (weightChange === "Gain") {
+      parsedWeightAmount = Math.abs(parsedWeightAmount);
+    } else {
+      parsedWeightAmount = 0;
+    }
+    // 2. Calculate most recent Sunday (week_start)
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const diffToSunday = dayOfWeek;   // How many days to subtract to get to last Sunday
+  const lastSunday = new Date(today);
+  lastSunday.setDate(today.getDate() - diffToSunday);
+  lastSunday.setHours(0, 0, 0, 0); // Reset time to 00:00:00
+console.log("patient", patientId)
+  const weekStart = lastSunday.toISOString().split('T')[0]; // ✅ '2024-09-01'
   const weeklyData = {
-    patient_id:patientId,
-    weight_change:weightChange ,
-    weight_amount:weightAmount,
-    blood_pressure:bloodPressure
-  };
+      patient_id: patientId,
+      week_start: weekStart,
+      weight_change: parsedWeightAmount,
+      blood_pressure: bloodPressure
+    };
 //replace fetch with correct url
   try {
-    const response = await fetch('http://localhost:5000/weekly-surveys', {
+    const response = await fetch('http://localhost:5000/weekly-survey', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -298,6 +316,10 @@ const handleDailySubmit = async (e) => {
 
       if (response.ok) {
         console.log('Weekly survey submitted successfully');
+        // Clear form fields
+        setWeightChange("");
+        setWeightAmount("");
+        setBloodPressure("");
         closeWeeklySurveysModal(); // Close modal on success
       } else {
         console.error('Failed to submit weekly survey');
@@ -314,7 +336,7 @@ useEffect(() => {
   const checkSurveyStatus = async () => {
     const today = new Date();
     const todayDateOnly = today.toISOString().split('T')[0]; // 'YYYY-MM-DD'
-    const currentWeek = getWeekNumber(today);
+    const currentWeekStart = getWeekStart(today); // Get the start of this week (Sunday)
 
     try {
       // Daily survey check
@@ -332,32 +354,32 @@ useEffect(() => {
       });
       setDailySubmitted(hasDailyToday);
 
-      // Weekly survey check
-      const weeklyRes = await fetch(`/weekly-surveys/${patientId}`);
-      const weeklyData = await weeklyRes.json();
-
-      const hasWeeklyThisWeek = weeklyData.some(survey => {
-        const surveyWeek = getWeekNumber(new Date(survey.week_start));
-        return surveyWeek === currentWeek;
-      });
-
-      setWeeklySubmitted(hasWeeklyThisWeek);
-
-    } catch (error) {
-      console.error("Error fetching surveys:", error);
-    }
+         // Weekly survey check
+         const weeklyRes = await fetch(`/weekly-surveys/${patientId}`);
+         const weeklyData = await weeklyRes.json();
+   
+         const hasWeeklyThisWeek = weeklyData.some(survey => {
+           const surveyWeekStart = new Date(survey.week_start);
+           // Check if the week_start is within the current week (starting from Sunday)
+           return surveyWeekStart.toISOString().split('T')[0] === currentWeekStart;
+         });
+   
+         setWeeklySubmitted(hasWeeklyThisWeek);
+   
+       } catch (error) {
+         console.error("Error fetching surveys:", error);
+       }
   };
 
   checkSurveyStatus();
 }, []);
 
 
-function getWeekNumber(date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const dayNum = d.getUTCDay() || 7;
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+function getWeekStart(date) {
+  const startOfWeek = new Date(date);
+  startOfWeek.setDate(date.getDate() - date.getDay()); // Set to Sunday (start of the week)
+  startOfWeek.setHours(0, 0, 0, 0); // Set to start of the day (midnight)
+  return startOfWeek.toISOString().split('T')[0]; // Return 'YYYY-MM-DD' format
 }
 
 
@@ -1002,7 +1024,6 @@ const [currentIndex, setCurrentIndex] = useState(0);
                         />
 
                         <Button
-                          onClick={closeWeeklySurveysModal}
                           type="submit"
                           variant="contained"
                           fullWidth
