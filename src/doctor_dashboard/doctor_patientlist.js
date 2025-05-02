@@ -29,6 +29,14 @@ function Doctor_Patientlist() {
       .catch(error => console.error("Error fetching patients:", error));
   }, [doctorId]);
 
+  const handleLearnMore = async (pat) => {
+    const res = await fetch(`http://127.0.0.1:5000/init-patient-survey/${pat.patient_id}`);
+    const data = await res.json();
+    setSelectedPatient({ ...pat, ...data });
+    setOpenLearnMore(true);
+  };
+  
+
   return (
     <div style={{ display: "flex" }}>
       <Doctor_Navbar />
@@ -73,19 +81,39 @@ function Doctor_Patientlist() {
                       {pat.first_name} {pat.last_name}
                     </Typography>
                     <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em' }}>
-                      <strong>Email:</strong> {pat.patient_email}
+                    <strong>Email:</strong> {pat.patient_email}
                     </Typography>
                     <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em' }}>
-                      <strong>Gender:</strong> {pat.gender || "N/A"}
+                    <strong>Phone:</strong> {pat.mobile_number || "N/A"}
                     </Typography>
                     <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em' }}>
-                      <strong>Phone:</strong> {pat.phone || "N/A"}
+                    <strong>Insurance Name:</strong> {pat.insurance_provider}
                     </Typography>
+                    
                   </Box>
                 </Box>
 
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2, marginRight: '2vw' }}>
                 <Button
-                  onClick={() => { setSelectedPatient(pat); setOpenLearnMore(true); }}
+                    onClick={() => handleLearnMore(pat)}
+                    variant="contained"
+                    sx={{
+                      backgroundColor: "#5A4AA3",
+                      borderRadius: "20px",
+                      textTransform: "none",
+                      fontFamily: 'Montserrat',
+                      paddingRight: '2em',
+                      paddingLeft: '2em',
+                      fontSize: '1.3em'
+                    }}
+                  >
+                    Learn More
+                  </Button>
+                  <Button
+                  onClick={() => {
+                    localStorage.setItem("patientId", pat.patient_id); // Store patient ID
+                    window.location.href = "/doctor_dashboard/doctor_patientinfo"; // Navigate to chart page
+                  }}
                   variant="contained"
                   sx={{
                     backgroundColor: "#5A4AA3",
@@ -94,12 +122,14 @@ function Doctor_Patientlist() {
                     fontFamily: 'Montserrat',
                     paddingRight: '2em',
                     paddingLeft: '2em',
-                    marginRight: '2vw',
                     fontSize: '1.3em'
                   }}
                 >
-                  Learn More
+                  Overview
                 </Button>
+
+                </Box>
+
               </Paper>
             ))}
 
@@ -111,34 +141,60 @@ function Doctor_Patientlist() {
                       <CloseIcon />
                     </IconButton>
 
-                    <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                      <Box
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box
                         component="img"
                         src={doc1}
                         alt="Patient"
                         sx={{ maxHeight: '20vh', width: '10vw', borderRadius: "30px", objectFit: "cover", mr: 2 }}
                       />
                       <Box>
-                        <Typography variant="h6" fontWeight="500" sx={{ fontFamily: 'Montserrat', fontSize: '1.5em', paddingBottom: '1vh' }}>
-                          {selectedPatient.first_name} {selectedPatient.last_name}
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontFamily: 'Merriweather', color: "#000000", fontSize: '1.1em' }}>
-                          <strong>Email:</strong> {selectedPatient.email}
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontFamily: 'Merriweather', color: "#000000", fontSize: '1.1em' }}>
-                          <strong>Phone:</strong> {selectedPatient.phone || "N/A"}
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontFamily: 'Merriweather', color: "#000000", fontSize: '1.1em' }}>
-                          <strong>Gender:</strong> {selectedPatient.gender || "N/A"}
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontFamily: 'Merriweather', color: "#000000", fontSize: '1.1em' }}>
-                          <strong>Weight:</strong> {selectedPatient.weight || "N/A"} lbs
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontFamily: 'Merriweather', color: "#000000", fontSize: '1.1em' }}>
-                          <strong>Height:</strong> {selectedPatient.height || "N/A"} in
-                        </Typography>
+                      <Typography variant="h6" fontWeight="500" sx={{ fontFamily: 'Montserrat', fontSize: '1.5em', paddingBottom: '1vh' }}>
+                        {selectedPatient.first_name} {selectedPatient.last_name}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                      <strong>Age:</strong> {selectedPatient.dob ? Math.floor((new Date() - new Date(selectedPatient.dob)) / (365.25 * 24 * 60 * 60 * 1000)) : "N/A"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Gender:</strong> {selectedPatient.gender || "N/A"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Email:</strong> {selectedPatient.patient_email}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Phone:</strong> {selectedPatient.mobile_number || "N/A"}
+                      </Typography>
                       </Box>
                     </Box>
+
+                    {/* Divider content below main section */}
+                    <Box sx={{ mt: 2 }}>
+                    <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Weight:</strong> {selectedPatient.weight || "N/A"} lbs
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Height:</strong> {selectedPatient.height || "N/A"} in
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Blood Type:</strong> {selectedPatient.blood_type || "N/A"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Dietary Restrictions:</strong> {selectedPatient.dietary_restrictions || "None"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Fitness Level:</strong> {selectedPatient.activity || "None"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Goal:</strong> {selectedPatient.health_goals || "None"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Insurance:</strong> {selectedPatient.insurance_provider || "N/A"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Expires:</strong> {selectedPatient.insurance_expiration_date || "N/A"}
+                      </Typography>
+                    </Box>
+
                   </Paper>
                 </Box>
               </Modal>

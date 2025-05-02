@@ -11,7 +11,7 @@ import Divider from '@mui/material/Divider';
 
 
 
-function Doctor_Chart() {
+function DoctorInfo() {
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState(0);
     const [dailyInfo, setDailyInfo] = useState(null);
@@ -472,4 +472,4 @@ useEffect(() => {
 
 }
 
-export default Doctor_Chart;
+export default DoctorInfo;
