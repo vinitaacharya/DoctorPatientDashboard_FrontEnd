@@ -84,8 +84,27 @@ function Doctor_Patientlist() {
                   </Box>
                 </Box>
 
-                <Button
-                  onClick={() => { setSelectedPatient(pat); setOpenLearnMore(true); }}
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2, marginRight: '2vw' }}>
+                  <Button
+                    onClick={() => { setSelectedPatient(pat); setOpenLearnMore(true); }}
+                    variant="contained"
+                    sx={{
+                      backgroundColor: "#5A4AA3",
+                      borderRadius: "20px",
+                      textTransform: "none",
+                      fontFamily: 'Montserrat',
+                      paddingRight: '2em',
+                      paddingLeft: '2em',
+                      fontSize: '1.3em'
+                    }}
+                  >
+                    Learn More
+                  </Button>
+                  <Button
+                  onClick={() => {
+                    localStorage.setItem("patientId", pat.patient_id); // Store patient ID
+                    window.location.href = "/doctor_dashboard/doctor_patientinfo"; // Navigate to chart page
+                  }}
                   variant="contained"
                   sx={{
                     backgroundColor: "#5A4AA3",
@@ -94,12 +113,14 @@ function Doctor_Patientlist() {
                     fontFamily: 'Montserrat',
                     paddingRight: '2em',
                     paddingLeft: '2em',
-                    marginRight: '2vw',
                     fontSize: '1.3em'
                   }}
                 >
-                  Learn More
+                  Overview
                 </Button>
+
+                </Box>
+
               </Paper>
             ))}
 
