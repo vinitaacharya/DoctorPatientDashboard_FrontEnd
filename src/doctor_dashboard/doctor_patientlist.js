@@ -148,52 +148,52 @@ function Doctor_Patientlist() {
                         alt="Patient"
                         sx={{ maxHeight: '20vh', width: '10vw', borderRadius: "30px", objectFit: "cover", mr: 2 }}
                       />
-  <Box>
-  <Typography variant="h6" fontWeight="500" sx={{ fontFamily: 'Montserrat', fontSize: '1.5em', paddingBottom: '1vh' }}>
-    {selectedPatient.first_name} {selectedPatient.last_name}
-  </Typography>
-  <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
-  <strong>Age:</strong> {selectedPatient.dob ? Math.floor((new Date() - new Date(selectedPatient.dob)) / (365.25 * 24 * 60 * 60 * 1000)) : "N/A"}
-  </Typography>
-  <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
-    <strong>Gender:</strong> {selectedPatient.gender || "N/A"}
-  </Typography>
-  <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
-    <strong>Email:</strong> {selectedPatient.patient_email}
-  </Typography>
-  <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
-    <strong>Phone:</strong> {selectedPatient.mobile_number || "N/A"}
-  </Typography>
-  </Box>
-</Box>
+                      <Box>
+                      <Typography variant="h6" fontWeight="500" sx={{ fontFamily: 'Montserrat', fontSize: '1.5em', paddingBottom: '1vh' }}>
+                        {selectedPatient.first_name} {selectedPatient.last_name}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                      <strong>Age:</strong> {selectedPatient.dob ? Math.floor((new Date() - new Date(selectedPatient.dob)) / (365.25 * 24 * 60 * 60 * 1000)) : "N/A"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Gender:</strong> {selectedPatient.gender || "N/A"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Email:</strong> {selectedPatient.patient_email}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Phone:</strong> {selectedPatient.mobile_number || "N/A"}
+                      </Typography>
+                      </Box>
+                    </Box>
 
-{/* Divider content below main section */}
-<Box sx={{ mt: 2 }}>
-<Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
-    <strong>Weight:</strong> {selectedPatient.weight || "N/A"} lbs
-  </Typography>
-  <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
-    <strong>Height:</strong> {selectedPatient.height || "N/A"} in
-  </Typography>
-  <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
-    <strong>Blood Type:</strong> {selectedPatient.blood_type || "N/A"}
-  </Typography>
-  <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
-    <strong>Dietary Restrictions:</strong> {selectedPatient.dietary_restrictions || "None"}
-  </Typography>
-  <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
-    <strong>Fitness Level:</strong> {selectedPatient.activity || "None"}
-  </Typography>
-  <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
-    <strong>Goal:</strong> {selectedPatient.health_goals || "None"}
-  </Typography>
-  <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
-    <strong>Insurance:</strong> {selectedPatient.insurance_provider || "N/A"}
-  </Typography>
-  <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
-    <strong>Expires:</strong> {selectedPatient.insurance_expiration_date || "N/A"}
-  </Typography>
-</Box>
+                    {/* Divider content below main section */}
+                    <Box sx={{ mt: 2 }}>
+                    <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Weight:</strong> {selectedPatient.weight || "N/A"} lbs
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Height:</strong> {selectedPatient.height || "N/A"} in
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Blood Type:</strong> {selectedPatient.blood_type || "N/A"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Dietary Restrictions:</strong> {selectedPatient.dietary_restrictions || "None"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Fitness Level:</strong> {selectedPatient.activity || "None"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Goal:</strong> {selectedPatient.health_goals || "None"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Insurance:</strong> {selectedPatient.insurance_provider || "N/A"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em', mb: 1 }}>
+                        <strong>Expires:</strong> {selectedPatient.insurance_expiration_date || "N/A"}
+                      </Typography>
+                    </Box>
 
                   </Paper>
                 </Box>
