@@ -68,7 +68,7 @@ useEffect(() => {
 
     const handleSave = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/doctor/${editableDoctorInfo.doctor_id}`, {
+        const response = await fetch(`http://localhost:5000/edit-doctor`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(editableDoctorInfo)
@@ -76,8 +76,10 @@ useEffect(() => {
     
         if (!response.ok) throw new Error('Failed to update');
     
-        const updated = await response.json();
-        setDoctorInfo(updated);  // Update the main display state
+        // Now re-fetch the updated doctor info
+        const updated = await fetch(`http://localhost:5000/doctor/${editableDoctorInfo.doctor_id}`);
+        const data = await updated.json();
+        setDoctorInfo(data);
         setIsEditing(false);
         alert('Doctor info updated!');
       } catch (error) {
@@ -86,16 +88,14 @@ useEffect(() => {
       }
     };
     
+    
 
     const handleEditToggle = () => {
       if (!isEditing && doctorInfo) {
         setEditableDoctorInfo({
           first_name: doctorInfo.first_name || '',
           last_name: doctorInfo.last_name || '',
-          dob: doctorInfo.dob || '',
           gender: doctorInfo.gender || '',
-          license_num: doctorInfo.license_num || '',
-          license_exp_date: doctorInfo.license_exp_date || '',
           med_school: doctorInfo.med_school || '',
           specialty: doctorInfo.specialty || '',
           years_of_practice: doctorInfo.years_of_practice || '',
@@ -200,17 +200,8 @@ useEffect(() => {
                               )}
                             </Typography>
 
-                            <Typography><strong>Medical License Number:</strong>
-                              {isEditing ? (
-                                <input
-                                  name="license_num"
-                                  value={editableDoctorInfo.license_num}
-                                  onChange={handleChange}
-                                />
-                              ) : (
-                                doctorInfo.license_num
-                              )}
-                            </Typography>
+                            <Typography><strong>Medical License Number:</strong> {doctorInfo.license_num} </Typography>
+
 
                             <Typography><strong>Phone:</strong>
                               {isEditing ? (

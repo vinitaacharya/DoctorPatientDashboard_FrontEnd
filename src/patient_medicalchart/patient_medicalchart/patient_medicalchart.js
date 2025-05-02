@@ -180,15 +180,14 @@ function Patient_Chart() {
         const handleSave = async () => {
         try {
           const payload = {
+            first_name: patientInfo.first_name,
+            last_name: patientInfo.last_name,
             patient_id: patientInfo.patient_id,
             email: patientInfo.patient_email,
-            password: "placeholder",
             phone: patientInfo.mobile_number,
-            dob: formatDate(patientInfo.dob),
             gender: patientInfo.gender,
             height: patientInfo.height,
             weight: patientInfo.weight,
-            blood_type: patientInfo.blood_type,
             dietary_restrictions: patientInfo.dietary_restrictions,
             activity: 0,
             health_conditions: patientInfo.medical_conditions,
@@ -296,7 +295,7 @@ function Patient_Chart() {
                                     `${patientInfo.first_name || ''} ${patientInfo.last_name || ''}`
                                 )}
                             </Typography>
-                            <Typography><strong>DOB: </strong>{patientInfo.dob}</Typography>
+                            <Typography><strong>DOB: </strong>{new Date(patientInfo.dob).toLocaleDateString()}</Typography>
                             <Typography><strong>Gender: </strong>
                             {isEditing ? (
                                 <input
