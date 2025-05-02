@@ -20,6 +20,11 @@ function Patient_Chart() {
     const patientId = localStorage.getItem("patientId");
     const [isEditing, setIsEditing] = useState(false);
     const [originalPatientInfo, setOriginalPatientInfo] = useState(null);
+    const [dailyGraphIndex, setDailyGraphIndex] = useState(0);
+    const [weeklyGraphIndex, setWeeklyGraphIndex] = useState(0);
+
+
+      
 
 
     const [patientInfo, setPatientInfo] = useState({
@@ -44,29 +49,25 @@ function Patient_Chart() {
       });
     
     
-    useEffect(() => {
+      useEffect(() => {
         const fetchDailyInfo = async () => {
           const id = localStorage.getItem("patientId");
-          if (!id) {
-            console.warn("No patient ID in localStorage");
-            return;
-          }
+          if (!id) return;
       
           try {
             const res = await fetch(`/daily-surveys/${patientId}`);
-            if (!res.ok) {
-              throw new Error("Failed to fetch patient info");
-            }
-      
             const data = await res.json();
-            setDailyInfo(data);
-            console.log("Patient info:", data);
+      
+            // Sort by date just to be safe
+            const sorted = data.sort((a, b) => new Date(a.date) - new Date(b.date));
+            setDailyInfo(sorted);
           } catch (error) {
             console.error("Error fetching patient survey info:", error);
           }
         };
         fetchDailyInfo();
-    }, []);
+      }, []);
+      
 
       useEffect(() => {
         const fetchWeeklyInfo = async () => {
@@ -84,7 +85,7 @@ function Patient_Chart() {
       
             const data = await res.json();
             setWeeklyInfo(data);
-            console.log("Patient info:", data);
+            console.log("Patient info Weekly:", data);
           } catch (error) {
             console.error("Error fetching patient servey info:", error);
           }
@@ -110,17 +111,21 @@ function Patient_Chart() {
       }, [patientId]);
       
 
-    const weightChartData = {
-        x: weeklyInfo?.map(entry => new Date(entry.week_start).toLocaleDateString()), // readable date
+      const weightChartData = {
+        x: weeklyInfo?.map(entry =>
+          new Date(entry.week_start).toISOString().split("T")[0]
+        ),
         y: weeklyInfo?.map(entry => entry.weight_change),
         type: 'scatter',
         mode: 'lines+markers',
         marker: { color: 'blue' },
         name: 'Weight Change'
       };
-
-    const systolicData = {
-        x: weeklyInfo?.map(entry => new Date(entry.week_start).toLocaleDateString()),
+      
+      const systolicData = {
+        x: weeklyInfo?.map(entry =>
+          new Date(entry.week_start).toISOString().split("T")[0]
+        ),
         y: weeklyInfo?.map(entry => parseInt(entry.blood_pressure.split('/')[0])),
         type: 'scatter',
         mode: 'lines+markers',
@@ -128,18 +133,23 @@ function Patient_Chart() {
         name: 'Systolic BP'
       };
       
-    const diastolicData = {
-        x: weeklyInfo?.map(entry => new Date(entry.week_start).toLocaleDateString()),
+      const diastolicData = {
+        x: weeklyInfo?.map(entry =>
+          new Date(entry.week_start).toISOString().split("T")[0]
+        ),
         y: weeklyInfo?.map(entry => parseInt(entry.blood_pressure.split('/')[1])),
         type: 'scatter',
         mode: 'lines+markers',
         marker: { color: 'green' },
         name: 'Diastolic BP'
-        };
+      };
+      
 
     // DAILY CHART DATA
-    const dailyDates = dailyInfo?.map(entry => new Date(entry.date).toLocaleDateString());
-
+    const dailyDates = dailyInfo?.map(entry =>
+        new Date(entry.date).toISOString().split("T")[0]
+      );
+      
     const waterIntakeData = {
         x: dailyDates,
         y: dailyInfo?.map(entry => entry.water_intake),
@@ -218,7 +228,37 @@ function Patient_Chart() {
               alert("Error updating patient info.");
             }
           };
+ 
           
+          const dailyCharts = [
+            {
+              title: "Water Intake (cups)",
+              data: [waterIntakeData]
+            },
+            {
+              title: "Calories Consumed",
+              data: [caloriesData]
+            },
+            {
+              title: "Heart Rate",
+              data: [heartRateData]
+            }
+          ];
+          
+          const weeklyCharts = [
+            {
+              title: "Weight Change",
+              data: [weightChartData]
+            },
+            {
+              title: "Systolic BP",
+              data: [systolicData]
+            },
+            {
+              title: "Diastolic BP",
+              data: [diastolicData]
+            }
+          ];
           
           
           
@@ -515,38 +555,83 @@ function Patient_Chart() {
                                     />
                                 </Box>
                                 {chartTab === 0 && (
+                                    <>
+                                    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                                    <Button
+                                        variant={dailyGraphIndex === 0 ? "contained" : "outlined"}
+                                        onClick={() => setDailyGraphIndex(0)}
+                                    >
+                                        Water
+                                    </Button>
+                                    <Button
+                                        variant={dailyGraphIndex === 1 ? "contained" : "outlined"}
+                                        onClick={() => setDailyGraphIndex(1)}
+                                    >
+                                        Calories
+                                    </Button>
+                                    <Button
+                                        variant={dailyGraphIndex === 2 ? "contained" : "outlined"}
+                                        onClick={() => setDailyGraphIndex(2)}
+                                    >
+                                        Heart Rate
+                                    </Button>
+                                    </Box>
+
                                     <Plot
-                                    data={[waterIntakeData, caloriesData, heartRateData]}
+                                    data={dailyCharts[dailyGraphIndex].data}
                                     layout={{
                                         width: 700,
                                         height: 400,
-                                        title: { text: 'Daily Health Data' },
+                                        title: { text: dailyCharts[dailyGraphIndex].title },
                                         xaxis: { title: 'Date' },
                                         yaxis: { title: 'Values' }
                                     }}
                                     />
+
+                                    </>
   
                                 )} 
                                 {chartTab === 1 && (
+                                        <>
+                                    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                                        <Button
+                                        variant={weeklyGraphIndex === 0 ? "contained" : "outlined"}
+                                        onClick={() => setWeeklyGraphIndex(0)}
+                                        >
+                                        Weight
+                                        </Button>
+                                        <Button
+                                        variant={weeklyGraphIndex === 1 ? "contained" : "outlined"}
+                                        onClick={() => setWeeklyGraphIndex(1)}
+                                        >
+                                        Systolic
+                                        </Button>
+                                        <Button
+                                        variant={weeklyGraphIndex === 2 ? "contained" : "outlined"}
+                                        onClick={() => setWeeklyGraphIndex(2)}
+                                        >
+                                        Diastolic
+                                        </Button>
+                                    </Box>
+
                                     <Plot
-                                    data={[weightChartData, systolicData, diastolicData]}
+                                    data={weeklyCharts[weeklyGraphIndex].data}
                                     layout={{
-                                      width: 700,
-                                      height: 400,
-                                      title: { text: 'Weekly Health Trends' },
-                                      xaxis: { title: 'Week Start' },
-                                      yaxis: { title: 'Values' }
+                                        title: { text: weeklyCharts[weeklyGraphIndex].title },
+                                        width: 700,
+                                        height: 400,
+                                        xaxis: {
+                                        title: 'Week Start',
+                                        tickformat: "%b %d, %Y",
+                                        tickangle: -45,
+                                        type: 'date'
+                                        },
+                                        yaxis: { title: 'Values' }
                                     }}
-                                  />
-                                  
-                                    // <Plot
-                                    // data={[weightChartData]}
-                                    // layout={{  width: 600, height: 400, title: {text: 'Weight Change'}, }}
-                                    // />
-                                    // <Plot
-                                    // data={[systolicData]}
-                                    // layout={{  width: 600, height: 400, title: {text: 'Systolic Change'}, }}
-                                    // />
+                                    />
+
+                                    </>
+
                                 )}
                             </Box>
                                 {/* Your Plotly charts would go here */}
