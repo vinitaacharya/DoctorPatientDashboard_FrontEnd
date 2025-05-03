@@ -13,6 +13,9 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
 
 
 
@@ -63,6 +66,17 @@ function Doctorsignup(){
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+    // Inside your component:
+    const [snackOpen, setSnackOpen] = useState(false);
+    const [snackMsg, setSnackMsg] = useState("");
+    const [snackType, setSnackType] = useState("error");
+  
+    const showSnack = (msg, type = "error") => {
+      setSnackMsg(msg);
+      setSnackType(type);
+      setSnackOpen(true);
+    };
+  
 
   
 
@@ -79,10 +93,25 @@ function Doctorsignup(){
     e.preventDefault();
   
     if (!termsAccepted) {
-      alert("Please accept the terms and conditions");
+      showSnack("Please accept the terms and conditions.");
       return;
     }
   
+    const today = new Date();
+    const dob = new Date(values.dob);
+    const exp = new Date(values.exp);
+  
+    if (dob > today) {
+      showSnack("Date of birth cannot be in the future.");
+      return;
+    }
+  
+    if (exp < today) {
+      showSnack("Insurance expiration date must be in the future.");
+      return;
+    }
+
+
     setLoading(true);
   
     const fullData = {
@@ -126,7 +155,7 @@ function Doctorsignup(){
       .catch(async (error) => {
         const errMsg = await error?.response?.json?.()?.error || "Couldnt create user, please double check the fields and try again. :)";
         console.error("Error:", errMsg);
-        alert(errMsg);
+        showSnack(errMsg);
         console.log(fullData)
       })
       .finally(() => setLoading(false));
@@ -426,6 +455,16 @@ function Doctorsignup(){
         </div>
       </div>
       </form>
+              <Snackbar
+                open={snackOpen}
+                autoHideDuration={4000}
+                onClose={() => setSnackOpen(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+              >
+                <MuiAlert onClose={() => setSnackOpen(false)} severity={snackType} variant="filled" sx={{ width: '100%' }}>
+                  {snackMsg}
+                </MuiAlert>
+              </Snackbar>
 
     </div>
     </>
