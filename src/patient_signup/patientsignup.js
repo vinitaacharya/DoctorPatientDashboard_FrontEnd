@@ -13,6 +13,12 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+
+
+
 
 
 
@@ -78,6 +84,16 @@ function Patientsignup() {
   const [dietaryRestrictions, setDietaryRestrictions] = useState([]);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  // Inside your component:
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackMsg, setSnackMsg] = useState("");
+  const [snackType, setSnackType] = useState("error");
+
+  const showSnack = (msg, type = "error") => {
+    setSnackMsg(msg);
+    setSnackType(type);
+    setSnackOpen(true);
+  };
   
 
 
@@ -117,7 +133,21 @@ function Patientsignup() {
     e.preventDefault();
   
     if (!termsAccepted) {
-      alert("Please accept the terms and conditions");
+      showSnack("Please accept the terms and conditions.");
+      return;
+    }
+  
+    const today = new Date();
+    const dob = new Date(values.dob);
+    const exp = new Date(values.exp);
+  
+    if (dob > today) {
+      showSnack("Date of birth cannot be in the future.");
+      return;
+    }
+  
+    if (exp < today) {
+      showSnack("Insurance expiration date must be in the future.");
       return;
     }
   
@@ -134,8 +164,6 @@ function Patientsignup() {
       insurance_expiration_date: values.exp,
       patient_email: values.email,
       patient_password: values.password,
-  
-      // survey fields
       mobile_number: values.phone,
       dob: values.dob,
       gender: values.gender,
@@ -153,12 +181,11 @@ function Patientsignup() {
       family_history: "None",
       past_procedures: "None"
     };
+    console.log("Data:", fullData);
   
     fetch("http://127.0.0.1:5000/register-patient-with-survey", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(fullData)
     })
       .then(res => res.json())
@@ -171,9 +198,9 @@ function Patientsignup() {
         }
       })
       .catch(async (error) => {
-        const errMsg = await error?.response?.json?.()?.error || "Couldnt create user, please double check the fields and try again. :)";
-        console.error("Error:", errMsg);
-        alert(errMsg);
+        const msg = error?.message || "Could not create user.";
+        showSnack(msg);
+        console.error("Error:", msg);
       })
       .finally(() => setLoading(false));
   };
@@ -708,6 +735,17 @@ function Patientsignup() {
             </div>
           </div>
         </form>
+        <Snackbar
+          open={snackOpen}
+          autoHideDuration={4000}
+          onClose={() => setSnackOpen(false)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <MuiAlert onClose={() => setSnackOpen(false)} severity={snackType} variant="filled" sx={{ width: '100%' }}>
+            {snackMsg}
+          </MuiAlert>
+        </Snackbar>
+
       </div>
     </>
   );
