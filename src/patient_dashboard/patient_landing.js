@@ -1356,7 +1356,7 @@ const handlePickup = async (prescriptionId) => {
                             marginBottom: "1%",
                           }}
                         >
-                           "Go to Appointment"
+                           Go to Appointment
                         </Button> : "Pending..." }
                       </Box>
                     ))}
