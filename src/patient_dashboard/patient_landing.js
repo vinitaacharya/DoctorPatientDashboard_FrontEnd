@@ -1187,7 +1187,6 @@ const handlePickup = async (prescriptionId) => {
   {/* White Card */}
   <Box
     sx={{
-      width: '400px',
       backgroundColor: 'white',
       borderRadius: '20px',
       p: 2,
@@ -1199,8 +1198,8 @@ const handlePickup = async (prescriptionId) => {
   >
 <Box
   sx={{
-    width: '100%',
-    height: '250px', // or '300px' if you prefer
+    height: '28vh', // or '300px' if you prefer
+    width: '24vw',
     borderRadius: 2,
     overflow: 'hidden',
   }}
