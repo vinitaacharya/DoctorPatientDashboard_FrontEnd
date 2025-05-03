@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; // ✅ Add useEffect
 import Patient_Navbar from "./patient_navbar";
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -10,6 +10,8 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+
+
 
 
 const RoundedPanel = styled(Paper)(({ theme }) => ({
@@ -79,69 +81,56 @@ const MealCard = ({ title, tags, description, image, day, onAddToPlan}) => {
 
 function Patient_Mealplan() {
   // Temporary mock data
-  const mealPlans = [
-    { title: "Meal plan #1", author: "Dr. Song", tags: "Keto" },
-    { title: "Meal plan #2", author: "Natasha", tags: "Keto" },
-  ];
-
-  // const savedMeals = [
-  //   {
-  //     title: "Cauliflower Fried Rice",
-  //     tags: "Keto",
-  //     description: "Fried rice is a classic and comforting recipe that everyone loves...",
-  //     image: "https://via.placeholder.com/80", // Replace with actual image URLs later
-  //   },
-  //   {
-  //     title: "Cheesy Broccoli Cheddar Spaghetti Squash",
-  //     tags: "Keto",
-  //     description: "Cheesy broccoli in any form is our ultimate comfort food...",
-  //     image: "https://via.placeholder.com/80",
-  //   },
-  //   {
-  //     title: "Cheesy Bacon Ranch Chicken",
-  //     tags: "Keto",
-  //     description: "Bacon and ranch is an absolute match made in heaven...",
-  //     image: "https://via.placeholder.com/80",
-  //   },
-  //   {
-  //       title: "Cheesy Bacon Ranch Chicken",
-  //       tags: "Keto",
-  //       description: "Bacon and ranch is an absolute match made in heaven...",
-  //       image: "https://via.placeholder.com/80",
-  //     },
-  // ];
-  const [savedMeals, setSavedMeals] = useState([]);
-  
-  // Example array of meal IDs to fetch
-  const savedMealIds = [1, 2, 3, 4]; // Replace with actual IDs from user data
+  const [mealPlans, setMealPlans] = useState([]);
 
   useEffect(() => {
-    const fetchMeals = async () => {
+    const fetchMealPlans = async () => {
       try {
-        const fetchedMeals = await Promise.all(
-          savedMealIds.map(async (id) => {
-            const res = await fetch(`http://localhost:5000/meal/${id}`);
-            if (!res.ok) {
-              throw new Error(`Meal with ID ${id} not found`);
-            }
-            const data = await res.json();
-            return {
-              title: data.meal_name,
-              description: data.meal_description,
-              tags: "Keto", // Placeholder
-              image: "https://via.placeholder.com/80", // Placeholder
-            };
-          })
+        const response = await fetch("http://localhost:5000/meals"); // or use your meal plan endpoint
+        const data = await response.json();
+        setMealPlans(
+          data.map(plan => ({
+            title: plan.meal_plan_name,
+            author: "Doctor", // adjust if your backend provides this
+            tags: plan.description || "Custom"
+          }))
         );
-        setSavedMeals(fetchedMeals);
-      } catch (err) {
-        console.error("Error fetching meals:", err);
+      } catch (error) {
+        console.error("Failed to fetch meal plans:", error);
       }
     };
   
-    fetchMeals();
+    fetchMealPlans();
   }, []);
   
+
+  const savedMeals = [
+    {
+      title: "Cauliflower Fried Rice",
+      tags: "Keto",
+      description: "Fried rice is a classic and comforting recipe that everyone loves...",
+      image: "https://via.placeholder.com/80", // Replace with actual image URLs later
+    },
+    {
+      title: "Cheesy Broccoli Cheddar Spaghetti Squash",
+      tags: "Keto",
+      description: "Cheesy broccoli in any form is our ultimate comfort food...",
+      image: "https://via.placeholder.com/80",
+    },
+    {
+      title: "Cheesy Bacon Ranch Chicken",
+      tags: "Keto",
+      description: "Bacon and ranch is an absolute match made in heaven...",
+      image: "https://via.placeholder.com/80",
+    },
+    {
+        title: "Cheesy Bacon Ranch Chicken",
+        tags: "Keto",
+        description: "Bacon and ranch is an absolute match made in heaven...",
+        image: "https://via.placeholder.com/80",
+      },
+  ];
+
   const [openModal, setOpenModal] = useState(false);
 
     const handleOpenModal = () => setOpenModal(true);
@@ -227,6 +216,42 @@ function Patient_Mealplan() {
           flexDirection: 'column',
           gap: 2
     };
+
+    const handleSaveNew = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/create-meal-plan`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            meal_plan_name: title,
+            description: "Custom patient meal plan"
+        })
+        });
+    
+        if (!response.ok) throw new Error('Failed to Create meal plan');
+    
+    // Refresh meal plans after creation
+        const refreshed = await fetch("http://localhost:5000/meals"); // replace with your meal plan list endpoint
+        const data = await refreshed.json();
+        setMealPlans(
+          data.map(plan => ({
+            title: plan.meal_plan_name || "Custom",
+            author: "Doctor" || "Custom",
+            tags: plan.description || "Custom"
+          }))
+        );
+
+        alert("Meal plan created successfully!");
+        setTitle("");
+        handleCloseNewPlanModal();
+      } catch (error) {
+        console.error("Meal plan creation failed:", error);
+        alert("Could not create meal plan.");
+      }
+    };
+
+
+
   return (
     <div style={{ display: "flex" }}>
       <Patient_Navbar />
@@ -281,7 +306,7 @@ function Patient_Mealplan() {
         sx={{ mb: 2 }}
       />
       <Button
-        onClick={handleCloseNewPlanModal}
+        onClick={handleSaveNew}
         variant="contained"
         fullWidth
         sx={{
