@@ -183,7 +183,22 @@ useEffect(() => {
     fetchAppointments();
   }, [patientId]);
 
-  
+  //check appointment acceptance status
+  const [appointmentAccepted, setAppointmentAccepted] = useState(false);
+  useEffect(()=>{
+    const fetchAppointmentStatus = async () =>{
+      try {
+        const res = await fetch(`/appointments/${patientId}`);
+        const appointments = await res.json();
+        const status = appointments.accepted;
+        console.log("AppointmentStatus:",status);
+        setAppointmentAccepted(status ===0);
+      }catch(error){
+        console.error("Error fetching appointment status:", error);
+      }
+    };
+    fetchAppointmentStatus();
+  }, [patientId]);
   //console.log("Patient ID:", patientId);
 
   //surveys modal
@@ -1256,8 +1271,17 @@ const [currentIndex, setCurrentIndex] = useState(0);
                             paddingLeft: "1vw",
                           }}
                         >
-                          {appointment.appointment_datetime}
-                        </Typography>
+                          {new Date(appointment.appointment_datetime).toLocaleString("en-US", {
+                            timeZone: "America/New_York",
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "2-digit",
+                            hour12: true,
+                            timeZoneName: "short"
+                          })}                        
+                          </Typography>
                         <Typography
                           variant="body1"
                           sx={{
@@ -1271,6 +1295,8 @@ const [currentIndex, setCurrentIndex] = useState(0);
                         >
                           {appointment.doctor_name}
                         </Typography>
+                        {appointment.accepted === 1 ? 
+
                         <Button
                           variant="contained"
                           onClick={() => navigate('/patient_dashboard/patient_appointment', {
@@ -1290,8 +1316,8 @@ const [currentIndex, setCurrentIndex] = useState(0);
                             marginBottom: "1%",
                           }}
                         >
-                          Go to Appointment
-                        </Button>
+                           "Go to Appointment"
+                        </Button> : "Pending..." }
                       </Box>
                     ))}
 
