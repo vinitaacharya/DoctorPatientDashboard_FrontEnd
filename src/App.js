@@ -20,8 +20,11 @@ import Doctor_Landing from "./doctor_dashboard/doctor_landing";
 import Doctor_Patientlist from './doctor_dashboard/doctor_patientlist';
 import Doctor_Appointment from './doctor_dashboard/doctor_appointment';
 import Doctor_Mealplan from './doctor_dashboard/doctor_mealplan';
-import Doctor_MedicalChart from './doctor_dashboard/doctor_medicalchart';
+import Doctor_Info from './doctor_dashboard/doctor_info';
 import Doctor_Profile from './doctor_dashboard/profile';
+import DoctorPatientInfo from './doctor_dashboard/doctor_patientinfo';
+
+
 function App() {
   const[data, setData] = useState([{}])
 
@@ -67,9 +70,11 @@ function App() {
           <Route path="/doctor_dashboard/doctor_landing" element={<Doctor_Landing />} />
           <Route path="/doctor_dashboard/doctor_patientlist" element={<Doctor_Patientlist />} />
           <Route path="/doctor_dashboard/doctor_appointment" element={<Doctor_Appointment/>} />
-          <Route path="/doctor_dashboard/doctor_medicalchart" element={<Doctor_MedicalChart/>}/>
+          <Route path="/doctor_dashboard/doctor_info" element={<Doctor_Info/>}/>
           <Route path="/doctor_dashboard/doctor_mealplan" element={<Doctor_Mealplan/>}/>
           <Route path="/doctor_dashboard/profile" element={<Doctor_Profile/>}/>
+          <Route path="/doctor_dashboard/doctor_patientinfo" element={<DoctorPatientInfo/> }/>
+          
         </Routes>
       </div>
       </Router>

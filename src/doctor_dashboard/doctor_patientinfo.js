@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"; 
-import Patient_Navbar from "../../patient_dashboard/patient_navbar";
+import Doctor_Navbar from "./doctor_navbar";
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 import { Tabs, Tab, Box, Paper, Typography, Button } from '@mui/material';
@@ -11,7 +11,7 @@ import Plot from 'react-plotly.js';
 
 
 
-function Patient_Chart() {
+function DoctorPatientInfo() {
 
     const [activeTab, setActiveTab] = useState(0);
     const [chartTab, setChartTab] = useState(0);
@@ -266,7 +266,7 @@ function Patient_Chart() {
 
     return(
         <div>
-            <Patient_Navbar/>
+            <Doctor_Navbar/>
             <Box sx={{ 
                 mt: 5,  // Adds margin-top
                 px: 20,  // Horizontal padding
@@ -418,22 +418,6 @@ function Patient_Chart() {
                                 patientInfo.past_procedures
                             )}
                             </Typography>
-                            <Button
-                            variant="outlined"
-                            sx={{ mt: 2 }}
-                            onClick={() => {
-                                if (isEditing) {
-                                // Revert to original values when canceling
-                                setPatientInfo(originalPatientInfo);
-                                } else {
-                                // Take a snapshot before entering edit mode
-                                setOriginalPatientInfo(patientInfo);
-                                }
-                                setIsEditing(!isEditing);
-                            }}
-                            >
-                            {isEditing ? "Cancel" : "Edit"}
-                            </Button>
 
 
                                     {isEditing && (
@@ -645,4 +629,4 @@ function Patient_Chart() {
 
 }
 
-export default Patient_Chart;
+export default DoctorPatientInfo;
