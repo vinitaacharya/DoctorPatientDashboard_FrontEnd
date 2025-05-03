@@ -29,6 +29,7 @@ import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
 import CalorieGraph from "../patient_medicalchart/patient_medicalchart/calorie_graph";
 import WaterGraph from "../patient_medicalchart/patient_medicalchart/water_graph";
 import WeightGraph from "../patient_medicalchart/patient_medicalchart/weight_graph";
+import { formatInTimeZone } from 'date-fns-tz';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -521,16 +522,19 @@ function getWeekStart(date) {
 
   const handleCreateAppointment = async () => {
     // 🔁 Put this helper function anywhere above `handleCreateAppointment` (top of component is fine)
-    const formatDateTimeForMySQL = (date) => {
-      const pad = (n) => n.toString().padStart(2, "0");
-      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:00`;
+    const formatDateTimeForMySQL = (localDateStr, localTimeStr) => {
+      const timeZone = 'America/New_York';
+      const localDateTime = new Date(`${localDateStr}T${localTimeStr}:00`);
+    
+      // Format directly in EDT without converting to UTC
+      return formatInTimeZone(localDateTime, timeZone, 'yyyy-MM-dd HH:mm:ss');
     };
+    
 
     // 👇 Inside handleCreateAppointment
-    const appointment_datetime = formatDateTimeForMySQL(
-      new Date(`${selectedDate.toISOString().split('T')[0]}T${selectedTime}`)
-    );
-
+    const localDateStr = selectedDate.toISOString().split('T')[0];
+    const appointment_datetime = formatDateTimeForMySQL(localDateStr, selectedTime);
+    
     const newAppointment = {
       patient_id: patientId,
       doctor_id: doctorInfo?.doctor_id,  // make sure doctorInfo is loaded
@@ -1656,7 +1660,7 @@ const handlePickup = async (prescriptionId) => {
                                   </IconButton>
                                 </Box>
 
-                                <Typography fontWeight="bold" mb={2}>Dr. Hillary Geller</Typography>
+                                <Typography fontWeight="bold" mb={2}>Dr. {doctorInfo.first_name} {doctorInfo.last_name}</Typography>
 
                                 <TextField
                                   label="Reason for Visit"
