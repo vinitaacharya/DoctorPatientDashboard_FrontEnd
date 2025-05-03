@@ -32,6 +32,9 @@ import WeightGraph from "../patient_medicalchart/patient_medicalchart/weight_gra
 import { formatInTimeZone } from 'date-fns-tz';
 
 
+import { useTheme, useMediaQuery, Drawer } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu'
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
   borderRadius: 30,
@@ -717,24 +720,37 @@ const handlePickup = async (prescriptionId) => {
       checkRatingStatus(); // Call the function to check rating status
     }
   }, [pastAppointments]);
+  const isMobile = useMediaQuery('(max-width:920px)');
 
+  const [open, setOpen] = React.useState(false);
 
-
-
-  
-
+  const toggleDrawer = () => {
+    setOpen(!open);  
+  };
   return (
 
     <div style={{ display: "flex" }}>
-      {/* Sidebar/Navbar */}
-      <Patient_Navbar />
+      <>
+      {isMobile ? (
+        <>
+          <IconButton onClick={toggleDrawer} sx={{ position: 'fixed', bottom: 10, left: 10, zIndex: 3}}>
+            <MenuIcon sx={{ color: 'white', backgroundColor: '#5b48a5', borderRadius: '100px', padding: '1px', fontSize: 32 }} />
+          </IconButton>
+          <Drawer anchor="left" open={open} onClose={toggleDrawer}>
+            <Patient_Navbar />
+          </Drawer>
+        </>
+      ) : (
+        <Patient_Navbar />
+      )}
+    </>
 
       <div style={{ marginLeft: "3px", flexGrow: 1, padding: "20px" }}>
         <Box sx={{ flexGrow: 1 }}>
 
           <Grid container spacing={2} >
             {/* item 1 */}
-            <Grid item xs={7} >
+            <Grid item md={7} xs={12} >
               <Item sx={{ color: 'white', background: 'linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)', borderRadius: 5, p: 2 }}>
                 <Typography sx={{ fontFamily: 'Montserrat', fontSize: '3.5vh', textAlign: "left", mb: '1.1vh' }} >Health Overview</Typography>
                 <Paper
@@ -1175,7 +1191,6 @@ const handlePickup = async (prescriptionId) => {
   {/* White Card */}
   <Box
     sx={{
-      width: '400px',
       backgroundColor: 'white',
       borderRadius: '20px',
       p: 2,
@@ -1187,8 +1202,8 @@ const handlePickup = async (prescriptionId) => {
   >
 <Box
   sx={{
-    width: '100%',
-    height: '250px', // or '300px' if you prefer
+    height: '28vh', // or '300px' if you prefer
+    width: '24vw',
     borderRadius: 2,
     overflow: 'hidden',
   }}
@@ -1247,10 +1262,10 @@ const handlePickup = async (prescriptionId) => {
             </Grid>
             {/* item 2 */}
 
-            <Grid item xs={5}>
+            <Grid item md={5} xs={12}>
               <Item sx={{ backgroundColor: "#EEF2FE" }}>
                 <Box>
-                  <Typography variant="h6" gutterBottom sx={{ fontFamily: "Montserrat", color: "#22252C", fontSize: '2.5em', textAlign: 'left', paddingLeft: '1.5vw' }}>
+                  <Typography variant="h6" gutterBottom sx={{ fontFamily: "Montserrat", color: "#22252C", fontSize: '3.5vh', textAlign: 'left', paddingLeft: '1.5vw' }}>
                     {showUpcoming ? "Upcoming Appointments" : "Past Appointments"}
                   </Typography>
                   <Box className="custom-scroll" sx={{ height: '30vh', width: '90%', margin: 'auto', overflowY: "auto" }}>
@@ -1291,7 +1306,7 @@ const handlePickup = async (prescriptionId) => {
                           sx={{
                             fontFamily: "Montserrat",
                             color: "#22252C",
-                            fontSize: "1.5em",
+                            fontSize: "1.8vh",
                             textAlign: "left",
                             paddingLeft: "1vw",
                           }}
@@ -1313,7 +1328,7 @@ const handlePickup = async (prescriptionId) => {
                             fontFamily: "Merrriweather",
                             fontWeight: "bold",
                             color: "#22252C",
-                            fontSize: "1.4em",
+                            fontSize: "1.7vh",
                             textAlign: "left",
                             paddingLeft: "1vw",
                           }}
@@ -1335,7 +1350,7 @@ const handlePickup = async (prescriptionId) => {
                             width: "70%",
                             borderRadius: "30px",
                             fontFamily: "Merrriweather",
-                            fontSize: "1.5em",
+                            fontSize: "2vh",
                             fontWeight: "700px",
                             marginTop: "2%",
                             marginBottom: "1%",
@@ -1348,7 +1363,7 @@ const handlePickup = async (prescriptionId) => {
 
                   </Box>
 
-                  <Box display="flex" justifyContent="center" mt={3} alignItems="center" sx={{ marginBottom: '1px', paddingBottom: '1px' }}>
+                  <Box display="flex" justifyContent="center"  alignItems="center" anchor="end">
                     {/* Left Arrow */}
                     <IconButton onClick={() => setShowUpcoming(!showUpcoming)} sx={{ backgroundColor: 'none', borderRadius: '50%', mx: 0.5 }}>
                       <ArrowBackIcon sx={{ color: '#5A8BBE' }} />
@@ -1367,11 +1382,11 @@ const handlePickup = async (prescriptionId) => {
                   </Box>
                   <Modal open={openCancelModal}>
   <Box sx={{ ...style, display: 'flex', flexDirection: 'column', alignItems: "center" }}>
-    <Typography sx={{ color: "black", fontSize: '4vh', p: 2 }}>
-      Are you sure you want to cancel this appointment?
+    <Typography sx={{ color: "black", fontSize: '3.5vh', p: 2 }}>
+      You are canceling this appointment.
     </Typography>
     <Typography sx={{ color: "black", fontSize: '3.5vh', p: 2 }}>
-      This action cannot be reversed.
+      This action cannot be reversed!
     </Typography>
 
     <Button
@@ -1417,10 +1432,10 @@ const handlePickup = async (prescriptionId) => {
             </Grid>
 
             {/* item 3 */}
-            <Grid item xs={4}>
+            <Grid item md={4} xs={12}>
               <Item sx={{ background: "linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)" }}>
                 <Box>
-                  <Typography variant="h6" gutterBottom sx={{ fontFamily: "Montserrat", color: "#FEFEFD", fontSize: '2.5em', textAlign: 'left', paddingLeft: '1.5vw' }}>
+                  <Typography variant="h6" gutterBottom sx={{ fontFamily: "Montserrat", color: "#FEFEFD", fontSize: '3.5vh', textAlign: 'left', paddingLeft: '1.5vw' }}>
                     Meal Plans
                   </Typography>
                   <Typography variant="h6" gutterBottom sx={{ fontFamily: "Montserrat", color: "#FEFEFD", fontSize: '2vh', textAlign: 'left', paddingLeft: '1.5vw', fontWeight: 'normal' }}>
@@ -1450,7 +1465,7 @@ const handlePickup = async (prescriptionId) => {
                     width: "70%",
                     borderRadius: "30px",
                     fontFamily: "Montserrat",
-                    fontSize: "1.5em",
+                    fontSize: '1.6vh',
                     fontWeight: "700px",
                     marginTop: "2%",
                     marginBottom: "1%",
@@ -1463,7 +1478,7 @@ const handlePickup = async (prescriptionId) => {
             </Grid>
 
             {/* item 4 */}
-            <Grid item xs={4}>
+            <Grid item md={4} xs={12}>
               <Item sx={{
                 position: "relative",
                 overflow: "hidden",
@@ -1489,26 +1504,19 @@ const handlePickup = async (prescriptionId) => {
                 <Box sx={{ position: "relative", zIndex: 2, height: '100%' }}>
                   <Box
                     sx={{
-                      position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2, maxHeight: "100%", overflowY: "auto", '&::-webkit-scrollbar': {
-                        width: '8px',
-                      },
-                      '&::-webkit-scrollbar-track': {
-                        background: 'transpnt',
-                        borderRadius: '10px',
-                      },
-                      '&::-webkit-scrollbar-thumb': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.4)',
-                        borderRadius: '10px',
-                        border: '2px solid rgba(255, 255, 255, 0.2)',
-                      },
-                      '&::-webkit-scrollbar-thumb:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                      },
+                      position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2, paddingTop: 0
                     }}>
-                    <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '2em' }}>
+                    <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '3.5vh' }}>
                       Doctors & Booking
                     </Typography>
-                    <Box>
+                    <Box className = "custom-scroll" sx={{
+                                height: '38vh',
+                                width: '100%',
+                                objectFit: "cover",
+                                mr: 2,
+                                fontFamily: 'Montserrat',
+                                overflowY: 'auto'
+                              }}>
 
                       {doctorInfo ? (
                         <>
@@ -1538,7 +1546,7 @@ const handlePickup = async (prescriptionId) => {
                                 : doctorInfo.description
                               : "Loading..."}
                               </Typography>
-                              <Button onClick={openLearnMoreModal} variant="contained" sx={{ color: "white", borderRadius: 5, textTransform: "none", backgroundColor: "#5A8BBE", fontFamily: 'Montserrat', marginTop: '7px', fontSize: '1.3em' }}>
+                              <Button onClick={openLearnMoreModal} variant="contained" sx={{ color: "white", borderRadius: 5, textTransform: "none", backgroundColor: "#5A8BBE", fontFamily: 'Montserrat', marginTop: '7px', fontSize: '1.6vh' }}>
                                 Learn More
                               </Button>
                             </Box>
@@ -1633,7 +1641,7 @@ const handlePickup = async (prescriptionId) => {
                                 textTransform: 'none',
                                 borderRadius: 5,
                                 fontFamily: 'Montserrat',
-                                fontSize: '1.2em',
+                                fontSize: '1.6vh',
                                 width: '75%',
                                 margin: 'auto',
                               }}
@@ -1654,7 +1662,7 @@ const handlePickup = async (prescriptionId) => {
                                 p: 4,
                               }}>
                                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                                  <Typography variant="h5" sx={{ fontFamily: 'Montserrat' }}>Book Appointment</Typography>
+                                  <Typography variant="h5" sx={{ fontFamily: 'Montserrat', fontSize: '1.6vh'}}>Book Appointment</Typography>
                                   <IconButton onClick={handleCloseBookAppt}>
                                     <CloseIcon />
                                   </IconButton>
@@ -1747,10 +1755,10 @@ const handlePickup = async (prescriptionId) => {
                               </Box>
                             </Modal>
 
-                            <Button variant="contained" onClick={() => navigate('/patient_dashboard/patient_doctorlist')} sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto' }}>
+                            <Button variant="contained" onClick={() => navigate('/patient_dashboard/patient_doctorlist')} sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.6vh', width: '75%', margin: 'auto' }}>
                               See More Doctors
                             </Button>
-                            <Button onClick={openDeleteCurrentDoctorModal} variant="contained" sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto' }}>
+                            <Button onClick={openDeleteCurrentDoctorModal} variant="contained" sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.6vh', width: '75%', margin: 'auto' }}>
                               Delete Current Doctor
                             </Button>
                             <Modal open={openDeleteCurrentDoctor} >
@@ -1851,24 +1859,33 @@ const handlePickup = async (prescriptionId) => {
 
 
             {/* item 5 */}
-            <Grid item xs={4}>
+            <Grid item md={4} xs={12}>
               <Item sx={{ background: "linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)", backgroundSize: "cover", fontFamily: 'Montserrat' }}>
-                <Box sx={{ position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2 }}>
-                  <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '2em' }}>
+                <Box sx={{ position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2, paddingTop: 0}}>
+                  <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '3.5vh' }}>
                     Appointment Overview
                   </Typography>
+                  <Box
+                  className = "custom-scroll"
+                  sx={{
+                    height: '35vh',
+                    width: '100%',
+                    overflowY: 'auto',
+                    fontFamily: 'Montserrat',
+                  }}>
+
                   {pastAppointments.length > 0 ? (
                     <>
-                      <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                      <Typography sx={{fontFamily: "montserrat", fontSize: '1.7vh' }}>
                         <strong>Date:</strong> {new Date(pastAppointments[0].appointment_datetime).toLocaleString()}
                       </Typography>
                       {prescriptions.map((prescription, index) => (
                         <Box key={index} sx={{ mb: 2 }}>
-                          <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                          <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
                             <strong>Prescription:</strong> {prescription.medicine_name}
                           </Typography>
 
-                          <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                          <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
                             <strong>Status:</strong>{' '}
                             {!prescription.filled ? (
                               // Pending, not filled yet
@@ -1889,7 +1906,7 @@ const handlePickup = async (prescriptionId) => {
                                     color: '#fff',
                                     textTransform: 'none',
                                     borderRadius: '16px',
-                                    fontSize: '0.75rem',
+                                    fontSize: '1.5vh',
                                     padding: '2px 12px',
                                     fontFamily: 'Montserrat',
                                     '&:hover': {
@@ -1906,13 +1923,13 @@ const handlePickup = async (prescriptionId) => {
                         </Box>
                       ))}
 
-                      <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                      <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
                         <strong>Pickup Location:</strong> {pharmacyInfo}
                       </Typography>
-                      <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                      <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
                         <strong>Diet:</strong> {pastAppointments[0].meal_prescribed || "N/A"}
                       </Typography>
-                      <Typography sx={{ fontSize: '1.2em', fontFamily: "montserrat" }}>
+                      <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
                         <strong>Notes:</strong> {pastAppointments[0].doctor_appointment_note || "No notes provided"}
                       </Typography>
 
@@ -1920,7 +1937,7 @@ const handlePickup = async (prescriptionId) => {
                         Rate Your Appointment:
                       </Typography>
                       {isRated ? (
-                        <Typography sx={{ fontSize: '1.2em', fontFamily: 'montserrat' }}>
+                        <Typography sx={{fontSize: '1.7vh', fontFamily: 'montserrat' }}>
                           You rated this appointment <strong>{pastAppointments[0].appt_rating}</strong> out of 5.
                         </Typography>
                       ) : (
@@ -1938,10 +1955,11 @@ const handlePickup = async (prescriptionId) => {
                       )}
                     </>
                   ) : (
-                    <Typography sx={{ fontSize: '1.2em' }}>
+                    <Typography sx={{ fontSize: '1.9vh' }}>
                       Book and attend an appointment to view overview.
                     </Typography>
                   )}
+                </Box>
                 </Box>
               </Item>
 
