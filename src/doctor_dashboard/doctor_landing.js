@@ -29,6 +29,8 @@ import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
 import doctor_shrug from "./doctor_shrug.png"
 import doctor_happy from "./doctor_happy.png"
 import patient_help from "./patient_help.png"
+import { useTheme, useMediaQuery, Drawer } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu'
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -44,17 +46,7 @@ const Item = styled(Paper)(({ theme }) => ({
   }),
 }));
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: '#EEF2FE',
-  boxShadow: 24,
-  borderRadius: 3,
-  p: 4,
-};
+
 
 const StyledRating = styled(Rating)({
   '& .MuiRating-iconFilled': {
@@ -66,27 +58,6 @@ const StyledRating = styled(Rating)({
 });
 
 
-
-
-
-const data = {
-  appointmentDate: '01/04/25',
-  prescription: 'Fakemed',
-  status: 'Ready',
-  pickedUp: true,
-  pickupLocation: 'Newark CVS',
-  diet: 'Keto',
-  notes: 'Drink lots of water and avoid any heavy carbs',
-  rating: 0,
-};
-const labelMap = {
-  appointmentDate: 'Appointment Date',
-  prescription: 'Prescription',
-  status: 'Status',
-  pickupLocation: 'Pickup Location',
-  diet: 'Diet',
-  notes: 'Notes',
-};
 
 function Doctor_Landing() {
 
@@ -603,8 +574,14 @@ function Doctor_Landing() {
       console.error("Error updating appointment status:", error);
     }
   };
-  
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const [open, setOpen] = React.useState(false);
+
+  const toggleDrawer = () => {
+    setOpen(!open);  
+  };
 
 
 
@@ -621,14 +598,27 @@ function Doctor_Landing() {
     <div style={{ display: "flex" }}>
       {/* Sidebar/Navbar */}
 
-      <Doctor_Navbar />
+      <>
+      {isMobile ? (
+        <>
+          <IconButton onClick={toggleDrawer} sx={{ position: 'fixed', bottom: 10, left: 10, zIndex: 3}}>
+            <MenuIcon sx={{ color: 'white', backgroundColor: '#5b48a5', borderRadius: '100px', padding: '1px', fontSize: 32 }} />
+          </IconButton>
+          <Drawer anchor="left" open={open} onClose={toggleDrawer}>
+            <Doctor_Navbar />
+          </Drawer>
+        </>
+      ) : (
+        <Doctor_Navbar />
+      )}
+    </>
 
       <div style={{ marginLeft: "3px", flexGrow: 1, padding: "20px" }}>
         <Box sx={{ flexGrow: 1 }}>
 
           <Grid container spacing={2} >
             {/* item 1 */}
-            <Grid item xs={7} >
+            <Grid item md={7} xs={12}>
               <Item sx={{ color: 'white', background: 'linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)', borderRadius: 5, p: 2 }}>
                 <Typography sx={{ fontFamily: 'Montserrat', fontSize: '3.5vh', textAlign: "left", mb: '1.1vh' }} >Your Information</Typography>
                 <Paper
@@ -681,7 +671,7 @@ function Doctor_Landing() {
                       click this button and you can fix a few details.
                     </Typography>
                     <Button
-                      onClick={() => navigate('/doctor_dashboard/doctor_medicalchart')} variant="contained"
+                      onClick={() => navigate('/doctor_dashboard/doctor_info')} variant="contained"
                       sx={{
                         background: 'rgba(238, 242, 254, 0.10)',
                         color: 'white',
@@ -770,10 +760,10 @@ function Doctor_Landing() {
             </Grid>
             {/* item 2 */}
 
-            <Grid item xs={5}>
+            <Grid item md={5} xs={12}>
               <Item sx={{ backgroundColor: "#EEF2FE" }}>
                 <Box>
-                  <Typography variant="h6" gutterBottom sx={{ fontFamily: "Montserrat", color: "#22252C", fontSize: '2.5em', textAlign: 'left', paddingLeft: '1.5vw' }}>
+                  <Typography variant="h6" gutterBottom sx={{ fontFamily: "Montserrat", color: "#22252C", fontSize: '3.5vh', textAlign: 'left', paddingLeft: '1.5vw' }}>
                     {showUpcoming ? "Upcoming Appointments" : "Past Appointments"}
                   </Typography>
                   <Box className="custom-scroll" sx={{ height: '30vh', width: '90%', margin: 'auto', overflowY: "auto" }}>
@@ -869,10 +859,10 @@ function Doctor_Landing() {
             </Grid>
 
             {/* item 3 */}
-            <Grid item xs={4}>
+            <Grid item md={4} xs={12}>
               <Item sx={{ background: "linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)" }}>
-                <Box>
-                  <Typography variant="h6" gutterBottom sx={{ fontFamily: "Montserrat", color: "#FEFEFD", fontSize: '2.5em', textAlign: 'left', paddingLeft: '1.5vw' }}>
+                <Box sx={{paddingTop: 2}}>
+                  <Typography variant="h6" gutterBottom sx={{ fontFamily: "Montserrat", color: "#FEFEFD", fontSize: '3.5vh', textAlign: 'left', paddingLeft: '1.5vw' }}>
                     Meal Plans
                   </Typography>
                   <Typography variant="h6" gutterBottom sx={{ fontFamily: "Montserrat", color: "#FEFEFD", fontSize: '2vh', textAlign: 'left', paddingLeft: '1.5vw', fontWeight: 'normal' }}>
@@ -915,7 +905,7 @@ function Doctor_Landing() {
             </Grid>
 
             {/* item 4 */}
-            <Grid item xs={4}>
+            <Grid item md={4} xs={12}>
               <Item sx={{
                 position: "relative",
                 overflow: "hidden",
@@ -941,23 +931,9 @@ function Doctor_Landing() {
                 <Box sx={{ position: "relative", zIndex: 2, height: '100%' }}>
                   <Box
                     sx={{
-                      position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2, maxHeight: "100%", overflowY: "auto", '&::-webkit-scrollbar': {
-                        width: '8px',
-                      },
-                      '&::-webkit-scrollbar-track': {
-                        background: 'transpnt',
-                        borderRadius: '10px',
-                      },
-                      '&::-webkit-scrollbar-thumb': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.4)',
-                        borderRadius: '10px',
-                        border: '2px solid rgba(255, 255, 255, 0.2)',
-                      },
-                      '&::-webkit-scrollbar-thumb:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                      },
+                      position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2
                     }}>
-                    <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '2em' }}>
+                    <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '3.5vh' }}>
                       Patients
                     </Typography>
                     <Box>
@@ -1052,10 +1028,10 @@ function Doctor_Landing() {
 
 
             {/* item 5 */}
-            <Grid item xs={4}>
+            <Grid item md={4} xs={12}>
               <Item sx={{ background: "linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)", backgroundSize: "cover", fontFamily: 'Montserrat' }}>
                 <Box sx={{ position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2 }}>
-                  <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '2em' }}>
+                  <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '3.5vh' }}>
                     Requested Appointments
                   </Typography>
                   <Box className="custom-scroll" sx={{ height: '35vh', width: '90%', margin: 'auto', overflowY: "auto", borderRadius: '30px', paddingTop: '1em', paddingBottom: '1em'}}>
@@ -1113,7 +1089,7 @@ function Doctor_Landing() {
                             "&:hover": { backgroundColor: "#5A8BCF" },
                             width: "40%",
                             borderRadius: "30px",
-                            fontFamily: "Merriweather",
+                            fontFamily: "Montserrat",
                             fontSize: "1.5em",
                             fontWeight: 700,
                             marginTop: "2%",
@@ -1132,7 +1108,7 @@ function Doctor_Landing() {
                             "&:hover": { backgroundColor: "#5A8BCF" },
                             width: "40%",
                             borderRadius: "30px",
-                            fontFamily: "Merriweather",
+                            fontFamily: "Montserrat",
                             fontSize: "1.5em",
                             fontWeight: 700,
                             marginTop: "2%",
