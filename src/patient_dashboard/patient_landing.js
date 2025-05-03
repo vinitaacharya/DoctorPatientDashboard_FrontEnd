@@ -26,6 +26,11 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Plot from 'react-plotly.js';
 import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
+import CalorieGraph from "../patient_medicalchart/patient_medicalchart/calorie_graph";
+import WaterGraph from "../patient_medicalchart/patient_medicalchart/water_graph";
+import WeightGraph from "../patient_medicalchart/patient_medicalchart/weight_graph";
+
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
   borderRadius: 30,
@@ -66,6 +71,8 @@ function Patient_Landing() {
 
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const [appointmentToCancel, setAppointmentToCancel] = useState(null);
+  const [refreshGraph, setRefreshGraph] = useState(false);
+
   
   const openCancelModalFor = (appointmentId) => {
     setAppointmentToCancel(appointmentId);
@@ -598,11 +605,16 @@ function getWeekStart(date) {
 
 
 //medical chart carousel
-const images = [
-  tempWeightImg,
-  mealImg,
-  tempWeightImg,
+const carouselComponents = [
+  <CalorieGraph refreshTrigger={refreshGraph} />,
+  <Typography sx={{ fontFamily: 'Merriweather', fontSize: '2vh' }}>
+  <WaterGraph refreshTrigger={refreshGraph} />,
+  </Typography>,
+  <Typography sx={{ fontFamily: 'Merriweather', fontSize: '2vh' }}>
+  <WeightGraph refreshTrigger={refreshGraph} />,
+  </Typography>
 ];
+
 const handlePickup = async (prescriptionId) => {
   try {
     const res = await fetch('http://localhost:5000/prescription/pickup', {
@@ -629,15 +641,16 @@ const handlePickup = async (prescriptionId) => {
 };
 
 
-const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? carouselComponents.length - 1 : prevIndex - 1));
   };
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
+    setCurrentIndex((prevIndex) => (prevIndex === carouselComponents.length - 1 ? 0 : prevIndex + 1));
   };
+
 
   const [ratingValue, setRatingValue] = useState(0);
   const [isRated, setIsRated] = useState(pastAppointments[0]?.appt_rating !== null && pastAppointments[0]?.appt_rating !== undefined);
@@ -700,6 +713,11 @@ const [currentIndex, setCurrentIndex] = useState(0);
       checkRatingStatus(); // Call the function to check rating status
     }
   }, [pastAppointments]);
+
+
+
+
+  
 
   return (
 
@@ -1163,17 +1181,19 @@ const [currentIndex, setCurrentIndex] = useState(0);
       boxShadow: 3,
     }}
   >
-    <Box
-      component="img"
-      src={images[currentIndex]}
-      alt="Chart"
-      sx={{
-        width: '100%',
-        height: 'auto',
-        borderRadius: 2,
-        objectFit: 'contain',
-      }}
-    />
+<Box
+  sx={{
+    width: '100%',
+    height: '250px', // or '300px' if you prefer
+    borderRadius: 2,
+    overflow: 'hidden',
+  }}
+>
+  {carouselComponents[currentIndex]}
+</Box>
+
+
+
   </Box>
 
   {/* Navigation (outside the card) */}
@@ -1183,7 +1203,8 @@ const [currentIndex, setCurrentIndex] = useState(0);
     </IconButton>
  {/* Dots */}
  <Box sx={{ display: 'flex', gap: 1 }}>
-          {images.map((_, index) => (
+          {carouselComponents.map((_, index) => (
+
             <span
               key={index}
               style={{
