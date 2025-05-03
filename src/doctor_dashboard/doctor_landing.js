@@ -370,6 +370,20 @@ function Doctor_Landing() {
     setSelectedTime('09:00');
   };
 
+  const formatAppointmentDate = (isoString) => {
+    const date = new Date(isoString);
+    return date.toLocaleString("en-US", {
+      weekday: "short",     // Thu
+      year: "numeric",      // 2025
+      month: "short",       // May
+      day: "2-digit",       // 01
+      hour: "2-digit",      // 09
+      minute: "2-digit",    // 00
+      hour12: true,         // AM/PM
+      timeZoneName: "short" // GMT
+    });
+  };
+
 
   // Form fields
   const [apptReason, setApptReason] = useState('');
@@ -789,7 +803,8 @@ function Doctor_Landing() {
                             paddingLeft: "1vw",
                           }}
                         >
-                          {appointment.appointment_datetime}
+                          {formatAppointmentDate(appointment.appointment_datetime)}
+
                         </Typography>
                         <Typography
                           variant="body1"
@@ -960,7 +975,8 @@ function Doctor_Landing() {
                                 borderRadius: "30px",
                                 objectFit: "cover",
                                 mr: 2,
-                                fontFamily: 'Montserrat'
+                                fontFamily: 'Montserrat',
+                                margin: 'auto'
                               }}
                             />
                           </Box>
@@ -1069,7 +1085,7 @@ function Doctor_Landing() {
                             paddingLeft: "1vw",
                           }}
                         >
-                          {new Date(appointment.appointment_datetime).toLocaleString()}
+                          {formatAppointmentDate(appointment.appointment_datetime)}
                         </Typography>
 
                         {/* Patient Name */}
