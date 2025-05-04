@@ -76,6 +76,30 @@ useEffect(() => {
 
   fetchPatientInfo();
 }, []);
+
+const [patientInitSurvey, setPatientInitSurvey] = useState(null);
+useEffect(() => {
+  const fetchInitialSurvey = async () => {
+    const id =localStorage.getItem("patientId");
+    if(!id){
+      console.warn("No paitent ID in localStorage");
+      return;
+    }
+    try{
+      const res = await fetch(`http://localhost:5000/init-patient-survey/${id}`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch patient info");
+      }
+      const data = await res.json();
+      setPatientInitSurvey(data);
+      
+    }catch (error){
+      console.error("Error fething patient info:", error);
+    }
+  };
+  fetchInitialSurvey();
+}, []);
+
   return (
     <Box display="flex">
       <Navbar />
@@ -103,7 +127,8 @@ useEffect(() => {
           {patientInfo && (
             <Typography  variant="h6" sx={{ color:'white', mt: 1, fontFamily: 'Montserrat', fontSize: '1.5em' }}>
                 {patientInfo.first_name} {patientInfo.last_name}
-            </Typography>)}           
+            </Typography>)} 
+            <Typography>{patientInitSurvey.health_goals}</Typography>          
           </Box>
         </Box>
         <Box sx={{backgroundColor:'#EEF2FE', minHeight:'70vh'}}>
