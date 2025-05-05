@@ -23,6 +23,7 @@ import Doctor_Mealplan from './doctor_dashboard/doctor_mealplan';
 import Doctor_Info from './doctor_dashboard/doctor_info';
 import Doctor_Profile from './doctor_dashboard/profile';
 import DoctorPatientInfo from './doctor_dashboard/doctor_patientinfo';
+import { SurveyProvider } from './patient_medicalchart/patient_medicalchart/Survey_context';
 
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
     )
   }, [])
   return (
+    <SurveyProvider>
     <div>
       <Router>
       <div className="App">
@@ -79,6 +81,7 @@ function App() {
       </div>
       </Router>
     </div>
+    </SurveyProvider>
   )
 }
 

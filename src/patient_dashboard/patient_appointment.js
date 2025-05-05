@@ -136,7 +136,7 @@ function Patient_Appointment() {
         
         // Set visibility of input box
         console.log(diffInDays)
-        setShowInput(diffInDays > 1 && diffInDays < 3); //Change this to 2 to be within a day
+        setShowInput(diffInDays > 0 && diffInDays < 5); //Change this to 2 to be within a day
       } catch (error) {
         console.error("Error fetching appointment:", error);
       }

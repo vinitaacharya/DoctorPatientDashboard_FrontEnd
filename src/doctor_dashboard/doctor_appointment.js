@@ -283,7 +283,7 @@ function Doctor_Appointment() {
                 <Typography sx={{ mt: 2, fontSize: "1.3em"}}><strong>Notes:</strong> {appointmentData.notes}</Typography>
                 <Typography sx={{fontSize: "1.3em"}}>
                   <strong>Prescription:</strong>
-                  <Button sx={buttonStyle} onClick={handleOpen}> Perscribe </Button>
+                  <Button sx={buttonStyle} onClick={handleOpen}> Prescribe </Button>
                   <Modal
                     open={open}
                     onClose={handleClose}
@@ -327,8 +327,13 @@ function Doctor_Appointment() {
                           className="form-control"
                           placeholder='Enter Quantity'
                           value={values.quantity}
-                          onChange={e => setValues({ ...values, quantity: e.target.value })}
-                        />
+                          min="1"
+                          onChange={e => {
+                            const val = parseInt(e.target.value);
+                            if (val >= 0 || e.target.value === "") {
+                              setValues({ ...values, quantity: e.target.value });
+                            }
+                          }}                        />
                       </div>
 
                       <button

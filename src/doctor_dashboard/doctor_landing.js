@@ -575,7 +575,7 @@ function Doctor_Landing() {
     }
   };
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery('(max-width:920px)');
 
   const [open, setOpen] = React.useState(false);
 
@@ -788,7 +788,7 @@ function Doctor_Landing() {
                           sx={{
                             fontFamily: "Montserrat",
                             color: "#22252C",
-                            fontSize: "1.5em",
+                            fontSize: "1.8vh",
                             textAlign: "left",
                             paddingLeft: "1vw",
                           }}
@@ -802,12 +802,12 @@ function Doctor_Landing() {
                             fontFamily: "Merrriweather",
                             fontWeight: "bold",
                             color: "#22252C",
-                            fontSize: "1.4em",
+                            fontSize: "1.7vh",
                             textAlign: "left",
                             paddingLeft: "1vw",
                           }}
                         >
-                          {appointment.doctor_name}
+                          {appointment.patient_first_name} {appointment.patient_last_name}
                         </Typography>
                         <Button
                           variant="contained"
@@ -822,7 +822,7 @@ function Doctor_Landing() {
                             width: "70%",
                             borderRadius: "30px",
                             fontFamily: "Merrriweather",
-                            fontSize: "1.5em",
+                            fontSize: "2vh",
                             fontWeight: "700px",
                             marginTop: "2%",
                             marginBottom: "1%",
@@ -892,7 +892,6 @@ function Doctor_Landing() {
                     width: "70%",
                     borderRadius: "30px",
                     fontFamily: "Montserrat",
-                    fontSize: "1.5em",
                     fontWeight: "700px",
                     marginTop: "2%",
                     marginBottom: "1%",
@@ -964,8 +963,8 @@ function Doctor_Landing() {
 
 
 
-                            <Button variant="contained" onClick={() => navigate('/doctor_dashboard/doctor_patientlist')} sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', fontSize: '1.3em', width: '75%', margin: 'auto' }}>
-                              See Your patients
+                            <Button variant="contained" onClick={() => navigate('/doctor_dashboard/doctor_patientlist')} sx={{ color: "white", backgroundColor: "#719EC7", borderRadius: 5, textTransform: "none", fontFamily: 'Montserrat', width: '75%', margin: 'auto' }}>
+                              View Patients
                             </Button>
 
 
@@ -1056,7 +1055,7 @@ function Doctor_Landing() {
                           sx={{
                             fontFamily: "Montserrat",
                             color: "#22252C",
-                            fontSize: "1.5em",
+                            fontSize: "1.8vh",
                             textAlign: "left",
                             paddingLeft: "1vw",
                           }}
@@ -1071,7 +1070,7 @@ function Doctor_Landing() {
                             fontFamily: "Merriweather",
                             fontWeight: "bold",
                             color: "#22252C",
-                            fontSize: "1.4em",
+                            fontSize: "1.7vh",
                             textAlign: "left",
                             paddingLeft: "1vw",
                           }}
@@ -1090,9 +1089,9 @@ function Doctor_Landing() {
                             width: "40%",
                             borderRadius: "30px",
                             fontFamily: "Montserrat",
-                            fontSize: "1.5em",
                             fontWeight: 700,
                             marginTop: "2%",
+                            fontSize: "2vh",
                             marginBottom: "1%",
                           }}
                         >
@@ -1109,8 +1108,8 @@ function Doctor_Landing() {
                             width: "40%",
                             borderRadius: "30px",
                             fontFamily: "Montserrat",
-                            fontSize: "1.5em",
                             fontWeight: 700,
+                            fontSize: "2vh",
                             marginTop: "2%",
                             marginBottom: "1%",
                           }}
