@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useRef } from 'react';
 import {
   Card, Box,CardHeader, CardMedia, CardContent, CardActions,
   IconButton, Typography, Collapse, Avatar, Chip, TextField, Button
@@ -67,6 +67,18 @@ export default function MealPlanCard({ meal, patientInfo}) {
     }
     setLiked(!liked);
   };
+
+const commentInputRef = useRef(null);
+const handleCommentIcon = () => {
+  handleOpenModal(); // Make sure to call the function (add parentheses)
+
+  // Focus after a short delay to ensure modal has rendered
+  setTimeout(() => {
+    if (commentInputRef.current) {
+      commentInputRef.current.focus();
+    }
+  }, 100);
+};
 
   const handleAddToMealPlan = () =>{
     setAdded(!added);
@@ -156,7 +168,7 @@ const handleCloseModal = () => setOpenModal(false);
 
 <Box position="relative" display="inline-flex">
  
-  <IconButton onClick={handleExpandClick}>
+  <IconButton onClick={handleCommentIcon}>
     <ChatBubbleOutline />
   </IconButton>
   {comments.length > 0 && (
@@ -323,6 +335,7 @@ const handleCloseModal = () => setOpenModal(false);
       {/* Input */}
       <Box display="flex" gap={1}>
         <TextField
+        inputRef={commentInputRef}
           variant="outlined"
           size="small"
           fullWidth
