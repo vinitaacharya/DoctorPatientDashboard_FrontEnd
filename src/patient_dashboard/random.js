@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // ✅ Add useEffect
 import Patient_Navbar from "./patient_navbar";
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -81,10 +81,46 @@ const MealCard = ({ title, tags, description, image, day, onAddToPlan}) => {
 
 function Patient_Mealplan() {
   // Temporary mock data
-  const mealPlans = [
-    { title: "Meal plan #1", author: "Dr. Song", tags: "Keto" },
-    { title: "Meal plan #2", author: "Natasha", tags: "Keto" },
-  ];
+  const [mealPlans, setMealPlans] = useState([]);
+
+  useEffect(() => {
+    const fetchMealPlans = async () => {
+      const id = localStorage.getItem("patientId");
+      if (!id) {
+        console.warn("No patient ID in localStorage");
+        return;
+      }
+    
+      try {
+        const response = await fetch(`http://localhost:5000/saved-meal-plans/${id}`);
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch meal plans');
+        }
+    
+        const { saved_meal_plans } = await response.json();
+        
+        if (!saved_meal_plans) {
+          throw new Error('No meal plans data received');
+        }
+    
+      // Change this in your fetchMealPlans function:
+      setMealPlans(
+        saved_meal_plans.map(plan => ({
+          title: plan.title || plan.meal_plan_name,
+          author: plan.creator_name || "Doctor", // Use creator_name from backend
+          tags: plan.tag || plan.description || "Custom"
+        }))
+      );
+      } catch (error) {
+        console.error("Failed to fetch meal plans:", error);
+      }
+    };
+  
+    fetchMealPlans();
+  }, []);
+  
 
   const savedMeals = [
     {
@@ -158,15 +194,46 @@ function Patient_Mealplan() {
     const [day, setDay] = React.useState('');
     const [plannedMeals, setPlannedMeals] = useState({});
 
-    const handleAddToPlan = (meal) => {
-      if (!day) return;
+    const handleAddToPlan = async (meal) => {
+      if (!day || !selectedMealPlan?.id) return;
     
-      setPlannedMeals(prev => {
-        const updatedDayMeals = prev[day] ? [...prev[day], meal] : [meal];
-        return { ...prev, [day]: updatedDayMeals };
-      });
+      try {
+        // First, add to backend
+        const response = await fetch('http://localhost:5000/assign-meal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            meal_plan_id: selectedMealPlan.id,
+            meal_id: meal.id, // Make sure your meal objects have IDs
+            day_of_week: day
+          })
+        });
+    
+        if (!response.ok) throw new Error('Failed to assign meal');
+    
+        const newEntry = await response.json();
+    
+        // Then update local state
+        const newMeal = {
+          id: newEntry.entry_id,
+          title: meal.title,
+          description: meal.description,
+          image: meal.image || food1
+        };
+    
+        setPlannedMeals(prev => ({
+          ...prev,
+          [day]: [...(prev[day] || []), newMeal]
+        }));
+    
+        setDayMeals(prev => ({
+          ...prev,
+          [day]: [...(prev[day] || []), newMeal]
+        }));
+      } catch (error) {
+        console.error("Error assigning meal:", error);
+      }
     };
-    
 
   
     
@@ -198,6 +265,109 @@ function Patient_Mealplan() {
           flexDirection: 'column',
           gap: 2
     };
+
+const handleSaveNew = async () => {
+  try {
+    const patientId = localStorage.getItem("patientId");
+    if (!patientId) {
+      alert("No patient ID found");
+      return;
+    }
+
+    const response = await fetch(`http://localhost:5000/create-meal-plan`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        meal_plan_name: title,
+        meal_plan_title: title, // or use a different title if needed
+        patient_id: patientId
+      })
+    });
+
+    if (!response.ok) throw new Error('Failed to create meal plan');
+
+    // Refresh meal plans with the correct patient ID
+    const refreshed = await fetch(`http://localhost:5000/get-meal-plans-by-user?patient_id=${patientId}`);
+    const data = await refreshed.json();
+    
+    setMealPlans(
+      data.map(plan => ({
+        title: plan.meal_plan_name || "Custom",
+        author: `${plan.first_name} ${plan.last_name}` || "Custom",
+        tags: plan.meal_plan_title || "Custom"
+      }))
+    );
+
+    alert("Meal plan created successfully!");
+    setTitle("");
+    handleCloseNewPlanModal();
+  } catch (error) {
+    console.error("Meal plan creation failed:", error);
+    alert("Could not create meal plan.");
+  }
+};
+
+  const [selectedOption, setSelectedOption] = useState(""); // ✅ Add this line
+
+
+
+  // Add state to track meals for each day
+  const [dayMeals, setDayMeals] = useState({
+    Monday: [],
+    Tuesday: [],
+    Wednesday: [],
+    Thursday: [],
+    Friday: [],
+    Saturday: [],
+    Sunday: []
+  });
+
+  // Fetch meal plan entries when a meal plan is selected for management
+  useEffect(() => {
+    if (selectedMealPlan && selectedMealPlan.id) {
+      const fetchMealPlanEntries = async () => {
+        try {
+          const response = await fetch(`http://localhost:5000/meal-plan-entries?meal_plan_id=${selectedMealPlan.id}`);
+          if (!response.ok) throw new Error('Failed to fetch meal plan entries');
+          
+          const entries = await response.json();
+          
+          // Initialize plannedMeals with empty arrays for each day
+          const initialPlannedMeals = {
+            Monday: [],
+            Tuesday: [],
+            Wednesday: [],
+            Thursday: [],
+            Friday: [],
+            Saturday: [],
+            Sunday: []
+          };
+          
+          // Organize meals by day
+          entries.forEach(entry => {
+            if (initialPlannedMeals[entry.day_of_week]) {
+              initialPlannedMeals[entry.day_of_week].push({
+                id: entry.entry_id,
+                title: entry.meal_name,
+                description: entry.meal_description,
+                image: food1
+              });
+            }
+          });
+          
+          // Update both states
+          setPlannedMeals(initialPlannedMeals);
+          setDayMeals(initialPlannedMeals);
+        } catch (error) {
+          console.error("Error fetching meal plan entries:", error);
+        }
+      };
+      
+      fetchMealPlanEntries();
+    }
+  }, [selectedMealPlan]);
+
+  
   return (
     <div style={{ display: "flex" }}>
       <Patient_Navbar />
@@ -251,8 +421,33 @@ function Patient_Mealplan() {
         size="small"
         sx={{ mb: 2 }}
       />
+      <TextField
+        select
+        label="Select Tag"
+        value={selectedOption}
+        onChange={(e) => setSelectedOption(e.target.value)}
+        fullWidth
+        variant="outlined"
+        sx={{ mb: 2 }}
+      >
+        <MenuItem value="" disabled>
+          Select Tag
+        </MenuItem>
+        <MenuItem value="Low_Carb">Low Carb</MenuItem>
+        <MenuItem value="Keto">Keto</MenuItem>
+        <MenuItem value="Paleo">Paleo</MenuItem>
+        <MenuItem value="Mediterranean">Mediterranean</MenuItem>
+        <MenuItem value="Vegan">Vegan</MenuItem>
+        <MenuItem value="Vegetarian">Vegetarian</MenuItem>
+        <MenuItem value="Gluten_Free">Gluten-Free</MenuItem>
+        <MenuItem value="Dairy_Free">Dairy-Free</MenuItem>
+        <MenuItem value="Weight_Loss">Weight Loss</MenuItem>
+        <MenuItem value="Weight_Gain">Weight Gain</MenuItem>
+        <MenuItem value="Other">Other</MenuItem>
+      </TextField>
+      
       <Button
-        onClick={handleCloseNewPlanModal}
+        onClick={handleSaveNew}
         variant="contained"
         fullWidth
         sx={{
@@ -335,6 +530,77 @@ function Patient_Mealplan() {
                         <MenuItem value='Sunday'>Sunday</MenuItem>
                       </Select>
                   {/* You can show savedMeals here and allow adding/removing/reordering */}
+                  {day && (
+                    <Box mt={2} sx={{ maxHeight: '50vh', overflowY: 'auto' }}>
+                      <Typography variant="h6" sx={{ mb: 2, fontFamily: 'Montserrat' }}>
+                        Meals for {day}
+                      </Typography>
+                      
+                      {plannedMeals[day]?.length > 0 ? (
+                        plannedMeals[day].map((meal, index) => (
+                          <Box 
+                            key={meal.id || index} 
+                            sx={{
+                              backgroundColor: '#DCEBFB',
+                              borderRadius: '20px',
+                              padding: '1em',
+                              marginBottom: '10px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 2
+                            }}
+                          >
+                            <img 
+                              src={meal.image || food1} 
+                              alt={meal.title} 
+                              style={{ width: 80, height: 80, borderRadius: 20 }} 
+                            />
+                            <Box sx={{ flexGrow: 1 }}>
+                              <Typography sx={{ fontWeight: 'bold', fontFamily: 'Montserrat' }}>
+                                {meal.title}
+                              </Typography>
+                              <Typography sx={{ fontFamily: 'Merriweather' }}>
+                                {meal.description}
+                              </Typography>
+                            </Box>
+                            <Button
+                              variant="contained"
+                              onClick={async () => {
+                                try {
+                                  // First delete from backend
+                                  await fetch(`http://localhost:5000/meal-plan-entries/${meal.id}`, {
+                                    method: 'DELETE'
+                                  });
+                                  
+                                  // Then update local state
+                                  setPlannedMeals(prev => ({
+                                    ...prev,
+                                    [day]: prev[day].filter((m) => m.id !== meal.id)
+                                  }));
+                                } catch (error) {
+                                  console.error("Error removing meal:", error);
+                                }
+                              }}
+                              sx={{
+                                backgroundColor: '#FF6B6B',
+                                '&:hover': { backgroundColor: '#FF5252' },
+                                borderRadius: '20px',
+                                textTransform: 'none',
+                                fontWeight: 'bold'
+                              }}
+                            >
+                              Remove
+                            </Button>
+                          </Box>
+                        ))
+                      ) : (
+                        <Typography sx={{ textAlign: 'center', mt: 4, color: '#666' }}>
+                          No meals added for {day} yet
+                        </Typography>
+                      )}
+                    </Box>
+                  )}
+
                 </Box>
                 ) : (
                       <Box mt={2} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>

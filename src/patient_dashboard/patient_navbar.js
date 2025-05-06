@@ -31,6 +31,7 @@ export default function Patient_Navbar() {
     console.log('clicked with parameter:', index);
     
     if (index === 1) {
+      
       navigate("/landing");
     }
     if (index === 2) {
