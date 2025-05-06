@@ -59,14 +59,44 @@ export default function MealPlanCard({ meal, patientInfo}) {
   };
   
   
-  const handleLike = () => {
-    if (liked) {
-      setLikes(likes - 1);
-    } else {
-      setLikes(likes + 1);
+  const handleLike = async () => {
+    const post_id = meal.post_id;
+    const patient_id = patientInfo?.patient_id; // assuming this is passed correctly
+  
+    if (!post_id || !patient_id) {
+      console.error("Missing post_id or patient_id");
+      return;
     }
-    setLiked(!liked);
+  
+    try {
+      const response = await fetch('http://localhost:5000/posts/like', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          post_id: post_id,
+          patient_id: patient_id,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.status === 201) {
+        setLiked(true);
+        setLikes(likes + 1);
+        console.log("Post liked successfully:", data);
+      } else if (response.status === 409) {
+        console.warn("Post already liked:", data);
+        setLiked(true); // Optional, still show UI as liked
+      } else {
+        console.error("Like failed:", data);
+      }
+    } catch (error) {
+      console.error("Error while liking post:", error);
+    }
   };
+  
 
 const commentInputRef = useRef(null);
 const handleCommentIcon = () => {

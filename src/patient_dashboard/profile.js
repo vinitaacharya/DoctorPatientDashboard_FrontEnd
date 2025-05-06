@@ -11,29 +11,6 @@ import ProfileImg from "./profile_assets/profilePageImg.png"
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
-const posts = [
-  {
-    author: 'Vinita Acharya',
-    title: 'Cauliflower Fried Rice',
-    tags: ['#Keto'],
-    description: 'Fried rice is a classic...',
-    image: food1,
-    comments: [
-      { firstName: 'Vinita', lastName: 'Acharya', text: 'hi' },
-      { firstName: 'Vinita', lastName: 'Acharya', text: 'vinitaaa' }
-    ],
-  },
-  {
-    author: 'Vinita Acharya',
-    title: 'Marry Me Tofu',
-    tags: ['#Keto', '#Vegan'],
-    description: 'Tofu is versatile...',
-    image: food1,
-    comments: [
-      { firstName: 'Joe', lastName: 'Smith', text: 'love this!' }
-    ],
-  },
-];
 
 
 const Profile = () => {
@@ -76,7 +53,26 @@ useEffect(() => {
 
   fetchPatientInfo();
 }, []);
+const [posts, setPosts] = useState([]);
 
+  useEffect(() => {
+    fetch('http://localhost:5000/posts') // Update if your API base URL is different
+      .then(res => res.json())
+      .then(data => {
+        const formattedPosts = data.map(post => ({
+          author: `${post.first_name} ${post.last_name}`,
+          title: post.meal_name,
+          tags: [`#${post.tag}`],
+          description: post.description,
+          image: `data:image/jpeg;base64,${post.picture}`, // Assuming JPEG, adjust if needed
+          comments: [], // You can add comment logic here if you have a comments endpoint
+        }));
+        setPosts(formattedPosts);
+      })
+      .catch(error => {
+        console.error("Error fetching posts:", error);
+      });
+  }, []);
 const [patientInitSurvey, setPatientInitSurvey] = useState(null);
 useEffect(() => {
   const fetchInitialSurvey = async () => {
@@ -98,6 +94,46 @@ useEffect(() => {
     }
   };
   fetchInitialSurvey();
+}, []);
+const [likedPosts, setLikedPosts] = useState([]);
+
+useEffect(() => {
+  const fetchLikedPosts = async () => {
+    const patientId = localStorage.getItem("patientId");
+    if (!patientId) {
+      console.warn("No patient ID found in localStorage");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/posts/liked?patient_id=${patientId}`);
+      const data = await response.json();
+
+      if (data.liked_posts) {
+        const postDetails = await Promise.all(
+          data.liked_posts.map(async (liked) => {
+            const res = await fetch(`http://localhost:5000/posts/${liked.post_id}`);
+            return res.json();
+          })
+        );
+
+        const formattedPosts = postDetails.map(post => ({
+          author: `${post.first_name} ${post.last_name}`,
+          title: post.meal_name,
+          tags: [`#${post.tag}`],
+          description: post.description,
+          image: `data:image/jpeg;base64,${post.picture}`,
+          comments: []
+        }));
+
+        setLikedPosts(formattedPosts);
+      }
+    } catch (err) {
+      console.error("Error fetching liked posts:", err);
+    }
+  };
+
+  fetchLikedPosts();
 }, []);
 
 const [openAboutMe, setOpenAboutMe] = useState(false);
@@ -178,11 +214,12 @@ const handleCloseAboutMe = () => setOpenAboutMe(false);
       <>
         {/* Posts Grid */}
         <Grid container spacing={3}>
-        {patientInfo && posts.map((post, index) => (
+        {patientInfo && posts.slice(0, 7).map((post, index) => (
   <Grid item xs={12} sm={6} md={4} key={index}>
     <MealCard
       meal={post}
       patientInfo={{
+        patient_id: patientInfo.patient_id, //  corrected key
         firstName: patientInfo.first_name,
         lastName: patientInfo.last_name,
       }}
@@ -319,28 +356,43 @@ const handleCloseAboutMe = () => setOpenAboutMe(false);
         </Grid></>
       )}
 {changeTab === 1 && (
-  <Grid container spacing={3} justifyContent="center" alignItems="center" sx={{ minHeight: '50vh' }}>
-    <Grid item xs={12} textAlign="center">
-      <Box
-        sx={{
-          backgroundColor: '#F5F7FF',
-          border: '2px dashed #A0B9DA',
-          borderRadius: '15px',
-          padding: '5vh',
-          display: 'inline-block',
-        }}
-      >
-        <FavoriteBorderIcon sx={{ fontSize: 60, color: '#A0B9DA', mb: 2 }} />
-        <Typography variant="h5" sx={{ color: '#5E4B8B', fontFamily: 'Montserrat', fontWeight: 'bold' }}>
-          No Liked Posts Yet
-        </Typography>
-        <Typography sx={{ color: '#7A7A7A', mt: 1, fontFamily: 'Montserrat' }}>
-          Start exploring and like some posts!
-        </Typography>
-      </Box>
-    </Grid>
+  <Grid container spacing={3}>
+    {likedPosts.length > 0 ? (
+      likedPosts.map((post, index) => (
+        <Grid item xs={12} sm={6} md={4} key={index}>
+          <MealCard
+            meal={post}
+            patientInfo={{
+              firstName: patientInfo.first_name,
+              lastName: patientInfo.last_name,
+            }}
+          />
+        </Grid>
+      ))
+    ) : (
+      <Grid item xs={12} textAlign="center">
+        <Box
+          sx={{
+            backgroundColor: '#F5F7FF',
+            border: '2px dashed #A0B9DA',
+            borderRadius: '15px',
+            padding: '5vh',
+            display: 'inline-block',
+          }}
+        >
+          <FavoriteBorderIcon sx={{ fontSize: 60, color: '#A0B9DA', mb: 2 }} />
+          <Typography variant="h5" sx={{ color: '#5E4B8B', fontFamily: 'Montserrat', fontWeight: 'bold' }}>
+            No Liked Posts Yet
+          </Typography>
+          <Typography sx={{ color: '#7A7A7A', mt: 1, fontFamily: 'Montserrat' }}>
+            Start exploring and like some posts!
+          </Typography>
+        </Box>
+      </Grid>
+    )}
   </Grid>
 )}
+
 
       </Box>
     </Box>
