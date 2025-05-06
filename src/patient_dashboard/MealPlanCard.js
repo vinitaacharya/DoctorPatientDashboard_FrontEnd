@@ -1,4 +1,4 @@
-import React, { useState,useRef } from 'react';
+import React, { useState,useRef, useEffect } from 'react';
 import {
   Card, Box,CardHeader, CardMedia, CardContent, CardActions,
   IconButton, Typography, Collapse, Avatar, Chip, TextField, Button
@@ -58,8 +58,10 @@ export default function MealPlanCard({ meal, patientInfo}) {
     setNewComment("");
   };
   
-  
+
+
   const handleLike = async () => {
+    setLiked(!liked);
     const post_id = meal.post_id;
     const patient_id = patientInfo?.patient_id; // assuming this is passed correctly
   
@@ -81,11 +83,14 @@ export default function MealPlanCard({ meal, patientInfo}) {
       });
   
       const data = await response.json();
-  
+      
       if (response.status === 201) {
+  
         setLiked(true);
         setLikes(likes + 1);
         console.log("Post liked successfully:", data);
+        localStorage.setItem(`liked-${post_id}`, 'true');
+
       } else if (response.status === 409) {
         console.warn("Post already liked:", data);
         setLiked(true); // Optional, still show UI as liked
