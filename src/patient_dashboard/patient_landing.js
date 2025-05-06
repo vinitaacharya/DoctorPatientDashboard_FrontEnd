@@ -34,6 +34,8 @@ import { formatInTimeZone } from 'date-fns-tz';
 
 import { useTheme, useMediaQuery, Drawer } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu'
+import { useSurveyData } from '../patient_medicalchart/patient_medicalchart/Survey_context';
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -76,6 +78,8 @@ function Patient_Landing() {
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const [appointmentToCancel, setAppointmentToCancel] = useState(null);
   const [refreshGraph, setRefreshGraph] = useState(false);
+  const { dailyInfo, weeklyInfo } = useSurveyData();
+
 
   
   const openCancelModalFor = (appointmentId) => {
@@ -244,17 +248,9 @@ useEffect(() => {
   };
 
 
+  //const hasSurveyData = (dailyInfo && dailyInfo.length > 0) || (weeklyInfo && weeklyInfo.length > 0);
   const [hasSurveyData, setHasSurveyData] = useState(false);
 
-  // Load survey status on mount
-  useEffect(() => {
-    const surveyFlag = localStorage.getItem('hasSurveyData');
-    if (surveyFlag === 'true') {
-      setHasSurveyData(true);
-    } else {
-      setHasSurveyData(false);
-    }
-  }, []);
   
   // Daily survey form states
   const [heartRate, setHeartRate] = useState("");
@@ -1183,7 +1179,7 @@ const handlePickup = async (prescriptionId) => {
                     alignItems: 'center',
                   }}>
 
-{hasSurveyData ? (
+{(dailyInfo?.length > 0 || weeklyInfo?.length > 0) ? (
 
 
 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -1245,12 +1241,35 @@ const handlePickup = async (prescriptionId) => {
 
 
 ) : (
-  <>
-    <Typography sx={{ fontFamily: 'Montserrat', textAlign: 'left', fontSize: '2.4vh' }}>
-      Looks like you don’t have any data. Come back after filling out the surveys
+  <Box
+    sx={{
+      backgroundColor: 'white',
+      borderRadius: '20px',
+      p: 2,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '28vh',
+      width: '24vw',
+      boxShadow: 3,
+    }}
+  >
+    <Typography sx={{ fontFamily: 'Montserrat', textAlign: 'center', fontSize: '2vh', mb: 2 }}>
+      Looks like you don’t have any data. Come back after filling out the surveys.
     </Typography>
-    <Box component="img" src={noSurveysImg} alt="Survey" />
-  </>
+    <Box
+      component="img"
+      src={noSurveysImg}
+      alt="Survey"
+      sx={{
+        width: '50%',
+        height: 'auto',
+        maxHeight: '10vh',
+        objectFit: 'contain'
+      }}
+    />
+  </Box>
 )}
 
                   </Box>
