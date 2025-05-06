@@ -85,16 +85,34 @@ function Patient_Mealplan() {
 
   useEffect(() => {
     const fetchMealPlans = async () => {
+      const id = localStorage.getItem("patientId");
+      if (!id) {
+        console.warn("No patient ID in localStorage");
+        return;
+      }
+    
       try {
-        const response = await fetch("http://localhost:5000/meals"); // or use your meal plan endpoint
-        const data = await response.json();
-        setMealPlans(
-          data.map(plan => ({
-            title: plan.meal_plan_name,
-            author: "Doctor", // adjust if your backend provides this
-            tags: plan.description || "Custom"
-          }))
-        );
+        const response = await fetch(`http://localhost:5000/saved-meal-plans/${id}`);
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch meal plans');
+        }
+    
+        const { saved_meal_plans } = await response.json();
+        
+        if (!saved_meal_plans) {
+          throw new Error('No meal plans data received');
+        }
+    
+      // Change this in your fetchMealPlans function:
+      setMealPlans(
+        saved_meal_plans.map(plan => ({
+          title: plan.title || plan.meal_plan_name,
+          author: plan.creator_name || "Doctor", // Use creator_name from backend
+          tags: plan.tag || plan.description || "Custom"
+        }))
+      );
       } catch (error) {
         console.error("Failed to fetch meal plans:", error);
       }
@@ -217,38 +235,48 @@ function Patient_Mealplan() {
           gap: 2
     };
 
-    const handleSaveNew = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/create-meal-plan`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            meal_plan_name: title,
-            description: "Custom patient meal plan"
-        })
-        });
-    
-        if (!response.ok) throw new Error('Failed to Create meal plan');
-    
-    // Refresh meal plans after creation
-        const refreshed = await fetch("http://localhost:5000/meals"); // replace with your meal plan list endpoint
-        const data = await refreshed.json();
-        setMealPlans(
-          data.map(plan => ({
-            title: plan.meal_plan_name || "Custom",
-            author: "Doctor" || "Custom",
-            tags: plan.description || "Custom"
-          }))
-        );
+const handleSaveNew = async () => {
+  try {
+    const patientId = localStorage.getItem("patientId");
+    if (!patientId) {
+      alert("No patient ID found");
+      return;
+    }
 
-        alert("Meal plan created successfully!");
-        setTitle("");
-        handleCloseNewPlanModal();
-      } catch (error) {
-        console.error("Meal plan creation failed:", error);
-        alert("Could not create meal plan.");
-      }
-    };
+    const response = await fetch(`http://localhost:5000/create-meal-plan`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        meal_plan_name: title,
+        meal_plan_title: title, // or use a different title if needed
+        patient_id: patientId
+      })
+    });
+
+    if (!response.ok) throw new Error('Failed to create meal plan');
+
+    // Refresh meal plans with the correct patient ID
+    const refreshed = await fetch(`http://localhost:5000/get-meal-plans-by-user?patient_id=${patientId}`);
+    const data = await refreshed.json();
+    
+    setMealPlans(
+      data.map(plan => ({
+        title: plan.meal_plan_name || "Custom",
+        author: `${plan.first_name} ${plan.last_name}` || "Custom",
+        tags: plan.meal_plan_title || "Custom"
+      }))
+    );
+
+    alert("Meal plan created successfully!");
+    setTitle("");
+    handleCloseNewPlanModal();
+  } catch (error) {
+    console.error("Meal plan creation failed:", error);
+    alert("Could not create meal plan.");
+  }
+};
+
+  const [selectedOption, setSelectedOption] = useState(""); // ✅ Add this line
 
 
 
@@ -305,6 +333,31 @@ function Patient_Mealplan() {
         size="small"
         sx={{ mb: 2 }}
       />
+      <TextField
+        select
+        label="Select Tag"
+        value={selectedOption}
+        onChange={(e) => setSelectedOption(e.target.value)}
+        fullWidth
+        variant="outlined"
+        sx={{ mb: 2 }}
+      >
+        <MenuItem value="" disabled>
+          Select Tag
+        </MenuItem>
+        <MenuItem value="Low_Carb">Low Carb</MenuItem>
+        <MenuItem value="Keto">Keto</MenuItem>
+        <MenuItem value="Paleo">Paleo</MenuItem>
+        <MenuItem value="Mediterranean">Mediterranean</MenuItem>
+        <MenuItem value="Vegan">Vegan</MenuItem>
+        <MenuItem value="Vegetarian">Vegetarian</MenuItem>
+        <MenuItem value="Gluten_Free">Gluten-Free</MenuItem>
+        <MenuItem value="Dairy_Free">Dairy-Free</MenuItem>
+        <MenuItem value="Weight_Loss">Weight Loss</MenuItem>
+        <MenuItem value="Weight_Gain">Weight Gain</MenuItem>
+        <MenuItem value="Other">Other</MenuItem>
+      </TextField>
+      
       <Button
         onClick={handleSaveNew}
         variant="contained"
