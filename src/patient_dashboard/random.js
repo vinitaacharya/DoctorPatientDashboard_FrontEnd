@@ -109,7 +109,7 @@ function Patient_Mealplan() {
       setMealPlans(
         saved_meal_plans.map(plan => ({
           title: plan.title || plan.meal_plan_name,
-          author: plan.creator_name || "Custom", // Use creator_name from backend
+          author: plan.creator_name || "Doctor", // Use creator_name from backend
           tags: plan.tag || plan.description || "Custom"
         }))
       );
@@ -194,15 +194,46 @@ function Patient_Mealplan() {
     const [day, setDay] = React.useState('');
     const [plannedMeals, setPlannedMeals] = useState({});
 
-    const handleAddToPlan = (meal) => {
-      if (!day) return;
+    const handleAddToPlan = async (meal) => {
+      if (!day || !selectedMealPlan?.id) return;
     
-      setPlannedMeals(prev => {
-        const updatedDayMeals = prev[day] ? [...prev[day], meal] : [meal];
-        return { ...prev, [day]: updatedDayMeals };
-      });
+      try {
+        // First, add to backend
+        const response = await fetch('http://localhost:5000/assign-meal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            meal_plan_id: selectedMealPlan.id,
+            meal_id: meal.id, // Make sure your meal objects have IDs
+            day_of_week: day
+          })
+        });
+    
+        if (!response.ok) throw new Error('Failed to assign meal');
+    
+        const newEntry = await response.json();
+    
+        // Then update local state
+        const newMeal = {
+          id: newEntry.entry_id,
+          title: meal.title,
+          description: meal.description,
+          image: meal.image || food1
+        };
+    
+        setPlannedMeals(prev => ({
+          ...prev,
+          [day]: [...(prev[day] || []), newMeal]
+        }));
+    
+        setDayMeals(prev => ({
+          ...prev,
+          [day]: [...(prev[day] || []), newMeal]
+        }));
+      } catch (error) {
+        console.error("Error assigning meal:", error);
+      }
     };
-    
 
   
     
@@ -280,6 +311,63 @@ const handleSaveNew = async () => {
 
 
 
+  // Add state to track meals for each day
+  const [dayMeals, setDayMeals] = useState({
+    Monday: [],
+    Tuesday: [],
+    Wednesday: [],
+    Thursday: [],
+    Friday: [],
+    Saturday: [],
+    Sunday: []
+  });
+
+  // Fetch meal plan entries when a meal plan is selected for management
+  useEffect(() => {
+    if (selectedMealPlan && selectedMealPlan.id) {
+      const fetchMealPlanEntries = async () => {
+        try {
+          const response = await fetch(`http://localhost:5000/meal-plan-entries?meal_plan_id=${selectedMealPlan.id}`);
+          if (!response.ok) throw new Error('Failed to fetch meal plan entries');
+          
+          const entries = await response.json();
+          
+          // Initialize plannedMeals with empty arrays for each day
+          const initialPlannedMeals = {
+            Monday: [],
+            Tuesday: [],
+            Wednesday: [],
+            Thursday: [],
+            Friday: [],
+            Saturday: [],
+            Sunday: []
+          };
+          
+          // Organize meals by day
+          entries.forEach(entry => {
+            if (initialPlannedMeals[entry.day_of_week]) {
+              initialPlannedMeals[entry.day_of_week].push({
+                id: entry.entry_id,
+                title: entry.meal_name,
+                description: entry.meal_description,
+                image: food1
+              });
+            }
+          });
+          
+          // Update both states
+          setPlannedMeals(initialPlannedMeals);
+          setDayMeals(initialPlannedMeals);
+        } catch (error) {
+          console.error("Error fetching meal plan entries:", error);
+        }
+      };
+      
+      fetchMealPlanEntries();
+    }
+  }, [selectedMealPlan]);
+
+  
   return (
     <div style={{ display: "flex" }}>
       <Patient_Navbar />
@@ -295,86 +383,86 @@ const handleSaveNew = async () => {
                   <Typography variant="h6" sx={{fontSize: '2em'}}>Meal Plans</Typography>
                   <Button onClick={handleOpenNewPlanModal} variant="contained" sx={{ backgroundColor: '#5A8BBE', borderRadius:'30px', fontFamily:'Montserrat', textTransform: 'none', fontSize:'1.05em', marginRight: '.5vw'}}>Create Plan</Button>
                   <Modal open={openNewPlanModal} onClose={handleCloseNewPlanModal}>
-                    <Box
-                      sx={{
-                        ...style,
-                        position: 'relative', // Needed for absolute positioning of close button
-                      }}
-                    >
-                      <IconButton
-                        onClick={handleCloseNewPlanModal}
-                        sx={{
-                          position: 'absolute',
-                          top: 16,
-                          right: 16,
-                          color: 'grey.600',
-                        }}
-                      >
-                        <CloseIcon />
-                      </IconButton>
+  <Box
+    sx={{
+      ...style,
+      position: 'relative', // Needed for absolute positioning of close button
+    }}
+  >
+    <IconButton
+      onClick={handleCloseNewPlanModal}
+      sx={{
+        position: 'absolute',
+        top: 16,
+        right: 16,
+        color: 'grey.600',
+      }}
+    >
+      <CloseIcon />
+    </IconButton>
 
-                      <Typography
-                        sx={{
-                          textAlign: 'center',
-                          fontSize: '3vh',
-                          fontWeight: 'bold',
-                          mb: 2,
-                        }}
-                      >
-                        Create New Meal Plan
-                      </Typography>
+    <Typography
+      sx={{
+        textAlign: 'center',
+        fontSize: '3vh',
+        fontWeight: 'bold',
+        mb: 2,
+      }}
+    >
+      Create New Meal Plan
+    </Typography>
 
-                      <FormControl fullWidth>
-                        <TextField
-                          placeholder="Enter New Title"
-                          value={title}
-                          onChange={(e) => setTitle(e.target.value)}
-                          fullWidth
-                          size="small"
-                          sx={{ mb: 2 }}
-                        />
-                        <TextField
-                          select
-                          label="Select Tag"
-                          value={selectedOption}
-                          onChange={(e) => setSelectedOption(e.target.value)}
-                          fullWidth
-                          variant="outlined"
-                          sx={{ mb: 2 }}
-                        >
-                          <MenuItem value="" disabled>
-                            Select Tag
-                          </MenuItem>
-                          <MenuItem value="Low_Carb">Low Carb</MenuItem>
-                          <MenuItem value="Keto">Keto</MenuItem>
-                          <MenuItem value="Paleo">Paleo</MenuItem>
-                          <MenuItem value="Mediterranean">Mediterranean</MenuItem>
-                          <MenuItem value="Vegan">Vegan</MenuItem>
-                          <MenuItem value="Vegetarian">Vegetarian</MenuItem>
-                          <MenuItem value="Gluten_Free">Gluten-Free</MenuItem>
-                          <MenuItem value="Dairy_Free">Dairy-Free</MenuItem>
-                          <MenuItem value="Weight_Loss">Weight Loss</MenuItem>
-                          <MenuItem value="Weight_Gain">Weight Gain</MenuItem>
-                          <MenuItem value="Other">Other</MenuItem>
-                        </TextField>
-                        
-                        <Button
-                          onClick={handleSaveNew}
-                          variant="contained"
-                          fullWidth
-                          sx={{
-                            backgroundColor: '#719EC7',
-                            color: 'white',
-                            borderRadius: '25px',
-                            fontWeight: 'bold',
-                            textTransform: 'none',
-                          }}
-                        >
-                          Submit
-                        </Button>
-                      </FormControl>
-                    </Box>
-                  </Modal>
+    <FormControl fullWidth>
+      <TextField
+        placeholder="Enter New Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        fullWidth
+        size="small"
+        sx={{ mb: 2 }}
+      />
+      <TextField
+        select
+        label="Select Tag"
+        value={selectedOption}
+        onChange={(e) => setSelectedOption(e.target.value)}
+        fullWidth
+        variant="outlined"
+        sx={{ mb: 2 }}
+      >
+        <MenuItem value="" disabled>
+          Select Tag
+        </MenuItem>
+        <MenuItem value="Low_Carb">Low Carb</MenuItem>
+        <MenuItem value="Keto">Keto</MenuItem>
+        <MenuItem value="Paleo">Paleo</MenuItem>
+        <MenuItem value="Mediterranean">Mediterranean</MenuItem>
+        <MenuItem value="Vegan">Vegan</MenuItem>
+        <MenuItem value="Vegetarian">Vegetarian</MenuItem>
+        <MenuItem value="Gluten_Free">Gluten-Free</MenuItem>
+        <MenuItem value="Dairy_Free">Dairy-Free</MenuItem>
+        <MenuItem value="Weight_Loss">Weight Loss</MenuItem>
+        <MenuItem value="Weight_Gain">Weight Gain</MenuItem>
+        <MenuItem value="Other">Other</MenuItem>
+      </TextField>
+      
+      <Button
+        onClick={handleSaveNew}
+        variant="contained"
+        fullWidth
+        sx={{
+          backgroundColor: '#719EC7',
+          color: 'white',
+          borderRadius: '25px',
+          fontWeight: 'bold',
+          textTransform: 'none',
+        }}
+      >
+        Submit
+      </Button>
+    </FormControl>
+  </Box>
+</Modal>
 
                 </Box>
                 <Box className = 'custom-scroll' sx={{height: '70vh',overflowY: 'auto', paddingRight: '.5vw'}}>
@@ -442,6 +530,77 @@ const handleSaveNew = async () => {
                         <MenuItem value='Sunday'>Sunday</MenuItem>
                       </Select>
                   {/* You can show savedMeals here and allow adding/removing/reordering */}
+                  {day && (
+                    <Box mt={2} sx={{ maxHeight: '50vh', overflowY: 'auto' }}>
+                      <Typography variant="h6" sx={{ mb: 2, fontFamily: 'Montserrat' }}>
+                        Meals for {day}
+                      </Typography>
+                      
+                      {plannedMeals[day]?.length > 0 ? (
+                        plannedMeals[day].map((meal, index) => (
+                          <Box 
+                            key={meal.id || index} 
+                            sx={{
+                              backgroundColor: '#DCEBFB',
+                              borderRadius: '20px',
+                              padding: '1em',
+                              marginBottom: '10px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 2
+                            }}
+                          >
+                            <img 
+                              src={meal.image || food1} 
+                              alt={meal.title} 
+                              style={{ width: 80, height: 80, borderRadius: 20 }} 
+                            />
+                            <Box sx={{ flexGrow: 1 }}>
+                              <Typography sx={{ fontWeight: 'bold', fontFamily: 'Montserrat' }}>
+                                {meal.title}
+                              </Typography>
+                              <Typography sx={{ fontFamily: 'Merriweather' }}>
+                                {meal.description}
+                              </Typography>
+                            </Box>
+                            <Button
+                              variant="contained"
+                              onClick={async () => {
+                                try {
+                                  // First delete from backend
+                                  await fetch(`http://localhost:5000/meal-plan-entries/${meal.id}`, {
+                                    method: 'DELETE'
+                                  });
+                                  
+                                  // Then update local state
+                                  setPlannedMeals(prev => ({
+                                    ...prev,
+                                    [day]: prev[day].filter((m) => m.id !== meal.id)
+                                  }));
+                                } catch (error) {
+                                  console.error("Error removing meal:", error);
+                                }
+                              }}
+                              sx={{
+                                backgroundColor: '#FF6B6B',
+                                '&:hover': { backgroundColor: '#FF5252' },
+                                borderRadius: '20px',
+                                textTransform: 'none',
+                                fontWeight: 'bold'
+                              }}
+                            >
+                              Remove
+                            </Button>
+                          </Box>
+                        ))
+                      ) : (
+                        <Typography sx={{ textAlign: 'center', mt: 4, color: '#666' }}>
+                          No meals added for {day} yet
+                        </Typography>
+                      )}
+                    </Box>
+                  )}
+
                 </Box>
                 ) : (
                       <Box mt={2} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
