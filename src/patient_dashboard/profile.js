@@ -112,7 +112,7 @@ useEffect(() => {
       if (data.liked_posts) {
         const postDetails = await Promise.all(
           data.liked_posts.map(async (liked) => {
-            const res = await fetch(`http://localhost:5000/posts/${liked.post_id}`);
+            const res = await fetch(`http://localhost:5000/posts/liked?patient_id=${liked.post_id}`);
             return res.json();
           })
         );

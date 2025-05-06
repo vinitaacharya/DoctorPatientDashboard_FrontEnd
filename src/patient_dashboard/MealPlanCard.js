@@ -71,7 +71,10 @@ export default function MealPlanCard({ meal, patientInfo}) {
     }
   
     try {
-      const response = await fetch('http://localhost:5000/posts/like', {
+      console.log('Sending like request:', {
+        post_id: meal.post_id,
+        patient_id: patientInfo?.patient_id,
+      });      const response = await fetch('http://localhost:5000/posts/like', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
