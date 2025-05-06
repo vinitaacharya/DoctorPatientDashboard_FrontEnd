@@ -69,30 +69,44 @@ useEffect(() => {
 
   fetchPatientInfo();
 }, []);
-const posts = [
-  {
-    author: 'Vinita Acharya',
-    title: 'Cauliflower Fried Rice',
-    tags: ['#Keto'],
-    description: 'Fried rice is a classic...',
-    image: food1,
-    comments: [
-      { firstName: 'Vinita', lastName: 'Acharya', text: 'hi' },
-      { firstName: 'Vinita', lastName: 'Acharya', text: 'vinitaaa' }
-    ],
-  },
-  {
-    author: 'Vinita Acharya',
-    title: 'Marry Me Tofu',
-    tags: ['#Keto', '#Vegan'],
-    description: 'Tofu is versatile...',
-    image: food1,
-    comments: [
-      { firstName: 'Joe', lastName: 'Smith', text: 'love this!' }
-    ],
-  },
-];
+const [posts, setPosts] = useState([]);
+const [searchQuery, setSearchQuery] = useState('');
+const [filteredPosts, setFilteredPosts] = useState([]);
+const [selectedCategory, setSelectedCategory] = useState("All");
 
+  useEffect(() => {
+    fetch('http://localhost:5000/posts') // Update if your API base URL is different
+      .then(res => res.json())
+      .then(data => {
+        const formattedPosts = data.map(post => ({
+          author: `${post.first_name} ${post.last_name}`,
+          title: post.meal_name,
+          tags: [`#${post.tag}`],
+          description: post.description,
+          image: `data:image/jpeg;base64,${post.picture}`, // Assuming JPEG, adjust if needed
+          comments: [], // You can add comment logic here if you have a comments endpoint
+        }));
+        setPosts(formattedPosts);
+      })
+      .catch(error => {
+        console.error("Error fetching posts:", error);
+      });
+  }, []);
+  useEffect(() => {
+    const query = searchQuery.toLowerCase();
+    const category = selectedCategory;
+  
+    const results = posts.filter(post => {
+      const matchesTitle = post.title.toLowerCase().includes(query);
+      const matchesCategory = category === "All" || post.tags.some(tag => tag.toLowerCase().includes(category.toLowerCase()));
+      return matchesTitle && matchesCategory;
+    });
+  
+    setFilteredPosts(results);
+  }, [searchQuery, selectedCategory, posts]);
+
+
+  
   return (
     
     <Box >
@@ -123,28 +137,32 @@ const posts = [
       width: '500px' // adjust this as needed (try 400px–600px)
     }}
   >
-    <TextField
-      select
-      size="small"
-      defaultValue="All"
-      sx={{
-        minWidth: 120,
-        backgroundColor: 'white',
-        borderTopLeftRadius: '1vh',
-        borderBottomLeftRadius: '1vh',
-        '& fieldset': { border: 'none' }
-      }}
-    >
-      <MenuItem value="All">Categories</MenuItem>
-      <MenuItem value="Keto">Keto</MenuItem>
-      <MenuItem value="Vegan">Vegan</MenuItem>
-      <MenuItem value="Paleo">Paleo</MenuItem>
-    </TextField>
+<TextField
+  select
+  size="small"
+  value={selectedCategory}
+  onChange={(e) => setSelectedCategory(e.target.value)}
+  sx={{
+    minWidth: 120,
+    backgroundColor: 'white',
+    borderTopLeftRadius: '1vh',
+    borderBottomLeftRadius: '1vh',
+    '& fieldset': { border: 'none' }
+  }}
+>
+  <MenuItem value="All">Categories</MenuItem>
+  <MenuItem value="Keto">Keto</MenuItem>
+  <MenuItem value="Vegan">Vegan</MenuItem>
+  <MenuItem value="Paleo">Paleo</MenuItem>
+</TextField>
+
 
     <TextField
       placeholder="Search ..."
       variant="outlined"
       size="small"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
       sx={{
         flexGrow: 1,
         backgroundColor: 'white',
@@ -195,7 +213,7 @@ const posts = [
         </Typography>
 
         <Grid container spacing={3}>
-                  {patientInfo && posts.map((post, index) => (
+        {patientInfo && (filteredPosts.length > 0 ? filteredPosts : posts).map((post, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
               <MealCard
                 meal={post}
