@@ -16,11 +16,12 @@ import {
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import MealCard from "./patient_dashboard/MealPlanCard"; // Make sure MealCard is exported from mealPlanCard.js
 
 import PatientNavbar from './patient_dashboard/patient_navbar';
 import DoctorNavbar from './doctor_dashboard/doctor_navbar';
 import CommunityImg from './community_homepage_img.png';
-
+import food1 from "./reciepe photo.png";
 export default function CommunityForum() {
   const [isDoctor, setIsDoctor] = useState(true); // 👈 clearer flag
 
@@ -43,26 +44,54 @@ export default function CommunityForum() {
     }
   }, []);
 
-  const posts = [
-    {
-      title: 'Cauliflower Fried Rice',
-      tags: '#Keto #Low-Carbs',
-      description: 'Fried rice is a classic and comforting recipe that everyone loves...except maybe those who are trying to eat less rice...',
-      image: '/images/cauliflower.jpg'
-    },
-    {
-      title: 'Marry Me Tofu',
-      tags: '#Keto #Vegan',
-      description: 'Because tofu is so versatile, why not give this plant-based protein a romantic spin, à la our marry me chicken ...',
-      image: '/images/tofu.jpg'
-    },
-    {
-      title: 'Balsamic Chicken and Asparagus',
-      tags: '#Paleo',
-      description: 'We’re always looking for new ways to switch up our weeknight chicken dinner, and when we’re craving something ...',
-      image: '/images/chicken.jpg'
+const [patientInfo, setPatientInfo] = useState(null);
+useEffect(() => {
+  const fetchPatientInfo = async () => {
+    const id = localStorage.getItem("patientId");
+    if (!id) {
+      console.warn("No patient ID in localStorage");
+      return;
     }
-  ];
+
+    try {
+      const res = await fetch(`http://localhost:5000/patient/${id}`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch patient info");
+      }
+
+      const data = await res.json();
+      setPatientInfo(data);
+      console.log("Patient info:", data);
+    } catch (error) {
+      console.error("Error fetching patient info:", error);
+    }
+  };
+
+  fetchPatientInfo();
+}, []);
+const posts = [
+  {
+    author: 'Vinita Acharya',
+    title: 'Cauliflower Fried Rice',
+    tags: ['#Keto'],
+    description: 'Fried rice is a classic...',
+    image: food1,
+    comments: [
+      { firstName: 'Vinita', lastName: 'Acharya', text: 'hi' },
+      { firstName: 'Vinita', lastName: 'Acharya', text: 'vinitaaa' }
+    ],
+  },
+  {
+    author: 'Vinita Acharya',
+    title: 'Marry Me Tofu',
+    tags: ['#Keto', '#Vegan'],
+    description: 'Tofu is versatile...',
+    image: food1,
+    comments: [
+      { firstName: 'Joe', lastName: 'Smith', text: 'love this!' }
+    ],
+  },
+];
 
   return (
     
@@ -166,33 +195,15 @@ export default function CommunityForum() {
         </Typography>
 
         <Grid container spacing={3}>
-          {posts.map((post, i) => (
-            <Grid item xs={12} md={4} key={i}>
-              <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
-                <CardMedia component="img" height="160" image={post.image} alt={post.title} />
-                <CardContent>
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    {post.title}
-                  </Typography>
-                  <Typography variant="body2" color="primary" gutterBottom>
-                    {post.tags}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {post.description}
-                  </Typography>
-
-                  <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                    <Avatar sx={{ width: 24, height: 24 }} src="/images/avatar.jpg" />
-                    <Typography variant="caption" sx={{ ml: 1 }}>
-                      JaneDoe123
-                    </Typography>
-                    <Box sx={{ flexGrow: 1 }} />
-                    <IconButton><ChatBubbleOutlineIcon fontSize="small" /></IconButton>
-                    <IconButton><FavoriteBorderIcon fontSize="small" /></IconButton>
-                    <IconButton><MoreHorizIcon fontSize="small" /></IconButton>
-                  </Box>
-                </CardContent>
-              </Card>
+                  {patientInfo && posts.map((post, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <MealCard
+                meal={post}
+                patientInfo={{
+                  firstName: patientInfo.first_name,
+                  lastName: patientInfo.last_name,
+                }}
+              />
             </Grid>
           ))}
         </Grid>

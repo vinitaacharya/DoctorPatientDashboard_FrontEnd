@@ -76,12 +76,70 @@ useEffect(() => {
 
   fetchPatientInfo();
 }, []);
+
+const [patientInitSurvey, setPatientInitSurvey] = useState(null);
+useEffect(() => {
+  const fetchInitialSurvey = async () => {
+    const id =localStorage.getItem("patientId");
+    if(!id){
+      console.warn("No paitent ID in localStorage");
+      return;
+    }
+    try{
+      const res = await fetch(`http://localhost:5000/init-patient-survey/${id}`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch patient info");
+      }
+      const data = await res.json();
+      setPatientInitSurvey(data);
+      
+    }catch (error){
+      console.error("Error fething patient info:", error);
+    }
+  };
+  fetchInitialSurvey();
+}, []);
+
+const [openAboutMe, setOpenAboutMe] = useState(false);
+const handleOpenAboutMe = () => setOpenAboutMe(true);
+const handleCloseAboutMe = () => setOpenAboutMe(false);
   return (
     <Box display="flex">
       <Navbar />
 
       <Box sx={{ flexGrow: 1, padding: 2 }}>
         {/* Profile Header */}
+
+<Modal open={openAboutMe} onClose={handleCloseAboutMe}>
+  <Box
+    sx={{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: "45vh",
+      bgcolor: '#F5F7FF',
+      borderRadius: '15px',
+      boxShadow: 24,
+      p: 3,
+      textAlign: 'center'
+    }}
+  >
+    <Typography variant="h6" sx={{ fontFamily: 'Montserrat', color: '#5E4B8B', mb: 2 }}>
+      💬 About Me
+    </Typography>
+    <Typography sx={{ fontFamily: 'Montserrat', color: '#333', mb: 1 }}>
+      <strong>Health Goal:</strong> {patientInitSurvey?.health_goals || "N/A"}
+    </Typography>
+    <Typography sx={{ fontFamily: 'Montserrat', color: '#333' }}>
+      <strong>Favorite Food:</strong> {patientInitSurvey?.favorite_meal || "N/A"}
+    </Typography>
+    <Button onClick={handleCloseAboutMe} sx={{ mt: 3, bgcolor: '#A0B9DA', color: 'white', fontFamily: 'Montserrat' }}>
+      Close
+    </Button>
+  </Box>
+</Modal>
+
         <Box 
         sx={{
           borderTopLeftRadius:'3vh',
@@ -100,10 +158,13 @@ useEffect(() => {
               sx={{ width:'15vh', height: '15vh', margin: '0 auto' }}
             />
            
-          {patientInfo && (
-            <Typography  variant="h6" sx={{ color:'white', mt: 1, fontFamily: 'Montserrat', fontSize: '1.5em' }}>
-                {patientInfo.first_name} {patientInfo.last_name}
-            </Typography>)}           
+           {patientInfo && patientInitSurvey &&(
+  <>
+    <Button onClick={handleOpenAboutMe}  sx={{ color:'white', fontFamily: 'Montserrat', fontSize: '2.5vh', textTransform: 'none' }}>ℹ️{patientInfo.first_name} {patientInfo.last_name}</Button>
+
+  </>
+)}
+
           </Box>
         </Box>
         <Box sx={{backgroundColor:'#EEF2FE', minHeight:'70vh'}}>
@@ -112,6 +173,7 @@ useEffect(() => {
       <Tab icon={<GridOnIcon />} aria-label="grid" />
       <Tab icon={<FavoriteBorderIcon />} aria-label="favorite" />
     </Tabs>
+
     {changeTab === 0 && (
       <>
         {/* Posts Grid */}
