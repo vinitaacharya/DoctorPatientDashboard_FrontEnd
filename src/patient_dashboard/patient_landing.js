@@ -263,9 +263,25 @@ useEffect(() => {
   const [mealPlanFollowed, setMealPlanFollowed] = useState("");
   const [mood, setMood] = useState("");
   const [calorieIntake, setCalorieIntake] = useState("");
+  const [error, setError] = useState("");
 
 const handleDailySubmit = async (e) => {
   e.preventDefault();
+  if (
+    !heartRate ||
+    !waterIntake ||
+    !exerciseMinutes ||
+    !mealPlanFollowed ||
+    !mood ||
+    !calorieIntake
+  ) {
+    setError("Please fill in all fields.");
+    return;
+  }
+
+  // Optional: check numeric fields
+
+  setError(""); 
   const dailyData = {
     
     patient_id: patientId, 
@@ -317,10 +333,30 @@ const handleDailySubmit = async (e) => {
   const [weightChange, setWeightChange] = React.useState("");
   const [weightAmount, setWeightAmount] = React.useState("");
   const [bloodPressure, setBloodPressure] = React.useState("");
+  const [weeklyError, setWeeklyError] = React.useState("");
 
   const handleWeeklySubmit = async (e) => {
     e.preventDefault();
 
+   // Empty check
+   if (
+    !weightChange || !weightAmount || !bloodPressure 
+  ) {
+    setError("All fields are required.");
+    return;
+  }
+  if (!weightChange) {
+    setWeeklyError("Please select a weight change type.");
+    return;
+  }
+
+  if ((weightChange === "Gain" || weightChange === "Loss") && (!weightAmount || isNaN(parseFloat(weightAmount)) || parseFloat(weightAmount) <= 0)) {
+    setWeeklyError("Please enter a valid weight amount greater than 0.");
+    return;
+  }
+
+
+  setWeeklyError(""); // Clear previous errors
     let parsedWeightAmount = parseFloat(weightAmount) || 0;
 
     if (weightChange === "Loss") {
@@ -951,7 +987,11 @@ const handlePickup = async (prescriptionId) => {
           </Typography>
 )}
 
-
+                    {error && (
+                          <Typography color="error" sx={{paddingLeft:"1.5vh"}}>
+                            {error}
+                          </Typography>
+                        )}
                       <Paper
                         sx={{
                           background: "transparent",
@@ -959,6 +999,8 @@ const handlePickup = async (prescriptionId) => {
                           p: 2,
                         }}
                       >
+                
+
                         <form onSubmit={handleDailySubmit} >
                           <Typography fontSize='1.5vh' mb={1}>
                             What is your heart rate?
@@ -970,6 +1012,8 @@ const handlePickup = async (prescriptionId) => {
                             onChange={(e) => setHeartRate(e.target.value)}
                             sx={{ mb: 2 }}
                             size="small"
+                            type="number"
+
 
                           />
 
@@ -983,6 +1027,8 @@ const handlePickup = async (prescriptionId) => {
                             onChange={(e) => setWaterIntake(e.target.value)}
                             sx={{ mb: 2 }}
                             size="small"
+                            type="number"
+
 
                           />
 
@@ -996,6 +1042,8 @@ const handlePickup = async (prescriptionId) => {
                             value={exerciseMinutes}
                             onChange={(e) => setExerciseMinutes(e.target.value)}
                             sx={{ mb: 2 }}
+                            type="number"
+
                           />
 
                           <Typography fontSize='1.5vh' mb={1}>
@@ -1044,6 +1092,7 @@ const handlePickup = async (prescriptionId) => {
           size="small"
           onChange={(e) => setCalorieIntake(e.target.value)}
           sx={{ mb: 2 }}
+          type="number"
         />
     
         <Button
@@ -1114,6 +1163,11 @@ const handlePickup = async (prescriptionId) => {
         </Typography>
       )}
       
+      {weeklyError && (
+  <Typography color="error" sx={{ mb: 2 }}>
+    {weeklyError}
+  </Typography>
+)}
 
                       <form onSubmit={handleWeeklySubmit}>
                         <Typography fontSize='1.5vh' mb={1} paddingTop={2}>
@@ -1141,6 +1195,8 @@ const handlePickup = async (prescriptionId) => {
                             onChange={(e) => setWeightAmount(e.target.value)}
                             fullWidth
                             size="small"
+                            type="number"
+
                           />
                         </Box>
 
