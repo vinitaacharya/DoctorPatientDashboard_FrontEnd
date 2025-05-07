@@ -15,7 +15,7 @@ import Button from '@mui/material/Button';
 import { useNavigate } from "react-router-dom";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-
+import io from 'socket.io-client';
 
 
 
@@ -122,8 +122,8 @@ const style = {
 function Doctor_Appointment() {
 
   const location = useLocation();
+  const socketRef = useRef();
   const { appointmentId } = location.state || {};
-  
   const [appointmentData, setAppointmentData] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -169,15 +169,35 @@ function Doctor_Appointment() {
         console.error("Error fetching appointment:", error);
       }
     };
-  
     
+    // Connect socket when component mounts
+    socketRef.current = io("http://localhost:5000");
+
+    socketRef.current.on("receive_message", (data) => {
+      console.log("Received message", data);
+      setChatMessages(prev => [...prev, {
+        text: data.message,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        sender: data.sender
+      }]);
+    });
 
     const fetchChat = async () => {
-      const messages = [
-        { text: "Hello, are you ready to start your appointment?", time: "12:45pm", sender: "doctor" },
-        { text: "Hi doctor! Yes I am ready to start. I just had a few concerns about my health", time: "12:46pm", sender: "doctor" }
-      ];
-      setChatMessages(messages);
+      try {
+        const res = await fetch(`http://localhost:5000/chat-history/${appointmentId}`);
+        const data = await res.json();
+    
+        const formatted = data.map(msg => ({
+          text: msg.message,
+          time: new Date(msg.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          sender: msg.sender_name,
+          sender_id: msg.sender_id
+        }));
+    
+        setChatMessages(formatted);
+      } catch (err) {
+        console.error("Failed to load chat:", err);
+      }
     };
 
     if (appointmentId) {
@@ -188,16 +208,24 @@ function Doctor_Appointment() {
 
   const handleSend = () => {
     if (!newMessage.trim()) return;
-    const newMsg = {
+
+    const data = {
+      message: newMessage,
+      sender: localStorage.getItem("userId"),
+      receiver: appointmentData.patient_id,
+      appointmentId: appointmentId
+    };
+
+    socketRef.current.emit("send_message", data);
+
+    setChatMessages(prev => [...prev, {
       text: newMessage,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      sender: "doctor"
-    };
-    setChatMessages(prev => [...prev, newMsg]);
+      sender: appointmentData.doctor,
+      sender_id: parseInt(localStorage.getItem("userId"))
+    }]);
     setNewMessage("");
-    
     console.log("AppointmentID", appointmentId);
-    // TODO: send to backend
   };
 
     const [open, setOpen] = React.useState(false);
@@ -384,8 +412,8 @@ function Doctor_Appointment() {
                     key={idx}
                     text={msg.text}
                     time={msg.time}
-                    isUser={msg.sender === "doctor"}
-                    avatar={msg.sender === "doctor" ? doc1 : pat1}
+                    isUser={parseInt(msg.sender_id) === parseInt(localStorage.getItem("userId"))}
+                    avatar={msg.sender === appointmentData.doctor ? doc1 : pat1}
                     />
                 ))}
             </Box>
