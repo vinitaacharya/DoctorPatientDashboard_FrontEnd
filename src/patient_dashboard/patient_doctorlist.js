@@ -207,9 +207,9 @@ function Patient_Doctorlist() {
                     <Typography variant="body2" sx={{ fontFamily: 'Merriweather', fontSize: '1.1em' }}>
                       <strong>Appointment Fee:</strong> ${doc.payment_fee}
                     </Typography>
-                    {/*<Typography variant="body2"sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
-                    <strong>Rating:</strong> {doc.rating}
-                  </Typography>*/}
+                    <Typography variant="body2"sx={{fontFamily: 'Merriweather', fontSize:'1.1em'}}>
+                    <strong>Rating:</strong> {doc.doctor_rating}/5
+                  </Typography>
                   </Box>
                 </Box>
 
