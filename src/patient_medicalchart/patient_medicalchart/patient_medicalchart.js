@@ -5,6 +5,8 @@ import { styled } from '@mui/material/styles';
 import { Tabs, Tab, Box, Paper, Typography, Button } from '@mui/material';
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 import Plot from 'react-plotly.js';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 
 
@@ -22,6 +24,16 @@ function Patient_Chart() {
     const [originalPatientInfo, setOriginalPatientInfo] = useState(null);
     const [dailyGraphIndex, setDailyGraphIndex] = useState(0);
     const [weeklyGraphIndex, setWeeklyGraphIndex] = useState(0);
+
+    const [snackOpen, setSnackOpen] = useState(false);
+    const [snackMsg, setSnackMsg] = useState("");
+    const [snackType, setSnackType] = useState("error");
+
+    const showSnack = (msg, type = "error") => {
+      setSnackMsg(msg);
+      setSnackType(type);
+      setSnackOpen(true);
+    };
 
 
       
@@ -187,29 +199,52 @@ function Patient_Chart() {
           };
           
 
-        const handleSave = async () => {
-        try {
-          const payload = {
-            first_name: patientInfo.first_name,
-            last_name: patientInfo.last_name,
-            patient_id: patientInfo.patient_id,
-            email: patientInfo.patient_email,
-            phone: patientInfo.mobile_number,
-            gender: patientInfo.gender,
-            height: patientInfo.height,
-            weight: patientInfo.weight,
-            dietary_restrictions: patientInfo.dietary_restrictions,
-            activity: 0,
-            health_conditions: patientInfo.medical_conditions,
-            family_history: patientInfo.family_history,
-            past_procedures: patientInfo.past_procedures,
-            address: patientInfo.patient_address,
-            zipcode: patientInfo.patient_zipcode,
-            city: patientInfo.patient_city,
-            state: patientInfo.patient_state
-          };
+          const handleSave = async () => {
+            // Validate phone number
+            if (!validatePhoneNumber(patientInfo.mobile_number)) {
+              showSnack("Please enter a valid phone number (e.g., 123-456-7890 or 1234567890)");
+              return;
+            }
           
+            // Validate email
+            if (!validateEmail(patientInfo.patient_email)) {
+              showSnack("Please enter a valid email address (e.g., user@example.com)");
+              return;
+            }
           
+            // Validate ZIP code
+            if (!validateZipCode(patientInfo.patient_zipcode)) {
+              showSnack("Please enter a valid 5-digit ZIP code");
+              return;
+            }
+          
+            // Validate gender
+            if (!validateGender(patientInfo.gender)) {
+              showSnack("Gender must be Male, Female, or Other");
+              return;
+            }
+          
+            try {
+              const payload = {
+                first_name: patientInfo.first_name,
+                last_name: patientInfo.last_name,
+                patient_id: patientInfo.patient_id,
+                email: patientInfo.patient_email,
+                phone: patientInfo.mobile_number,
+                gender: patientInfo.gender,
+                height: patientInfo.height,
+                weight: patientInfo.weight,
+                dietary_restrictions: patientInfo.dietary_restrictions,
+                activity: 0,
+                health_conditions: patientInfo.medical_conditions,
+                family_history: patientInfo.family_history,
+                past_procedures: patientInfo.past_procedures,
+                address: patientInfo.patient_address,
+                zipcode: patientInfo.patient_zipcode,
+                city: patientInfo.patient_city,
+                state: patientInfo.patient_state
+              };
+              
               const response = await fetch("http://localhost:5000/edit-patient", {
                 method: "PUT",
                 headers: {
@@ -221,11 +256,11 @@ function Patient_Chart() {
               const result = await response.json();
               if (!response.ok) throw new Error(result.error || "Failed to update patient");
           
-              alert("Patient information updated successfully!");
+              showSnack("Patient information updated successfully!", "success");
               setIsEditing(false);
             } catch (err) {
               console.error("Update error:", err);
-              alert("Error updating patient info.");
+              showSnack(err.message || "Error updating patient info.");
             }
           };
  
@@ -261,7 +296,29 @@ function Patient_Chart() {
           ];
           
           
-          
+          // Validation functions
+          const validatePhoneNumber = (phone) => {
+            const phoneRegex = /^(?:\d{3}-\d{3}-\d{4}|\d{10})$/;
+            return phoneRegex.test(phone);
+          };
+
+          const validateEmail = (email) => {
+            const emailRegex = /^[a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9]+([.-]?[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email) && 
+                  email.split('@')[0].length > 0 && 
+                  !email.includes('..') && 
+                  !email.startsWith('.') && 
+                  !email.split('@')[0].endsWith('.');
+          };
+
+          const validateZipCode = (zip) => {
+            const usZipRegex = /^\d{5}(-\d{4})?$/;
+            return usZipRegex.test(zip);
+          };
+
+          const validateGender = (gender) => {
+            return ['Male', 'Female', 'Other'].includes(gender);
+          };
 
 
     return(
@@ -474,15 +531,20 @@ function Patient_Chart() {
 
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                             <Typography>
-                            <strong>Zip code:</strong>{" "}
-                            {isEditing ? (
+                              <strong>Zip code:</strong>{" "}
+                              {isEditing ? (
                                 <input
-                                value={patientInfo.patient_zipcode}
-                                onChange={(e) => setPatientInfo({ ...patientInfo, patient_zipcode: e.target.value })}
+                                  value={patientInfo.patient_zipcode}
+                                  onChange={(e) => setPatientInfo({ ...patientInfo, patient_zipcode: e.target.value })}
+                                  onBlur={(e) => {
+                                    if (!validateZipCode(e.target.value)) {
+                                      showSnack("Please enter a valid 5-digit ZIP code");
+                                    }
+                                  }}
                                 />
-                            ) : (
+                              ) : (
                                 patientInfo.patient_zipcode
-                            )}
+                              )}
                             </Typography>
                             </Box>
 
@@ -502,15 +564,20 @@ function Patient_Chart() {
 
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                             <Typography>
-                            <strong>Email:</strong>{" "}
-                            {isEditing ? (
+                              <strong>Email:</strong>{" "}
+                              {isEditing ? (
                                 <input
-                                value={patientInfo.patient_email}
-                                onChange={(e) => setPatientInfo({ ...patientInfo, patient_email: e.target.value })}
+                                  value={patientInfo.patient_email}
+                                  onChange={(e) => setPatientInfo({ ...patientInfo, patient_email: e.target.value })}
+                                  onBlur={(e) => {
+                                    if (!validateEmail(e.target.value)) {
+                                      showSnack("Please enter a valid email address (e.g., user@example.com)");
+                                    }
+                                  }}
                                 />
-                            ) : (
+                              ) : (
                                 patientInfo.patient_email
-                            )}
+                              )}
                             </Typography>
                             </Box>
 
@@ -640,6 +707,16 @@ function Patient_Chart() {
                 </Box>
                 </Paper>
             </Box>
+            <Snackbar
+              open={snackOpen}
+              autoHideDuration={4000}
+              onClose={() => setSnackOpen(false)}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+              <MuiAlert onClose={() => setSnackOpen(false)} severity={snackType} variant="filled" sx={{ width: '100%' }}>
+                {snackMsg}
+              </MuiAlert>
+            </Snackbar>
         </div>
     );
 
