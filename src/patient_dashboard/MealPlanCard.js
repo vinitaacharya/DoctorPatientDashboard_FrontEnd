@@ -63,8 +63,8 @@ export default function MealPlanCard({ meal, patientInfo}) {
   const handleLike = async () => {
     setLiked(!liked);
     const post_id = meal.post_id;
-    const patient_id = patientInfo?.patient_id; // assuming this is passed correctly
-  
+    const patient_id = patientInfo.patient_id; // assuming this is passed correctly
+    console.log(post_id);
     if (!post_id || !patient_id) {
       console.error("Missing post_id or patient_id");
       return;
@@ -74,6 +74,7 @@ export default function MealPlanCard({ meal, patientInfo}) {
       console.log('Sending like request:', {
         post_id: meal.post_id,
         patient_id: patientInfo?.patient_id,
+        "doctor_id": null,
       });      const response = await fetch('http://localhost:5000/posts/like', {
         method: 'POST',
         headers: {
@@ -81,7 +82,8 @@ export default function MealPlanCard({ meal, patientInfo}) {
         },
         body: JSON.stringify({
           post_id: post_id,
-          patient_id: patient_id,
+          patient_id:patient_id,
+          doctor_id: null,
         }),
       });
   
