@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./landing.css";
 import heroImage from "./assets/heroimage.png";
 import patient1 from "./assets/patient1.png";
@@ -14,9 +14,23 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardContent,
+  Collapse,
+} from '@mui/material';
 
-
-
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  borderRadius: 2,
+  boxShadow: 24,
+  p: 4,
+};
 const style = {
   position: 'absolute',
   top: '50%',
@@ -30,6 +44,29 @@ const style = {
 };
 
 function Landing() {
+  const [doctors, setDoctors] = useState([]);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [openAbout, setOpenAbout] = useState(false);
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:5000/doctors')
+      .then(response => response.json())
+      .then(data => {
+        const topDoctors = data.sort((a, b) => b.doctor_rating - a.doctor_rating).slice(0, 3);
+        setDoctors(topDoctors);
+      })
+      .catch(error => console.error("Error fetching doctor data:", error));
+  }, []);
+
+  const handleOpenAbout = (doctor) => {
+    setSelectedDoctor(doctor);
+    setOpenAbout(true);
+  };
+
+  const handleCloseAbout = () => {
+    setOpenAbout(false);
+    setSelectedDoctor(null);
+  };
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -135,7 +172,41 @@ function Landing() {
     };
 
 
+  // const [doctors, setDoctors] = useState([]);
+  // useEffect(() => {
+  //   fetch('http://127.0.0.1:5000/doctors')
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       // Sort by doctor_rating (descending) and take top 3
+  //       const topDoctors = data
+  //         .sort((a, b) => b.doctor_rating - a.doctor_rating)
+  //         .slice(0, 3);
+  //       setDoctors(topDoctors);
+  //     })
+  //     .catch(error => {
+  //       console.error("Error fetching doctor data:", error);
+  //     });
+  // }, []);
+
+  
+    const [expandedIndex, setExpandedIndex] = useState(null); // track which card is expanded
+  
+    useEffect(() => {
+      fetch('http://127.0.0.1:5000/doctors')
+        .then(response => response.json())
+        .then(data => {
+          const topDoctors = data.sort((a, b) => b.doctor_rating - a.doctor_rating).slice(0, 3);
+          setDoctors(topDoctors);
+        })
+        .catch(error => console.error("Error fetching doctor data:", error));
+    }, []);
+  
+    const toggleExpand = (index) => {
+      setExpandedIndex(expandedIndex === index ? null : index);
+    };
+
   return (
+    <div id="sizeScreen">
     <div className="Landing">
       <div className="landingnav">
         <h2>DPP</h2>
@@ -332,22 +403,98 @@ function Landing() {
 
       
       <div className="doctortest">
-        <h4>Meet Our Doctors</h4>
-        <div className="testcards">
-          <div className="patientcard">
-            <img src={doctor1} alt="patient" className="patientimage"/>
-            <p class="patienttext" id="black">Lorem ipsum odor amet, consectetuer adipiscing elit. Vitae consec</p>
+      <h4>Meet Our Top Rated Doctors</h4>
+      <div className="testcards">
+        {doctors.map((doc, index) => (
+          <div className="patientcard" key={index}>
+            <img
+              src={doctor1} // Or: `data:image/jpeg;base64,${doc.doctor_picture}`
+              alt={`${doc.first_name} ${doc.last_name}`}
+              className="patientimage"
+            />
+            <p className="patienttext" id="black">
+              Dr. {doc.first_name} {doc.last_name}<br />
+              {doc.specialty}<br />
+              Rating: {doc.doctor_rating}/5
+            </p>
+            <Button sx={{marginTop:'1.5vh'}} variant="outlined" onClick={() => handleOpenAbout(doc)}>Learn More</Button>
           </div>
-          <div className="patientcard">
-            <img src={doctor2} alt="patient" className="patientimage"/>
-            <p class="patienttext" id="black">Lorem ipsum odor amet, consectetuer adipiscing elit. Vitae consec</p>
-          </div>
-          <div className="patientcard">
-            <img src={doctor3} alt="patient" className="patientimage"/>
-            <p class="patienttext" id="black">Lorem ipsum odor amet, consectetuer adipiscing elit. Vitae consec</p>
-          </div>
-        </div>
+        ))}
       </div>
+
+      {/* MUI Modal */}
+<Modal open={openAbout} onClose={handleCloseAbout} aria-labelledby="doctor-modal-title">
+  <Box
+    sx={{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: { xs: 350, sm: 450 },
+      bgcolor: '#FFFFFF',
+      borderRadius: 3,
+      boxShadow: 24,
+      p: 4,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 2,
+      borderTop: '6px solid  #5C8CC6', // A subtle purple accent line
+    }}
+  >
+    {selectedDoctor && (
+      <>
+        {/* Optional: Doctor Image */}
+        {/* <img src={`data:image/jpeg;base64,${selectedDoctor.doctor_picture}`} alt="Doctor" style={{ width: '100%', borderRadius: 8, marginBottom: 16 }} /> */}
+
+        <Typography
+          id="doctor-modal-title"
+          variant="h5"
+          fontWeight="bold"
+          color="black"
+        >
+          Dr. {selectedDoctor.first_name} {selectedDoctor.last_name}
+        </Typography>
+
+        <Typography variant="subtitle1" color="#5C8CC6">
+          {selectedDoctor.specialty}
+        </Typography>
+
+        <Typography variant="body1" color="text.primary">
+          <strong>Description:</strong> {selectedDoctor.description}
+        </Typography>
+
+        <Typography variant="body1" color="text.primary">
+          <strong>Years of Practice:</strong> {selectedDoctor.years_of_practice}
+        </Typography>
+
+        <Typography variant="body1" color="text.primary">
+          <strong>Medical School:</strong> {selectedDoctor.med_school}
+        </Typography>
+
+        <Typography variant="body1" color="text.primary">
+          <strong>Accepting New Patients:</strong> {selectedDoctor.accepting_patients ? "Yes" : "No"}
+        </Typography>
+
+        <Button
+          variant="contained"
+          onClick={handleCloseAbout}
+          sx={{
+            alignSelf: 'flex-end',
+            mt: 2,
+            backgroundColor:'#5C8CC6',
+  
+          }}
+        >
+          Close
+        </Button>
+      </>
+    )}
+  </Box>
+</Modal>
+
+
+    </div>
+    </div>
     </div>
   );
 }
