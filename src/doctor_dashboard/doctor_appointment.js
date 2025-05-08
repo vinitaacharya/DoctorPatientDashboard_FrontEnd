@@ -15,9 +15,10 @@ import Button from '@mui/material/Button';
 import { useNavigate } from "react-router-dom";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 import { io } from "socket.io-client";
-const socket = io("http://localhost:5000");
+const socket = io(`${apiUrl}`);
 
 
 const buttonStyle = {
@@ -149,7 +150,7 @@ function Doctor_Appointment() {
   
     const fetchChat = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/chat/${appointmentId}`);
+        const res = await fetch(`${apiUrl}/chat/${appointmentId}`);
         if (!res.ok) throw new Error("Failed to load chat");
     
         const data = await res.json();
@@ -169,7 +170,7 @@ function Doctor_Appointment() {
     const fetchAppointment = async () => {
       try {
         console.log("appointmentId:", appointmentId);
-        const res = await fetch(`http://localhost:5000/single_appointment/${appointmentId}`);
+        const res = await fetch(`${apiUrl}/single_appointment/${appointmentId}`);
         if (!res.ok) throw new Error("Failed to fetch appointment details");
   
         const data = await res.json();
@@ -213,7 +214,7 @@ function Doctor_Appointment() {
         return;
       }
       try {
-        const res = await fetch(`http://localhost:5000/user?doctor_id=${id}`);
+        const res = await fetch(`${apiUrl}/user?doctor_id=${id}`);
         if (!res.ok) throw new Error("Failed to fetch user");
     
         const data = await res.json();
@@ -252,7 +253,7 @@ function Doctor_Appointment() {
   
     // Save to DB
     try {
-      await fetch(`http://localhost:5000/chat/send`, {
+      await fetch(`${apiUrl}/chat/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newMsg),
@@ -279,7 +280,7 @@ function Doctor_Appointment() {
     const [medications, setMedications] = useState([]);
 
     useEffect(() => {
-      fetch('http://localhost:5000/all_meds')
+      fetch(`${apiUrl}/all_meds`)
         .then(res => res.json())
         .then(data => setMedications(data))
         .catch(err => console.error('Error fetching meds:', err));
@@ -372,7 +373,7 @@ function Doctor_Appointment() {
                         style={{ background: 'teal' }}
                         onClick={async () => {
                           try {
-                            const res = await fetch('http://localhost:5000/prescriptions', {
+                            const res = await fetch(`${apiurl}/prescriptions`, {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
                               body: JSON.stringify({
@@ -440,6 +441,12 @@ function Doctor_Appointment() {
                 variant="outlined"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSend(); 
+                  }
+                }}
                 
                 sx={{ backgroundColor: "#fff", borderRadius: '30px', paddingTop:'.4em', paddingBottom:".4em", marginLeft: "2vw",
 

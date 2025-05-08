@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles';
 import { Tabs, Tab, Box, Paper, Typography, Button } from '@mui/material';
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 import Plot from 'react-plotly.js';
-
+const apiUrl = process.env.REACT_APP_API_URL;
 
 
 
@@ -96,7 +96,7 @@ function DoctorPatientInfo() {
     useEffect(() => {
         const fetchPatientInfo = async () => {
           try {
-            const res = await fetch(`http://localhost:5000/init-patient-survey/${patientId}`);
+            const res = await fetch(`${apiUrl}/init-patient-survey/${patientId}`);
             if (!res.ok) throw new Error("Failed to fetch patient info");
             const data = await res.json();
             setPatientInfo(data);
@@ -210,7 +210,7 @@ function DoctorPatientInfo() {
           };
           
           
-              const response = await fetch("http://localhost:5000/edit-patient", {
+              const response = await fetch(`${apiUrl}/edit-patient`, {
                 method: "PUT",
                 headers: {
                   "Content-Type": "application/json"

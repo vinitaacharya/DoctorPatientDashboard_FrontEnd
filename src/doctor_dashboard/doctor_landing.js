@@ -31,6 +31,8 @@ import doctor_happy from "./doctor_happy.png"
 import patient_help from "./patient_help.png"
 import { useTheme, useMediaQuery, Drawer } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu'
+const apiUrl = process.env.REACT_APP_API_URL;
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -74,7 +76,7 @@ function Doctor_Landing() {
       }
 
       try {
-        const res = await fetch(`http://localhost:5000/doctor/${id}`);
+        const res = await fetch(`${apiUrl}/doctor/${id}`);
         if (!res.ok) {
           throw new Error("Failed to fetch doctor info");
         }
@@ -204,7 +206,7 @@ function Doctor_Landing() {
     //replace fetch with correct url
 
     try {
-      const response = await fetch('http://localhost:5000/daily-survey', {
+      const response = await fetch(`${apiUrl}/daily-survey`, {
 
         method: 'POST',
         headers: {
@@ -252,7 +254,7 @@ function Doctor_Landing() {
     };
     //replace fetch with correct url
     try {
-      const response = await fetch('http://localhost:5000/weekly-surveys', {
+      const response = await fetch(`${apiUrl}/weekly-surveys`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -293,7 +295,7 @@ function Doctor_Landing() {
 
   const handleDeleteCurrentDoctor = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/remove_doctor/${doctorId}`, {
+      const response = await fetch(`${apiUrl}/remove_doctor/${doctorId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -370,7 +372,7 @@ function Doctor_Landing() {
   useEffect(() => {
     // Commented out to avoid crash from 404
     /*
-    fetch('http://localhost:5000/api/get-pharmacy')
+    fetch(`${apiUrl}/api/get-pharmacy`)
       .then(res => res.json())
       .then(data => {
         setPharmacyInfo(`${data.name}, ${data.address}, ${data.zip}, ${data.city}`);
@@ -409,7 +411,7 @@ function Doctor_Landing() {
 
 
     try {
-      const response = await fetch('http://localhost:5000/appointments', {
+      const response = await fetch(`${apiUrl}/appointments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newAppointment),
@@ -420,7 +422,7 @@ function Doctor_Landing() {
         console.log("Appointment created!");
 
         // Refresh the appointments from backend
-        const updated = await fetch(`http://127.0.0.1:5000/appointmentsupcoming/${doctorId}`);
+        const updated = await fetch(`${apiUrl}/appointmentsupcoming/${doctorId}`);
         const updatedData = await updated.json();
         setUpcomingAppointments(updatedData);
 
@@ -446,7 +448,7 @@ function Doctor_Landing() {
       if (!doctorId) return;
 
       try {
-        const res = await fetch(`http://localhost:5000/doc_patients/${doctorId}`);
+        const res = await fetch(`${apiUrl}/doc_patients/${doctorId}`);
         if (!res.ok) throw new Error("Failed to fetch patients");
 
         const data = await res.json();
@@ -505,7 +507,7 @@ function Doctor_Landing() {
 
   const toggleDoctorStatus = async (doctorId, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:5000/doctor-accepting-status/${doctorId}`, {
+      const response = await fetch(`${apiUrl}/doctor-accepting-status/${doctorId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ accepting_patients: newStatus }),

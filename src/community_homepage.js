@@ -22,6 +22,8 @@ import PatientNavbar from './patient_dashboard/patient_navbar';
 import DoctorNavbar from './doctor_dashboard/doctor_navbar';
 import CommunityImg from './community_homepage_img.png';
 import food1 from "./reciepe photo.png";
+const apiUrl = process.env.REACT_APP_API_URL;
+
 export default function CommunityForum() {
   const [isDoctor, setIsDoctor] = useState(true); // 👈 clearer flag
 
@@ -54,7 +56,7 @@ useEffect(() => {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/patient/${id}`);
+      const res = await fetch(`${apiUrl}/patient/${id}`);
       if (!res.ok) {
         throw new Error("Failed to fetch patient info");
       }
@@ -75,7 +77,7 @@ const [filteredPosts, setFilteredPosts] = useState([]);
 const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
-    fetch('http://localhost:5000/posts') // Update if your API base URL is different
+    fetch(`${apiUrl}/posts`) // Update if your API base URL is different
       .then(res => res.json())
       .then(data => {
         const formattedPosts = data.map(post => ({

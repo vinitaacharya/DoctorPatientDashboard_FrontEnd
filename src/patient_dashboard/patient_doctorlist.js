@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { Select, MenuItem, Modal } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 
 /**const doctors = [
@@ -63,7 +64,7 @@ function Patient_Doctorlist() {
   const patientId = localStorage.getItem("patientId");
   const [doctors, setDoctors] = useState([]);
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/doctors')
+    fetch(`${apiUrl}/doctors`)
       .then(response => response.json())
       .then(data => {
         setDoctors(data);
@@ -98,7 +99,7 @@ function Patient_Doctorlist() {
     if (!selectedDoctor || !patient) return;
   
     try {
-      const response = await fetch('http://localhost:5000/select-doctor', {
+      const response = await fetch(`${apiUrl}/select-doctor`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +128,7 @@ function Patient_Doctorlist() {
   useEffect(() => {
     const fetchPatient = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/patient/${patientId}`);
+        const res = await fetch(`${apiUrl}/patient/${patientId}`);
         if (!res.ok) throw new Error("Failed to fetch patient info");
         const data = await res.json();
         setPatient(data);

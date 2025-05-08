@@ -7,7 +7,7 @@ import { styled } from '@mui/material/styles';
 import { Typography } from "@mui/material";
 import backImg from "./assets/purpback.png"
 import { TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from "@mui/material";
-
+const apiUrl = process.env.REACT_APP_API_URL;
 const sectionStyle = {
     padding: "20px",
     borderRadius: "30px",
@@ -70,7 +70,7 @@ function Pharmacy_Landing() {
             }
 
             try {
-                const res = await fetch(`http://localhost:5000/pharmacy/${id}`);
+                const res = await fetch(`${apiUrl}/pharmacy/${id}`);
                 if (!res.ok) {
                     throw new Error("Failed to fetch patient info");
                 }
@@ -111,7 +111,7 @@ function Pharmacy_Landing() {
 
     const handleFill = async (prescription_id) => {
         try {
-            const response = await fetch('http://localhost:5000/prescription/fill', {
+            const response = await fetch(`${apiUrl}/prescription/fill`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ function Pharmacy_Landing() {
                             : req
                     )
                 );
-                const response = await fetch(`http://localhost:5000/unfilled_prescriptions/${pharmacyInfo.pharmacy_id}`);
+                const response = await fetch(`${apiUrl}/unfilled_prescriptions/${pharmacyInfo.pharmacy_id}`);
                 const data = await response.json();
                 setRequests(data);
 
@@ -155,7 +155,7 @@ function Pharmacy_Landing() {
     
         const fetchRequests = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/unfilled_prescriptions/${pharmacyInfo.pharmacy_id}`);
+                const response = await fetch(`${apiUrl}/unfilled_prescriptions/${pharmacyInfo.pharmacy_id}`);
                 if (response.ok) {
                     const data = await response.json();
                     setRequests(data);

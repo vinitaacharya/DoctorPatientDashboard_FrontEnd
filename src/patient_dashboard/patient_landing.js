@@ -38,6 +38,8 @@ import { useTheme, useMediaQuery, Drawer } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu'
 import { useSurveyData } from '../patient_medicalchart/patient_medicalchart/Survey_context';
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -128,7 +130,7 @@ function Patient_Landing() {
       }
 
       try {
-        const res = await fetch(`http://localhost:5000/patient/${id}`);
+        const res = await fetch(`${apiUrl}/patient/${id}`);
         if (!res.ok) {
           throw new Error("Failed to fetch patient info");
         }
@@ -156,7 +158,7 @@ function Patient_Landing() {
 
   const fetchPrescriptions = async (apptId) => {
     try {
-      const res = await fetch(`http://127.0.0.1:5000/patient/${apptId}/prescriptions`);
+      const res = await fetch(`${apiUrl}/patient/${apptId}/prescriptions`);
       if (!res.ok) {
         throw new Error("Failed to fetch prescriptions");
       }
@@ -171,8 +173,8 @@ function Patient_Landing() {
     console.log("useEffect ran");
     const fetchAppointments = async () => {
       try {
-        const upcomingRes = await fetch(`http://127.0.0.1:5000/appointmentsupcoming/${patientId}`);
-        const pastRes = await fetch(`http://127.0.0.1:5000/appointmentspast/${patientId}`);
+        const upcomingRes = await fetch(`${apiUrl}/appointmentsupcoming/${patientId}`);
+        const pastRes = await fetch(`${apiUrl}/appointmentspast/${patientId}`);
 
         if (!upcomingRes.ok || !pastRes.ok) {
           throw new Error("Failed to fetch appointments");
@@ -294,7 +296,7 @@ function Patient_Landing() {
     //replace fetch with correct url
 
     try {
-      const response = await fetch('http://localhost:5000/daily-survey', {
+      const response = await fetch(`${apiUrl}/daily-survey`, {
 
         method: 'POST',
         headers: {
@@ -381,7 +383,7 @@ function Patient_Landing() {
     };
     //replace fetch with correct url
     try {
-      const response = await fetch('http://localhost:5000/weekly-survey', {
+      const response = await fetch(`${apiUrl}/weekly-survey`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -482,7 +484,7 @@ function Patient_Landing() {
 
   const handleDeleteCurrentDoctor = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/remove_doctor/${patientId}`, {
+      const response = await fetch(`${apiUrl}/remove_doctor/${patientId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -545,7 +547,7 @@ function Patient_Landing() {
   useEffect(() => {
     // Commented out to avoid crash from 404
     /*
-    fetch('http://localhost:5000/api/get-pharmacy')
+    fetch(`${apiUrl}/api/get-pharmacy`)
       .then(res => res.json())
       .then(data => {
         setPharmacyInfo(`${data.name}, ${data.address}, ${data.zip}, ${data.city}`);
@@ -587,7 +589,7 @@ function Patient_Landing() {
 
 
     try {
-      const response = await fetch('http://localhost:5000/appointments', {
+      const response = await fetch(`${apiUrl}/appointments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newAppointment),
@@ -598,7 +600,7 @@ function Patient_Landing() {
         console.log("Appointment created!");
 
         // Refresh the appointments from backend
-        const updated = await fetch(`http://127.0.0.1:5000/appointmentsupcoming/${patientId}`);
+        const updated = await fetch(`${apiUrl}/appointmentsupcoming/${patientId}`);
         const updatedData = await updated.json();
         setUpcomingAppointments(updatedData);
 
@@ -620,18 +622,18 @@ function Patient_Landing() {
   useEffect(() => {
     const fetchDoctorInfo = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/patient/${patientId}`);
+        const res = await fetch(`${apiUrl}/patient/${patientId}`);
         const patientData = await res.json();
 
         if (patientData.doctor_id) {
-          const doctorRes = await fetch(`http://localhost:5000/doctor/${patientData.doctor_id}`);
+          const doctorRes = await fetch(`${apiUrl}/doctor/${patientData.doctor_id}`);
           const doctorData = await doctorRes.json();
           setDoctorInfo(doctorData);
         }
 
         // ✅ New: Fetch pharmacy info from the patient data
         if (patientData.pharmacy_id) {
-          const pharmacyRes = await fetch(`http://localhost:5000/pharmacy/${patientData.pharmacy_id}`);
+          const pharmacyRes = await fetch(`${apiUrl}/pharmacy/${patientData.pharmacy_id}`);
           const pharmacyData = await pharmacyRes.json();
           const { pharmacy_name, address, zipcode, city } = pharmacyData;
           setPharmacyInfo(`${pharmacy_name}, ${address}, ${zipcode}, ${city}`);
@@ -658,7 +660,7 @@ function Patient_Landing() {
 
   const handlePickup = async (prescriptionId) => {
     try {
-      const res = await fetch('http://localhost:5000/prescription/pickup', {
+      const res = await fetch(`${apiUrl}/prescription/pickup`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

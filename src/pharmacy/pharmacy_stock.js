@@ -7,7 +7,7 @@ import { styled } from '@mui/material/styles';
 import {TextField, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from "@mui/material";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
-
+const apiUrl = process.env.REACT_APP_API_URL;
 const PharmacyStock = () => {
   const [quantities, setQuantities] = useState({});
   //const [inventory, setInventory] = useState(stockData);
@@ -33,7 +33,7 @@ const PharmacyStock = () => {
     }).filter(Boolean);
   
     Promise.all(updates.map(update =>
-      fetch('/stock/update', {
+      fetch(`${apiUrl}/stock/update`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(update)
@@ -59,7 +59,7 @@ const PharmacyStock = () => {
   const [selectedPharmacy, setSelectedPharmacy] = useState("");
 
   useEffect(() => {
-    fetch("/pharmacies")
+    fetch(`${apiUrl}/pharmacies`)
       .then((res) => res.json())
       .then((data) => setPharmacies(data))
       .catch((err) => console.error("Error fetching pharmacies:", err));
@@ -68,7 +68,7 @@ const PharmacyStock = () => {
   const [pharmacyStock, setPharmacyStock] = useState([]);
   useEffect(() => {
     if (selectedPharmacy) {
-      fetch(`/stock/${selectedPharmacy}`)
+      fetch(`${apiUrl}/stock/${selectedPharmacy}`)
         .then(res => res.json())
         .then(data => {
           if (!data.error) {

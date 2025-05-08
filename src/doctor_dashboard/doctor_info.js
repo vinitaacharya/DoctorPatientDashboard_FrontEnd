@@ -8,7 +8,7 @@ import Divider from '@mui/material/Divider';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { Select, MenuItem } from '@mui/material';
-
+const apiUrl = process.env.REACT_APP_API_URL;
 
 
 
@@ -128,7 +128,7 @@ function DoctorInfo() {
 useEffect(() => {
  
 
-  fetch(`http://localhost:5000/doctor/${doctorId}`)
+  fetch(`${apiUrl}/doctor/${doctorId}`)
     .then((res) => res.json())
     .then((data) => {
       setDoctorInfo(data);
@@ -230,7 +230,7 @@ useEffect(() => {
       // delete dataToSend.license_num;
     
       try {
-        const response = await fetch(`http://localhost:5000/edit-doctor`, {
+        const response = await fetch(`${apiUrl}/edit-doctor`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(editableDoctorInfo)
@@ -239,7 +239,7 @@ useEffect(() => {
         if (!response.ok) throw new Error('Failed to update');
     
         // Now re-fetch the updated doctor info
-        const updated = await fetch(`http://localhost:5000/doctor/${editableDoctorInfo.doctor_id}`);
+        const updated = await fetch(`${apiUrl}/doctor/${editableDoctorInfo.doctor_id}`);
         const data = await updated.json();
         setDoctorInfo(data);
         setIsEditing(false);
