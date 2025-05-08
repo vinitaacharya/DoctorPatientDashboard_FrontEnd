@@ -262,8 +262,8 @@ const handleCopy = (text) => {
     <div className="Landing">
     <AppBar position="static" sx={{ bgcolor: "#5889BD" }}>
   <Toolbar>
-    <Typography  sx={{ flexGrow: 1 , fontSize:'5vh'}}>
-      DPP
+    <Typography  sx={{ flexGrow: 1 , fontSize:'4vh'}}>
+      <strong>DPP</strong>
     </Typography>
 
     <Button color="inherit" onClick={() => {
