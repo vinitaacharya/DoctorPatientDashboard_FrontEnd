@@ -14,12 +14,20 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { useNavigate } from "react-router-dom";
-import {
-  Card,
-  CardContent,
-  Collapse,
-} from '@mui/material';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
 
+import MenuIcon from '@mui/icons-material/Menu';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+
+const copyToClipboard = (text) => {
+  navigator.clipboard.writeText(text)
+    .then(() => alert(`${text} copied to clipboard!`))
+    .catch((err) => console.error("Clipboard copy failed:", err));
+};
 const modalStyle = {
   position: 'absolute',
   top: '50%',
@@ -42,6 +50,41 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+
+function ContactMenu() {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <Box>
+      <Button
+        color="inherit"
+        onClick={handleClick}
+        endIcon={<MoreVertIcon />}
+      >
+        Contact Us
+      </Button>
+      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+        <MenuItem onClick={() => copyToClipboard("+1 (555) 123-4567")}>
+          📞 +1 (555) 123-4567
+        </MenuItem>
+        <MenuItem onClick={() => copyToClipboard("contact@dpp.com")}>
+          ✉️ contact@dpp.com
+        </MenuItem>
+        <MenuItem onClick={() => copyToClipboard("123 Health St, Wellness City")}>
+          📍 123 Health St, Wellness City
+        </MenuItem>
+      </Menu>
+    </Box>
+  );
+}
 
 function Landing() {
   const [doctors, setDoctors] = useState([]);
@@ -188,8 +231,19 @@ function Landing() {
   //     });
   // }, []);
 
-  
-    const [expandedIndex, setExpandedIndex] = useState(null); // track which card is expanded
+  const [contactOpen, setContactOpen] = useState(false);
+
+const contactInfo = {
+  phone: "123-456-7890",
+  email: "contact@dpp.com",
+  address: "123 Healthy Way, Wellness City, HW 54321",
+};
+
+const handleCopy = (text) => {
+  navigator.clipboard.writeText(text);
+  alert("Copied to clipboard: " + text);
+};
+
   
     useEffect(() => {
       fetch('http://127.0.0.1:5000/doctors')
@@ -200,17 +254,31 @@ function Landing() {
         })
         .catch(error => console.error("Error fetching doctor data:", error));
     }, []);
-  
-    const toggleExpand = (index) => {
-      setExpandedIndex(expandedIndex === index ? null : index);
-    };
 
+
+    
   return (
     <div id="sizeScreen">
     <div className="Landing">
-      <div className="landingnav">
-        <h2>DPP</h2>
-      </div>
+    <AppBar position="static" sx={{ bgcolor: "#5889BD" }}>
+  <Toolbar>
+    <Typography  sx={{ flexGrow: 1 , fontSize:'5vh'}}>
+      DPP
+    </Typography>
+
+    <Button color="inherit" onClick={() => {
+      const section = document.getElementById("ourStories");
+      section?.scrollIntoView({ behavior: 'smooth' });
+    }}>
+      Our Stories
+    </Button>
+
+    <ContactMenu />
+  </Toolbar>
+</AppBar>
+
+
+
       <div className="landinghero">
         <div className="herotext">
             <h3>Have Access To A Health Professional at Any Time</h3>
@@ -383,7 +451,7 @@ function Landing() {
       </div>
 
       <div className="patienttest">
-        <h4 className="white">Patient Testimontials</h4>
+        <h4 id="ourStories" className="white">Patient Testimontials</h4>
         <div className="testcards">
           <div className="patientcard">
             <img src={patient1} alt="patient" className="patientimage"/>
