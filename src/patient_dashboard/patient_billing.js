@@ -3,7 +3,6 @@ import Patient_Navbar from "./patient_navbar";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { Select,MenuItem, InputLabel,  Modal, TextField, FormControl} from "@mui/material";
-const apiUrl = process.env.REACT_APP_API_URL;
 
 import {
   Typography,
@@ -17,6 +16,8 @@ import {
 } from "@mui/material";
 import TablePagination from "@mui/material/TablePagination";
 import { styled } from "@mui/material/styles";
+
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const columns = [
   { id: "article", label: "Article", minWidth: 150, align: "center" },
