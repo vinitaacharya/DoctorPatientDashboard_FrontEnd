@@ -19,26 +19,20 @@ import Toolbar from '@mui/material/Toolbar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
-
-import MenuIcon from '@mui/icons-material/Menu';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import Tooltip from '@mui/material/Tooltip';
+import TextField from '@mui/material/TextField';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-
+import Container from '@mui/material/Container';
+import Divider from '@mui/material/Divider';
+import Link from '@mui/material/Link';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 const copyToClipboard = (text) => {
-  navigator.clipboard.writeText(text)
-    .then(() => alert(`${text} copied to clipboard!`))
-    .catch((err) => console.error("Clipboard copy failed:", err));
+  navigator.clipboard.writeText(text)  
 };
-const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  borderRadius: 2,
-  boxShadow: 24,
-  p: 4,
-};
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -72,16 +66,35 @@ function ContactMenu() {
         Contact Us
       </Button>
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-        <MenuItem onClick={() => copyToClipboard("+1 (555) 123-4567")}>
-          📞 +1 (555) 123-4567
-        </MenuItem>
-        <MenuItem onClick={() => copyToClipboard("contact@dpp.com")}>
-          ✉️ contact@dpp.com
-        </MenuItem>
-        <MenuItem onClick={() => copyToClipboard("123 Health St, Wellness City")}>
-          📍 123 Health St, Wellness City
-        </MenuItem>
-      </Menu>
+      <Tooltip title="Copy to clipboard">
+        
+          </Tooltip>
+  <MenuItem onClick={() => copyToClipboard("+1 (555) 123-4567")}>
+    <Typography  sx={{pr:'1vh'}} component="span">Phone: </Typography>
+    <Typography  component="span" sx={{ color: 'primary.main', paddingRight:'12vh' }}>
+      +1 (555) 123-4567
+    </Typography>
+  <ContentCopyIcon color="primary"  fontSize="small" />
+      
+  </MenuItem>
+  <MenuItem onClick={() => copyToClipboard("contact@dpp.com")}>
+    <Typography sx={{pr:'1vh'}} component="span">E-mail:  </Typography>
+    <Typography component="span" sx={{ color: 'primary.main', paddingRight:'12.6vh' }}>
+      contact@dpp.com
+    </Typography>
+    <ContentCopyIcon color="primary" fontSize="small" />
+
+  </MenuItem>
+  <MenuItem onClick={() => copyToClipboard("123 Health St, Wellness City")}>
+    <Typography sx={{pr:'1vh'}} component="span">Location:  </Typography>
+    <Typography component="span" sx={{ color: 'primary.main', paddingRight:'2vh' }}>
+      123 Health St, Wellness City
+    </Typography>
+    <ContentCopyIcon color="primary" fontSize="small" />
+
+  </MenuItem>
+</Menu>
+
     </Box>
   );
 }
@@ -262,8 +275,8 @@ const handleCopy = (text) => {
     <div className="Landing">
     <AppBar position="static" sx={{ bgcolor: "#5889BD" }}>
   <Toolbar>
-    <Typography  sx={{ flexGrow: 1 , fontSize:'4vh'}}>
-      <strong>DPP</strong>
+    <Typography id='signUp' sx={{ flexGrow: 1 , fontSize:'5.5vh'}}>
+      D P P
     </Typography>
 
     <Button color="inherit" onClick={() => {
@@ -272,7 +285,12 @@ const handleCopy = (text) => {
     }}>
       Our Stories
     </Button>
-
+    <Button color="inherit" onClick={() => {
+      const section = document.getElementById("ourDoctors");
+      section?.scrollIntoView({ behavior: 'smooth' });
+    }}>
+      Our Doctors
+    </Button>
     <ContactMenu />
   </Toolbar>
 </AppBar>
@@ -281,8 +299,8 @@ const handleCopy = (text) => {
 
       <div className="landinghero">
         <div className="herotext">
-            <h3>Have Access To A Health Professional at Any Time</h3>
-            <div className="herobuttons">
+            <h3 >Have Access To A Health Professional at Any Time</h3>
+            <div  className="herobuttons">
             {/*Login Buttons*/}
             <Button className="herobutton" onClick={handleOpenLogin}>Login</Button>
                 <Modal
@@ -471,7 +489,7 @@ const handleCopy = (text) => {
 
       
       <div className="doctortest">
-      <h4>Meet Our Top Rated Doctors</h4>
+      <h4 id="ourDoctors">Meet Our Top Rated Doctors</h4>
       <div className="testcards">
         {doctors.map((doc, index) => (
           <div className="patientcard" key={index}>
@@ -563,6 +581,104 @@ const handleCopy = (text) => {
 
     </div>
     </div>
+    (
+    <Box sx={{ bgcolor: '#f5f5f5', mt: 6, pt: 4, pb: 3, fontFamily: 'Roboto, sans-serif' }}>
+      <Container maxWidth="lg">
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            gap: 4,
+            mb: 4,
+          }}
+        >
+          {/* Branding */}
+          <Box display={'flex'} flexDirection={'column'}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+              DPP Wellness
+            </Typography>
+            <Link href="#ourStories"  underline="hover" color="text.primary" sx={{ fontSize: '1.7vh', pt:'.5vh' , pb:'.5vh'}}>
+              Our Stories
+            </Link>
+            <Link href="#ourDoctors" underline="hover" color="text.primary" sx={{ fontSize: '1.7vh', pt:'.5vh', pb:'.5vh' }}>
+              Our Doctors
+            </Link>
+            <Link href="#signUp" underline="hover" color="text.primary" sx={{ fontSize: '1.7vh', pt:'.5vh', pb:'.5vh' }}>
+              Sign Up Today!
+            </Link>
+          </Box>
+
+          {/* Contact Information */}
+          <Box>
+            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 500 }}>
+              Contact Us
+            </Typography>
+
+            {/* Phone */}
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Typography variant="body2" color="text.primary">Phone:</Typography>
+              <Typography variant="body2" sx={{ ml: 1, color: 'primary.main' }}>
+                +1 (555) 123-4567
+              </Typography>
+              <Tooltip title="Copy">
+                <IconButton size="small" onClick={() => copyToClipboard("+1 (555) 123-4567")}>
+                  <ContentCopyIcon color='primary' fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+
+            {/* Email */}
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Typography variant="body2" color="text.primary">Email:</Typography>
+              <Typography variant="body2" sx={{ ml: 1, color: 'primary.main' }}>
+                contact@dpp.com
+              </Typography>
+              <Tooltip title="Copy">
+                <IconButton size="small" onClick={() => copyToClipboard("contact@dpp.com")}>
+                  <ContentCopyIcon color='primary' fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+
+            {/* Address */}
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2" color="text.primary">Address:</Typography>
+              <Typography variant="body2" sx={{ ml: 1, color: 'primary.main' }}>
+                123 Health St, Wellness City
+              </Typography>
+              <Tooltip title="Copy">
+                <IconButton size="small" onClick={() => copyToClipboard("123 Health St, Wellness City")}>
+                  <ContentCopyIcon color='primary' fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
+
+          {/* Social Links */}
+          <Box>
+            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 500 }}>
+              Follow Us
+            </Typography>
+            <IconButton href="https://facebook.com" target="_blank" aria-label="Facebook" size="small">
+              <FacebookIcon />
+            </IconButton>
+            <IconButton href="https://twitter.com" target="_blank" aria-label="Twitter" size="small">
+              <TwitterIcon />
+            </IconButton>
+            <IconButton href="https://linkedin.com" target="_blank" aria-label="LinkedIn" size="small">
+              <LinkedInIcon />
+            </IconButton>
+          </Box>
+        </Box>
+
+        <Divider sx={{ mb: 2 }} />
+        <Typography variant="body2" color="text.secondary" align="center">
+          © {new Date().getFullYear()} DPP Wellness. All rights reserved.
+        </Typography>
+      </Container>
+    </Box>
     </div>
   );
 }
