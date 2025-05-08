@@ -1425,13 +1425,14 @@ function Patient_Landing() {
                         >
                           {appointment.doctor_name}
                         </Typography>
-                        {appointment.accepted === 1 ?
-
+                        {appointment.accepted === 1 ? (
                           <Button
                             variant="contained"
-                            onClick={() => navigate('/patient_dashboard/patient_appointment', {
-                              state: { appointmentId: appointment.patient_appt_id }
-                            })}
+                            onClick={() =>
+                              navigate("/patient_dashboard/patient_appointment", {
+                                state: { appointmentId: appointment.patient_appt_id },
+                              })
+                            }
                             sx={{
                               backgroundColor: "#5A8BBE",
                               color: "#22252C",
@@ -1447,7 +1448,20 @@ function Patient_Landing() {
                             }}
                           >
                             Go to Appointment
-                          </Button> : "Pending..."}
+                          </Button>
+                        ) : appointment.accepted === 2 ? (
+                          <Typography
+                            sx={{
+                              color: "#C62828",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Denied
+                          </Typography>
+                        ) : (
+                          "Pending..."
+                        )}
+
                       </Box>
                     ))}
 
@@ -2061,21 +2075,21 @@ function Patient_Landing() {
 
         </Box>
         <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={4000}
+          open={snackbarOpen}
+          autoHideDuration={4000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <MuiAlert
             onClose={handleSnackbarClose}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            severity={snackbarSeverity}
+            elevation={6}
+            variant="filled"
+            sx={{ width: '100%' }}
           >
-            <MuiAlert
-              onClose={handleSnackbarClose}
-              severity={snackbarSeverity}
-              elevation={6}
-              variant="filled"
-              sx={{ width: '100%' }}
-            >
-              {snackbarMessage}
-            </MuiAlert>
-          </Snackbar>
+            {snackbarMessage}
+          </MuiAlert>
+        </Snackbar>
       </div>
     </div>
   );
