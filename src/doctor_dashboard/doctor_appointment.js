@@ -16,7 +16,8 @@ import { useNavigate } from "react-router-dom";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
-
+import { io } from "socket.io-client";
+const socket = io("http://localhost:5000");
 
 
 const buttonStyle = {
@@ -93,20 +94,6 @@ const ChatBubble = ({ text, time, isUser, avatar }) => {
     );
   };
 
-const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: '#fff',
-    borderRadius:30,
-    height:'47vh',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    //padding: theme.spacing(2),
-    color: (theme.vars ?? theme).palette.text.secondary,
-    ...theme.applyStyles('dark', {
-      backgroundColor: '#1A2027',
-    }),
-  }));
-
 const style = {
     position: 'absolute',
     top: '50%',
@@ -128,6 +115,55 @@ function Doctor_Appointment() {
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [showInput, setShowInput] = useState(true);
+  const [userId, setUserId] = useState(null);
+  const messagesEndRef = useRef(null);
+
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages]);
+  
+    useEffect(() => {
+      socket.on('receive_message', (data) => {
+        setChatMessages(prev => [...prev, data]);
+      });
+    
+      return () => {
+        socket.off('receive_message');
+      };
+    }, []);
+  
+    const formatTime = (timestamp) => {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+    
+    
+    useEffect(() => {
+      if (userId && appointmentId) {
+        fetchChat();
+      }
+    }, [userId, appointmentId]);
+  
+    const fetchChat = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/chat/${appointmentId}`);
+        if (!res.ok) throw new Error("Failed to load chat");
+    
+        const data = await res.json();
+        console.log("Data sender ID:", data.sender_id, "| Patient user ID:", userId);
+        const mapped = data.map(msg => ({
+          text: msg.message,
+          timestamp: msg.sent_at,
+          sender: msg.sender_id === userId ? "doctor" : "patient"
+        }));
+        setChatMessages(mapped);
+      } catch (error) {
+        console.error("Error fetching chat:", error);
+      }
+    };
 
   useEffect(() => {
     const fetchAppointment = async () => {
@@ -164,40 +200,68 @@ function Doctor_Appointment() {
         const diffInDays = diffInTime / (1000 * 3600 * 24); // Convert milliseconds to days
         
         // Set visibility of input box
-        setShowInput(diffInDays <= 1);
+        setShowInput(diffInDays > 0 && diffInDays < 5);
       } catch (error) {
         console.error("Error fetching appointment:", error);
       }
     };
-  
+    const fetchUserId = async () => {
+      const id = localStorage.getItem("doctorId");
+      console.log("doctorId from localStorage:", id); 
+      if (!id) {
+        console.warn("No doctor ID in localStorage");
+        return;
+      }
+      try {
+        const res = await fetch(`http://localhost:5000/user?doctor_id=${id}`);
+        if (!res.ok) throw new Error("Failed to fetch user");
     
-
-    const fetchChat = async () => {
-      const messages = [
-        { text: "Hello, are you ready to start your appointment?", time: "12:45pm", sender: "doctor" },
-        { text: "Hi doctor! Yes I am ready to start. I just had a few concerns about my health", time: "12:46pm", sender: "doctor" }
-      ];
-      setChatMessages(messages);
+        const data = await res.json();
+        console.log("Fetched user data:", data); 
+        setUserId(data.user_id);
+      } catch (error) {
+        console.error("Error fetching user ID:", error);
+      }
     };
 
     if (appointmentId) {
       fetchAppointment();
     }
+    fetchUserId();
     fetchChat();
   }, [appointmentId]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!newMessage.trim()) return;
+  
     const newMsg = {
+      appointment_id: appointmentId,
+      sender: "doctor",
       text: newMessage,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      sender: "doctor"
     };
-    setChatMessages(prev => [...prev, newMsg]);
+  
+    // Emit over socket
+    socket.emit('send_message', {
+      ...newMsg,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    });
+
+    const temp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    console.log(temp);
+
+  
+    // Save to DB
+    try {
+      await fetch(`http://localhost:5000/chat/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newMsg),
+      });
+    } catch (err) {
+      console.error("Failed to save chat message:", err);
+    }
+  
     setNewMessage("");
-    
-    console.log("AppointmentID", appointmentId);
-    // TODO: send to backend
   };
 
     const [open, setOpen] = React.useState(false);
@@ -209,41 +273,8 @@ function Doctor_Appointment() {
         quantity: ''
     })
 
-    const handleLogin = async (email, password) => {
-      try {
-        const response = await fetch('http://127.0.0.1:5000/login-patient', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-        });
-    
-        const data = await response.json();
-    
-        if (response.ok) {
-          // Save patient ID (and optionally, email or token)
-          console.log("Patient ID returned from backend:", data.patient_id); // ✅ debug line
-          localStorage.setItem("patientId", data.patient_id);
-          localStorage.removeItem("doctorId");
-
-          // Redirect to dashboard
-          navigate("/patient_dashboard/patient_landing");
-        } else {
-          alert(data.error || "Login failed");
-        }
-      } catch (error) {
-        console.error("Login error:", error);
-        alert("An error occurred. Please try again.");
-      }
-    };
-
-    const navigate = useNavigate()
-
     const [pills, setPills] = useState(null); // or use 0 if preferred
-    
-    const handleChange = (event: SelectChangeEvent) => {
-        setPills(event.target.value);
-        setValues({...values, perscription: event.target.value});
-    };
+  
 
     const [medications, setMedications] = useState([]);
 
@@ -388,11 +419,12 @@ function Doctor_Appointment() {
                     <ChatBubble
                     key={idx}
                     text={msg.text}
-                    time={msg.time}
+                    time={formatTime(msg.timestamp)}
                     isUser={msg.sender === "doctor"}
                     avatar={msg.sender === "doctor" ? doc1 : pat1}
                     />
                 ))}
+                <div ref={messagesEndRef} />
             </Box>
 
 

@@ -76,7 +76,14 @@ function Patient_Appointment() {
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [showInput, setShowInput] = useState(true);
+  const [userId, setUserId] = useState(null);
+  const messagesEndRef = useRef(null);
 
+  useEffect(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, [chatMessages]);
   useEffect(() => {
     socket.on('receive_message', (data) => {
       setChatMessages(prev => [...prev, data]);
@@ -87,12 +94,25 @@ function Patient_Appointment() {
     };
   }, []);
 
+
   const formatTime = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const date = new Date(timestamp); // should be in ISO or epoch format
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'America/New_York',
+    });
   };
   
   
+  
+  
+  useEffect(() => {
+    if (userId && appointmentId) {
+      fetchChat();
+    }
+  }, [userId, appointmentId]);
 
   const fetchChat = async () => {
     try {
@@ -100,11 +120,18 @@ function Patient_Appointment() {
       if (!res.ok) throw new Error("Failed to load chat");
   
       const data = await res.json();
-      setChatMessages(data);
+      console.log("Data sender ID:", data.sender_id, "| Patient user ID:", userId);
+      const mapped = data.map(msg => ({
+        text: msg.message,
+        timestamp: msg.sent_at,
+        sender: msg.sender_id === userId ? "patient" : "doctor"
+      }));
+      setChatMessages(mapped);
     } catch (error) {
       console.error("Error fetching chat:", error);
     }
   };
+  
   
   useEffect(() => {
     const fetchAppointment = async () => {
@@ -147,10 +174,29 @@ function Patient_Appointment() {
         console.error("Error fetching appointment:", error);
       }
     };
-
+    const fetchUserId = async () => {
+      const id = localStorage.getItem("patientId");
+      console.log("patientId from localStorage:", id); 
+      if (!id) {
+        console.warn("No patient ID in localStorage");
+        return;
+      }
+      try {
+        const res = await fetch(`http://localhost:5000/user?patient_id=${id}`);
+        if (!res.ok) throw new Error("Failed to fetch user");
+    
+        const data = await res.json();
+        console.log("Fetched user data:", data); 
+        setUserId(data.user_id);
+      } catch (error) {
+        console.error("Error fetching user ID:", error);
+      }
+    };
+    
     if (appointmentId) {
       fetchAppointment();
     }
+    fetchUserId();
     fetchChat();
   }, [appointmentId]);
 
@@ -231,6 +277,7 @@ function Patient_Appointment() {
                   avatar={msg.sender === "patient" ? pat1 : doc1}
                 />
               ))}
+              <div ref={messagesEndRef} />
             </Box>
 
 
