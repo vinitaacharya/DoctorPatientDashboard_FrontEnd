@@ -100,12 +100,12 @@ function Patientsignup() {
 
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (event: SelectChangeEvent) => {
+  const handleChange = (event) => {
     setGender(event.target.value);
     setValues({...values, gender: event.target.value});
   };
 
-  const handleChange2 = (event: SelectChangeEvent) => {
+  const handleChange2 = (event) => {
     setBlood(event.target.value);
     setValues({...values, blood: event.target.value});
   };
@@ -228,7 +228,7 @@ function Patientsignup() {
       .then(res => res.json())
       .then(response => {
         if (response.message) {
-          alert("Account and survey submitted successfully!");
+          showSnack("Account and survey submitted successfully!");
           navigate('/landing');
         } else {
           throw new Error(response.error || "Something went wrong");
@@ -300,60 +300,78 @@ function Patientsignup() {
               <div className="basic-info">
                 <h1>Basic Information</h1>
                 <div className='labels'>
-                  <label className='def-label' htmlFor="first_name">First Name: </label>
-                  <input type='text'
+                <label htmlFor="first_name" className='input-group'>
+                  First Name:
+                  <input 
+                    type='text'
                     name='first_name'
-                    className="form-control" 
+                    className="input-field" 
                     placeholder='Enter First Name'
                     value={values.first_name}
-                    onChange={e => setValues({...values, first_name: e.target.value})}/>
-                </div>
+                    onChange={e => setValues({...values, first_name: e.target.value})}
+                  />
+                </label>
+              </div>
                 <div className='labels'>
-                  <label className='def-label' htmlFor="last_name">Last Name: </label>
+                  <label className='input-group' htmlFor="last_name">Last Name:
                   <input type='text'
                     name='last_name'
-                    className="form-control" 
+                    className="input-field" 
                     placeholder='Enter last Name'
                     value={values.last_name}
                     onChange={e => setValues({...values, last_name: e.target.value})}/>
+                  </label>
                 </div>
 
                 {/*Make the fields horizontal */}
                 <div className='horizontal-bar'>
-                  <div className='labels'>
-                    <label htmlFor="dob" className='short-label'>DOB: </label>
-                    <input type='date'
+                <div className='labels'>
+                  <label htmlFor="dob" className='input-group'>
+                    DOB:
+                    <input
+                      type='date'
                       name='dob'
-                      className="form-control" 
-                      placeholder='Enter DOB'
+                      className="input-field-dob"
                       value={values.dob}
-                      onChange={e => setValues({...values, dob: e.target.value})}/>
-                  </div>
+                      onChange={e => setValues({...values, dob: e.target.value})}
+                      style={{ height: '35px' }}
+                    />
+                  </label>
+                </div>
                   <div className='labels'>
-                    <label htmlFor="gender" className='gender-label'>Gender: </label>
-                    <Select
-                      className="form-control-select"
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={gender}
-                      onChange={handleChange}
-                      displayEmpty
-                      renderValue={(selected) => selected ? selected : "Select Gender"}
-                    >
-                      <MenuItem value='Male'>Male</MenuItem>
-                      <MenuItem value='Female'>Female</MenuItem>
-                      <MenuItem value='Other'>Other</MenuItem>
-                    </Select>
+                    <label htmlFor="gender" className='input-group'>
+                      Gender:
+                      <Select
+                        className="input-field"
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={gender}
+                        onChange={handleChange}
+                        displayEmpty
+                        renderValue={(selected) => selected ? selected : "Select"}
+                        sx={{
+                          height: '35px',
+                          borderRadius: '23px',
+                          '& .MuiSelect-select': {
+                            padding: '0 10px'
+                          }
+                        }}
+                      >
+                        <MenuItem value='Male'>Male</MenuItem>
+                        <MenuItem value='Female'>Female</MenuItem>
+                        <MenuItem value='Other'>Other</MenuItem>
+                      </Select>
+                    </label>
                   </div>
                 </div>
 
                 {/*Normal Now */}
                 <div className='labels'>
-                  <label className='def-label' htmlFor="phone">Phone: </label>
+                  <label className='input-group' htmlFor="phone">Phone: 
                   <input
                     type='tel'
                     name='phone'
-                    className="form-control" 
+                    className="input-field" 
                     placeholder='Enter phone (e.g., 123-456-7890 or 1234567890)'
                     pattern="^(?:\d{3}-\d{3}-\d{4}|\d{10})$"
                     title="Please enter a valid phone number (e.g., 123-456-7890 or 1234567890)"
@@ -381,156 +399,205 @@ function Patientsignup() {
                       }
                     }}
                   />  
+                  </label>
                 </div>
                 <div className='labels'>
-                  <label className='def-label' htmlFor="address">Address: </label>
+                  <label className='input-group' htmlFor="address">Address: 
                   <input type='text'
                     name='address'
-                    className="form-control" 
+                    className="input-field" 
                     placeholder='Enter your address'
                     value={values.address}
                     onChange={e => setValues({...values, address: e.target.value})}/>
+                  </label>
                 </div>
 
                 {/*Make fields horizontal again */}              
                 <div className='horizontal-bar'>
                   <div className='labels'>
-                    <label htmlFor="zip" className='def-label'>Zip code: </label>
+                    <label htmlFor="zip" className='input-group'>Zip code: 
                     <input
                       type='text'  // Changed from number to allow dashes
                       name='zip'
-                      className="form-control-dob" 
-                      placeholder='Enter ZIP (e.g., 12345)'
+                      className="input-field-small" 
+                      placeholder='Enter ZIP'
                       pattern="^\d{5}(-\d{4})?$"
                       title="Please enter a valid 5-digit ZIP code (optionally with 4-digit extension)"
                       value={values.zip}
                       onChange={e => setValues({...values, zip: e.target.value})}
                     />
+                    </label>
                   </div>
                   <div className='labels'>
-                    <label htmlFor="city" className='short-label'>City: </label>
+                    <label htmlFor="city" className='input-group'>City: 
                     <input type='text'
                       name='city'
-                      className="form-control-gender" 
+                      className="input-field-small" 
                       placeholder='Enter City'
                       value={values.city}
                       onChange={e => setValues({...values, city: e.target.value})}/>
+                      </label>
                   </div>
                   <div className='labels'>
-                    <label htmlFor="state" className='gender-label'>State: </label>
+                    <label htmlFor="state" className='input-group'>State:
                     <input type='text'
                       name='state'
-                      className="form-control-gender" 
+                      className="input-field-small" 
                       placeholder='Enter state'
                       value={values.state}
                       onChange={e => setValues({...values, state: e.target.value})}/>
+                      </label>
                   </div>
                 </div>
               </div>
 
               {/*Pharmacy side */}
-              <div className="pharmacy-info">
+              {/* <div className="pharmacy-info">
                 <h1>Pharmacy Information</h1>
 
                 <div className="labels">
-                  <label className="long-label">Pharmacy:</label>
-                  <Select
-                    className="form-control-select"
-                    value={values.pharmacy_name}
-                    onChange={(e) => {
-                      const selectedName = e.target.value;
-                      if (selectedName === "__new") {
-                        setIsNewPharmacy(true);
-                        setValues(v => ({
-                          ...v,
-                          pharmacy_name: "__new", // temporary
-                          pharmacy_address: '',
-                          pharm_zip: '',
-                          pharm_city: ''
-                        }));
-                      } else {
-                        setIsNewPharmacy(false);
-                        const selectedPharmacy = pharmacies.find(p => p.name === selectedName);
-                        if (selectedPharmacy) {
+                  <label className="input-group">Pharmacy: 
+                    <Select
+                      className="input-field-select"
+                      value={values.pharmacy_name}
+                      onChange={(e) => {
+                        const selectedName = e.target.value;
+                        if (selectedName === "__new") {
+                          setIsNewPharmacy(true);
                           setValues(v => ({
                             ...v,
-                            pharmacy_name: selectedPharmacy.name,
-                            pharmacy_address: selectedPharmacy.address,
-                            pharm_zip: selectedPharmacy.zipcode,
-                            pharm_city: selectedPharmacy.city
+                            pharmacy_name: "", // Clear the temporary value
+                            pharmacy_address: '',
+                            pharm_zip: '',
+                            pharm_city: ''
                           }));
-                        }
-                      }
-                    }}
-                    
-                    displayEmpty
-                    renderValue={(selected) => selected ? selected : "Select Pharmacy"}
-                  >
-                    {pharmacies.map((pharm, idx) => (
-                      <MenuItem key={idx} value={pharm.name}>
-                        {pharm.name}
-                      </MenuItem>
-                    ))}
-                    {isNewPharmacy && (
-                      <div className="labels" style={{ marginTop: "15px" }}>
-                        <label htmlFor="pharmacy_name" className="long-label">New Pharmacy Name:</label>
-                        <input
-                          type="text"
-                          name="pharmacy_name"
-                          className="form-control"
-                          placeholder="Enter new pharmacy name"
-                          value={values.pharmacy_name === "__new" ? "" : values.pharmacy_name}
-                          onChange={(e) =>
-                            setValues({ ...values, pharmacy_name: e.target.value })
+                        } else {
+                          setIsNewPharmacy(false);
+                          const selectedPharmacy = pharmacies.find(p => p.name === selectedName);
+                          if (selectedPharmacy) {
+                            setValues(v => ({
+                              ...v,
+                              pharmacy_name: selectedPharmacy.name,
+                              pharmacy_address: selectedPharmacy.address,
+                              pharm_zip: selectedPharmacy.zipcode,
+                              pharm_city: selectedPharmacy.city
+                            }));
                           }
-                        />
-                      </div>
-                    )}
-
-                  </Select>
+                        }
+                      }}
+                      displayEmpty
+                      renderValue={(selected) => selected ? (selected === "__new" ? "Add New Pharmacy" : selected) : "Select Pharmacy"}
+                    >
+                      {pharmacies.map((pharm, idx) => (
+                        <MenuItem key={idx} value={pharm.name}>
+                          {pharm.name}
+                        </MenuItem>
+                      ))}
+                      <MenuItem value="__new">Add New Pharmacy</MenuItem>
+                    </Select>
+                  </label>
                 </div>
-
 
                 {isNewPharmacy && (
                   <>
                     <div className="labels">
-                      <label htmlFor="pharmacy_address" className="long-label">Pharmacy Address:</label>
-                      <input
-                        type="text"
-                        name="pharmacy_address"
-                        className="form-control"
-                        placeholder="Enter pharmacy address"
-                        value={values.pharmacy_address}
-                        onChange={(e) => setValues({ ...values, pharmacy_address: e.target.value })}
-                      />
+                      <label className="input-group">
+                        Pharmacy Name:
+                        <input
+                          type="text"
+                          name="pharmacy_name"
+                          className="input-field" 
+                          placeholder="Enter new pharmacy name"
+                          value={values.pharmacy_name}
+                          onChange={e => setValues({...values, pharmacy_name: e.target.value})}
+                          required
+                        />
+                      </label>
+                    </div>
+                    <div className="labels">
+                      <label className="input-group">
+                        Pharmacy Address:
+                        <input
+                          type="text"
+                          name="pharmacy_address"
+                          className="input-field" 
+                          placeholder="Enter pharmacy address"
+                          value={values.pharmacy_address}
+                          onChange={e => setValues({...values, pharmacy_address: e.target.value})}
+                          required
+                        />
+                      </label>
                     </div>
                     <div className="horizontal-bar">
                       <div className="labels">
-                        <label htmlFor="pharm_zip" className="def-label">Zip Code:</label>
-                        <input
-                          type="text"
-                          name="pharm_zip"
-                          className="form-control-dob"
-                          placeholder="Enter ZIP"
-                          value={values.pharm_zip}
-                          onChange={(e) => setValues({ ...values, pharm_zip: e.target.value })}
-                        />
+                        <label className="input-group">
+                          Zip Code:
+                          <input
+                            type="text"
+                            name="pharm_zip"
+                            className="input-field-small" 
+                            placeholder="Enter ZIP"
+                            value={values.pharm_zip}
+                            onChange={e => setValues({...values, pharm_zip: e.target.value})}
+                            pattern="^\d{5}(-\d{4})?$"
+                            title="Please enter a valid 5-digit ZIP code"
+                            required
+                          />
+                        </label>
                       </div>
                       <div className="labels">
-                        <label htmlFor="pharm_city" className="short-label">City:</label>
-                        <input
-                          type="text"
-                          name="pharm_city"
-                          className="form-control-gender"
-                          placeholder="Enter City"
-                          value={values.pharm_city}
-                          onChange={(e) => setValues({ ...values, pharm_city: e.target.value })}
-                        />
+                        <label className="input-group">
+                          City:
+                          <input
+                            type="text"
+                            name="pharm_city"
+                            className="input-field-small" 
+                            placeholder="Enter City"
+                            value={values.pharm_city}
+                            onChange={e => setValues({...values, pharm_city: e.target.value})}
+                            required
+                          />
+                        </label>
                       </div>
                     </div>
                   </>
                 )}
-              </div>
+              </div> */}
+              <div className="pharmacy-info">
+  <h1>Pharmacy Information</h1>
+
+  <div className="labels">
+    <label className="input-group">Pharmacy: 
+      <Select
+        className="input-field-select"
+        value={values.pharmacy_name}
+        onChange={(e) => {
+          const selectedName = e.target.value;
+          const selectedPharmacy = pharmacies.find(p => p.name === selectedName);
+          if (selectedPharmacy) {
+            setValues(v => ({
+              ...v,
+              pharmacy_name: selectedPharmacy.name,
+              pharmacy_address: selectedPharmacy.address,
+              pharm_zip: selectedPharmacy.zipcode,
+              pharm_city: selectedPharmacy.city
+            }));
+          }
+        }}
+        displayEmpty
+        renderValue={(selected) => selected ? selected : "Select Pharmacy"}
+      >
+        {pharmacies.map((pharm, idx) => (
+          <MenuItem key={idx} value={pharm.name}>
+            {pharm.name}
+          </MenuItem>
+        ))}
+      </Select>
+    </label>
+  </div>
+</div>
+
+
 
             </div>
           </div>
@@ -544,97 +611,125 @@ function Patientsignup() {
 
                 <div className='horizontal-bar2'>
                   <div className='labels2'>
-                    <label className='def-label'htmlFor="weight">Weight: </label>
-                    <input type='text'
-                      name='weight'
-                      className="form-control-dob" 
-                      placeholder='Enter Weight'
-                      value={values.weight}
-                      onChange={e => setValues({...values, weight: e.target.value})}/>
+                    <label htmlFor="weight" className="input-group">
+                      Weight:
+                      <input
+                      sx={{color: 'black'}}
+                        type="text"
+                        name="weight"
+                        className="input-field-weight"
+                        placeholder="Enter Weight"
+                        value={values.weight}
+                        onChange={e => setValues({ ...values, weight: e.target.value })}
+                      />
+                    </label>
                   </div>
+
                   <div className='labels2'>
-                    <label className='def-label' htmlFor="height">Height: </label>
+                    <label className='input-group' htmlFor="height">Height:
                     <input type='text'
                       name='height'
-                      className="form-control-gender" 
+                      className="input-field" 
                       placeholder='Enter height'
                       value={values.height}
                       onChange={e => setValues({...values, height: e.target.value})}/>
+                      </label>
                   </div>
                   <div className='labels2'>
-                    <label htmlFor="fitness" className='active-label'>Hours of Fitness?: </label>
+                    <label htmlFor="fitness" className='input-group'>Hours of Fitness: 
                     <input type='text'
                       name='fitness'
-                      className="form-control-active" 
+                      className="input-field-weight" 
                       placeholder='Enter active level'
                       value={values.fitness}
                       onChange={e => setValues({...values, fitness: e.target.value})}/>
+                      </label>
                   </div>
                   <div className='labels2'>
-                    <label htmlFor="goal" className='goal-label'>Health Goals: </label>
+                    <label htmlFor="goal" className='input-group'>Health Goals:
                     <input type='text'
                       name='goal'
-                      className="form-control-active" 
+                      className="input-field-weight" 
                       placeholder='Enter goal'
                       value={values.goal}
                       onChange={e => setValues({...values, goal: e.target.value})}/>
+                      </label>
                   </div>
                 </div>
                 
                 <div className="table-container">
                   <div className='medic-info'>
-                    <Table>
+                    <div className='table-section'>
+                    <Table sx={{boar: "None"}}>
                       <thead>
                         <TableRow>
                           <th colSpan={2}>Please Check Off All Medical Conditions</th>
                         </TableRow>
                       </thead>
                       <tbody>
-                        <TableRow>
-                          <td>
+                      <TableRow>
+                        <td>
+                          <label className="checkbox-pill">
                             Cancer 
                             <Checkbox name="Cancer" checked={medicalConditions.includes("Cancer")} onChange={(e) => handleCheckboxChange(e, "medical")}/>
-                          </td>
-                          <td>
+                          </label>
+                        </td>
+                        <td>
+                          <label className="checkbox-pill">
                             Diabetes 
-                            <Checkbox name="Diabetes" checked={medicalConditions.includes("Diabetes")} onChange={(e) => handleCheckboxChange(e, "medical")}  />
-                          </td>
-                        </TableRow>
-                        <TableRow>
-                          <td>
+                            <Checkbox name="Diabetes" checked={medicalConditions.includes("Diabetes")} onChange={(e) => handleCheckboxChange(e, "medical")}/>
+                          </label>
+                        </td>
+                      </TableRow>
+                      <TableRow>
+                        <td>
+                          <label className="checkbox-pill">
                             Pregnant 
-                            <Checkbox name="Pregnant" checked={medicalConditions.includes("Pregnant")} onChange={(e) => handleCheckboxChange(e, "medical")}  />
-                          </td>
-                          <td>
+                            <Checkbox name="Pregnant" checked={medicalConditions.includes("Pregnant")} onChange={(e) => handleCheckboxChange(e, "medical")}/>
+                          </label>
+                        </td>
+                        <td>
+                          <label className="checkbox-pill">
                             Bipolar 
-                            <Checkbox name="Bipolar" checked={medicalConditions.includes("Bipolar")} onChange={(e) => handleCheckboxChange(e, "medical")} />
-                          </td>
-                        </TableRow>
-                        <TableRow>
-                          <td>
+                            <Checkbox name="Bipolar" checked={medicalConditions.includes("Bipolar")} onChange={(e) => handleCheckboxChange(e, "medical")}/>
+                          </label>
+                        </td>
+                      </TableRow>
+                      <TableRow>
+                        <td>
+                          <label className="checkbox-pill">
                             Asthma 
-                            <Checkbox name="Asthma" checked={medicalConditions.includes("Asthma")} onChange={(e) => handleCheckboxChange(e, "medical")}  />
-                          </td>
-                          <td>
+                            <Checkbox name="Asthma" checked={medicalConditions.includes("Asthma")} onChange={(e) => handleCheckboxChange(e, "medical")}/>
+                          </label>
+                        </td>
+                        <td>
+                          <label className="checkbox-pill">
                             Anxiety 
-                            <Checkbox name="Anxiety" checked={medicalConditions.includes("Anxiety")} onChange={(e) => handleCheckboxChange(e, "medical")}  />
-                          </td>
-                        </TableRow>
-                        <TableRow>
-                          <td>
+                            <Checkbox name="Anxiety" checked={medicalConditions.includes("Anxiety")} onChange={(e) => handleCheckboxChange(e, "medical")}/>
+                          </label>
+                        </td>
+                      </TableRow>
+                      <TableRow>
+                        <td>
+                          <label className="checkbox-pill">
                             Epilepsy 
-                            <Checkbox name="Epilepsy" checked={medicalConditions.includes("Epilepsy")} onChange={(e) => handleCheckboxChange(e, "medical")}  />
-                          </td>
-                          <td>
+                            <Checkbox name="Epilepsy" checked={medicalConditions.includes("Epilepsy")} onChange={(e) => handleCheckboxChange(e, "medical")}/>
+                          </label>
+                        </td>
+                        <td>
+                          <label className="checkbox-pill">
                             Other 
-                            <Checkbox name="Other" checked={medicalConditions.includes("Other")} onChange={(e) => handleCheckboxChange(e, "medical")}  />
-                          </td>
-                        </TableRow>
+                            <Checkbox name="Other" checked={medicalConditions.includes("Other")} onChange={(e) => handleCheckboxChange(e, "medical")}/>
+                          </label>
+                        </td>
+                      </TableRow>
                       </tbody>
                     </Table>
+                    </div>
                   </div>
 
                   <div className='diet-info'>
+                    <div className='table-section'>
                     <Table>
                       <thead>
                         <TableRow>
@@ -642,59 +737,85 @@ function Patientsignup() {
                         </TableRow>
                       </thead>
                       <tbody>
-                        <TableRow>
-                          <td>
+                      <TableRow>
+                        <td>
+                          <label className="checkbox-pill">
                             Nuts 
-                            <Checkbox name="Nuts" checked={dietaryRestrictions.includes("Nuts")} onChange={(e) => handleCheckboxChange(e, "diet")} />
-                            </td>
-                          <td>
+                            <Checkbox name="Nuts" checked={dietaryRestrictions.includes("Nuts")} onChange={(e) => handleCheckboxChange(e, "diet")}/>
+                          </label>
+                        </td>
+                        <td>
+                          <label className="checkbox-pill">
                             Eggs 
-                            <Checkbox name="Eggs" checked={dietaryRestrictions.includes("Eggs")} onChange={(e) => handleCheckboxChange(e, "diet")}  />
-                          </td>
-                        </TableRow>
-                        <TableRow>
-                          <td>
+                            <Checkbox name="Eggs" checked={dietaryRestrictions.includes("Eggs")} onChange={(e) => handleCheckboxChange(e, "diet")}/>
+                          </label>
+                        </td>
+                      </TableRow>
+                      <TableRow>
+                        <td>
+                          <label className="checkbox-pill">
                             Gluten 
-                            <Checkbox name="Gluten" checked={dietaryRestrictions.includes("Gluten")} onChange={(e) => handleCheckboxChange(e, "diet")} />
-                          </td>
-                          <td>
+                            <Checkbox name="Gluten" checked={dietaryRestrictions.includes("Gluten")} onChange={(e) => handleCheckboxChange(e, "diet")}/>
+                          </label>
+                        </td>
+                        <td>
+                          <label className="checkbox-pill">
                             Vegan 
-                            <Checkbox name="Vegan" checked={dietaryRestrictions.includes("Vegan")} onChange={(e) => handleCheckboxChange(e, "diet")}  />
-                          </td>
-                        </TableRow>
-                        <TableRow>
-                          <td>
+                            <Checkbox name="Vegan" checked={dietaryRestrictions.includes("Vegan")} onChange={(e) => handleCheckboxChange(e, "diet")}/>
+                          </label>
+                        </td>
+                      </TableRow>
+                      <TableRow>
+                        <td>
+                          <label className="checkbox-pill">
                             Fish 
-                            <Checkbox name="Fish" checked={dietaryRestrictions.includes("Fish")} onChange={(e) => handleCheckboxChange(e, "diet")}  />
-                          </td>
-                          <td>
+                            <Checkbox name="Fish" checked={dietaryRestrictions.includes("Fish")} onChange={(e) => handleCheckboxChange(e, "diet")}/>
+                          </label>
+                        </td>
+                        <td>
+                          <label className="checkbox-pill">
                             Vegetarian 
-                            <Checkbox name="Vegetarian" checked={dietaryRestrictions.includes("Vegetarian")} onChange={(e) => handleCheckboxChange(e, "diet")}  />
-                          </td>
-                        </TableRow>
-                        <TableRow>
-                          <td>
+                            <Checkbox name="Vegetarian" checked={dietaryRestrictions.includes("Vegetarian")} onChange={(e) => handleCheckboxChange(e, "diet")}/>
+                          </label>
+                        </td>
+                      </TableRow>
+                      <TableRow>
+                        <td>
+                          <label className="checkbox-pill">
                             Dairy 
-                            <Checkbox name="Dairy" checked={dietaryRestrictions.includes("Dairy")} onChange={(e) => handleCheckboxChange(e, "diet")}  />
-                          </td>
-                          <td>
+                            <Checkbox name="Dairy" checked={dietaryRestrictions.includes("Dairy")} onChange={(e) => handleCheckboxChange(e, "diet")}/>
+                          </label>
+                        </td>
+                        <td>
+                          <label className="checkbox-pill">
                             Other 
-                            <Checkbox name="Other" checked={dietaryRestrictions.includes("Other")} onChange={(e) => handleCheckboxChange(e, "diet")}  />
-                          </td>
-                        </TableRow>
+                            <Checkbox name="Other" checked={dietaryRestrictions.includes("Other")} onChange={(e) => handleCheckboxChange(e, "diet")}/>
+                          </label>
+                        </td>
+                      </TableRow>
                       </tbody>
                     </Table>
+                    </div>
                   </div>
                   <div className='labels2'>
-                    <label className='def-label' htmlFor="blood">Blood Type: </label>
+                    <label className='input-group' htmlFor="blood">Blood Type:
                     <Select
-                      className="form-control-select"
+                      className="input-field"
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
                       value={blood}
                       onChange={handleChange2}
                       displayEmpty
                       renderValue={(selected) => selected ? selected : "Select Blood Type"}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            backgroundColor: '#EEF2FE',
+                            borderRadius: 5, // rounds the dropdown menu
+                            mt: 1, // optional spacing between input and menu
+                          },
+                        },
+                      }}
                     >
                       <MenuItem value='A+'>A+</MenuItem>
                       <MenuItem value='A-'>A-</MenuItem>
@@ -705,6 +826,7 @@ function Patientsignup() {
                       <MenuItem value='O+'>O+</MenuItem>
                       <MenuItem value='O-'>O-</MenuItem>
                     </Select>
+                    </label>
                   </div>
                 </div>
               </div>
@@ -716,11 +838,12 @@ function Patientsignup() {
               <div className="basic-info">
                 <h1>Other Information</h1>
                 <div className='labels'>
-                  <label htmlFor="insur_name" className='long-label'>Insurance Name: </label>
+                  <label htmlFor="insur_name" className='insurance-label'>
+                    Insurance Name:
                     <input 
                       type='text'
                       name='insur_name'
-                      className="form-control" 
+                      className="insurance-input" 
                       placeholder='Enter insurance name (e.g., Blue Cross)'
                       value={values.insur_name}
                       onChange={e => setValues({...values, insur_name: e.target.value})}
@@ -732,33 +855,37 @@ function Patientsignup() {
                         }
                       }}
                     />
-                  </div>
+                  </label>
+                </div>
                 <div className='labels'>
-                  <label htmlFor="policy" className='long-label'>Policy Number: </label>
+                  <label htmlFor="policy" className='insurance-label'>Policy Number: 
                   <input
                     type='text'
                     name='policy'
-                    className="form-control" 
+                    className="insurance-input" 
                     placeholder='Enter policy number (numbers only)'
                     pattern="^[0-9]+$"
                     title="Policy number must contain only numbers"
                     value={values.policy}
                     onChange={e => setValues({...values, policy: e.target.value})}
                   />
+                  </label>
                 </div>
                 {/*Normal Now */}
                 <div className='labels'>
-                  <label className='def-label' htmlFor="exp">Exp. Date: </label>
+                  <label className='input-group' htmlFor="exp">Exp. Date: 
                   <input type='date'
                     name='exp'
-                    className="form-control" 
+                    className="input-field" 
                     placeholder='Enter your exp date'
                     value={values.exp}
                     onChange={e => setValues({...values, exp: e.target.value})}/>
+                    </label>
                 </div>
                 <div className='labels'>
-                  <label className='def-label' htmlFor="email">Email: </label>
+                  <label className='input-group' htmlFor="email">Email: 
                   <input
+                    className="input-field" 
                     type="email"
                     name="email"
                     value={values.email}
@@ -773,15 +900,16 @@ function Patientsignup() {
                       }
                     }}
                   />
+                  </label>
                 </div>
                 <div className='labels'>
-                  <label className='def-label'htmlFor="password">Password: </label>
+                  <label className='input-group'htmlFor="password">Password: 
                   <input
                     type={showPassword ? "text" : "password"}
                     id="psw"
                     pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                     name='password'
-                    className="form-control"
+                    className="input-field"
                     placeholder='Enter your password'
                     title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
                     required
@@ -792,13 +920,16 @@ function Patientsignup() {
                     onClick={() => setShowPassword(!showPassword)}
                     size="small"
                     variant="text"
-                    style={{ marginTop: '5px' }}
+                    className="icon-button"
                   >
-                    {showPassword ? <VisibilityIcon/> : <VisibilityOffIcon/>}
+                    {showPassword 
+                      ? <VisibilityIcon/> 
+                      : <VisibilityOffIcon />}
                   </Button>
+                  </label>
                 </div>      
                 <div className='labels'> 
-                  <label className='terms' onClick={handleOpen}>Do you Accept the terms and conditions? 
+                  <label className='input-group' onClick={handleOpen}>Do you Accept the terms and conditions? 
                     <Checkbox checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)}  />
                   </label>
                           <Modal

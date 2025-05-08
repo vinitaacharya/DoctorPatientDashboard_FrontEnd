@@ -69,7 +69,7 @@ function Doctorsignup() {
     setSnackOpen(true);
   };
 
-  const handleChange2 = (event: SelectChangeEvent) => {
+  const handleChange2 = (event) => {
     setGender(event.target.value);
     setValues({...values, gender: event.target.value});
   };
@@ -250,156 +250,177 @@ function Doctorsignup() {
               <div className="basic-info">
                 <h1>Basic Information</h1>
                 <div className='labels'>
-                  <label className='def-label' htmlFor="first_name">First Name: </label>
-                  <input 
-                    type='text'
-                    name='first_name'
-                    className="form-control" 
-                    placeholder='Enter First Name'
-                    value={values.first_name}
-                    onChange={e => setValues({...values, first_name: e.target.value})}
-                    required
-                  />
+                  <label htmlFor="first_name" className='input-group'>
+                    First Name:
+                    <input 
+                      type='text'
+                      name='first_name'
+                      className="input-field" 
+                      placeholder='Enter First Name'
+                      value={values.first_name}
+                      onChange={e => setValues({...values, first_name: e.target.value})}
+                      required
+                    />
+                  </label>
                 </div>
                 <div className='labels'>
-                  <label className='def-label' htmlFor="last_name">Last Name: </label>
-                  <input 
-                    type='text'
-                    name='last_name'
-                    className="form-control" 
-                    placeholder='Enter Last Name'
-                    value={values.last_name}
-                    onChange={e => setValues({...values, last_name: e.target.value})}
-                    required
-                  />
+                  <label className='input-group' htmlFor="last_name">
+                    Last Name:
+                    <input 
+                      type='text'
+                      name='last_name'
+                      className="input-field" 
+                      placeholder='Enter Last Name'
+                      value={values.last_name}
+                      onChange={e => setValues({...values, last_name: e.target.value})}
+                      required
+                    />
+                  </label>
                 </div>
 
                 {/*Make the fields horizontal */}
                 <div className='horizontal-bar'>
                   <div className='labels'>
-                    <label htmlFor="dob" className='short-label'>DOB: </label>
-                    <input 
-                      type='date'
-                      name='dob'
-                      className="form-control-dob" 
-                      placeholder='Enter DOB'
-                      value={values.dob}
-                      onChange={e => setValues({...values, dob: e.target.value})}
-                      required
-                    />
+                    <label htmlFor="dob" className='input-group'>
+                      DOB:
+                      <input 
+                        type='date'
+                        name='dob'
+                        className="input-field-dob" 
+                        placeholder='Enter DOB'
+                        value={values.dob}
+                        onChange={e => setValues({...values, dob: e.target.value})}
+                        required
+                      />
+                    </label>
                   </div>
                   <div className='labels'>
-                    <label htmlFor="gender" className='gender-label'>Gender: </label>
-                    <Select
-                      className="form-control-select"
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={gender}
-                      onChange={handleChange2}
-                      displayEmpty
-                      renderValue={(selected) => selected ? selected : "Select Gender"}
-                      required
-                    >
-                      <MenuItem value='Male'>Male</MenuItem>
-                      <MenuItem value='Female'>Female</MenuItem>
-                      <MenuItem value='Other'>Other</MenuItem>
-                    </Select>
+                    <label htmlFor="gender" className='input-group'>
+                      Gender:
+                      <Select
+                        className="input-field-small"
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={gender}
+                        onChange={handleChange2}
+                        displayEmpty
+                        renderValue={(selected) => selected ? selected : "Select"}
+                        sx={{
+                          height: '35px',
+                          borderRadius: '23px',
+                          '& .MuiSelect-select': {
+                            padding: '0 10px'
+                          }
+                        }}
+                      >
+                        <MenuItem value='Male'>Male</MenuItem>
+                        <MenuItem value='Female'>Female</MenuItem>
+                        <MenuItem value='Other'>Other</MenuItem>
+                      </Select>
+                    </label>
                   </div>
                 </div>
 
                 {/*Normal Now */}
                 <div className='labels'>
-                  <label className='def-label' htmlFor="phone">Phone: </label>
-                  <input 
-                    type='tel'
-                    name='phone'
-                    className="form-control" 
-                    placeholder='Enter phone number'
-                    pattern="^(?:\d{3}-\d{3}-\d{4}|\d{10})$"
-                    title="Please enter a valid phone number (e.g., 123-456-7890 or 1234567890)"
-                    value={values.phone}
-                    onChange={e => {
-                      // Auto-format as user types
-                      const input = e.target.value.replace(/\D/g, ''); // Remove all non-digits
-                      let formatted = input;
-                      
-                      // Format as 123-456-7890 if length > 3 and <= 6
-                      if (input.length > 3 && input.length <= 6) {
-                        formatted = `${input.slice(0, 3)}-${input.slice(3)}`;
-                      } 
-                      // Format as 123-456-7890 if length > 6
-                      else if (input.length > 6) {
-                        formatted = `${input.slice(0, 3)}-${input.slice(3, 6)}-${input.slice(6, 10)}`;
-                      }
-                      
-                      setValues({...values, phone: formatted});
-                    }}
-                    maxLength="12" // 123-456-7890 is 12 chars
-                    onBlur={(e) => {
-                      if (!validatePhoneNumber(e.target.value)) {
-                        showSnack("Please enter a valid phone number (e.g., 123-456-7890 or 1234567890)");
-                      }
-                    }}
-                    required
-                  />
-                </div>
-                <div className='labels'>
-                  <label className='def-label' htmlFor="address">Address: </label>
-                  <input 
-                    type='text'
-                    name='address'
-                    className="form-control" 
-                    placeholder='Enter your address'
-                    value={values.address}
-                    onChange={e => setValues({...values, address: e.target.value})}
-                    required
-                  />
-                </div>
-
-                {/*Make fields horizontal again */}              
-                <div className='horizontal-bar'>
-                  <div className='labels'>
-                    <label htmlFor="zip" className='def-label'>Zip code: </label>
+                  <label className='input-group' htmlFor="phone">
+                    Phone:
                     <input 
-                      type='text'
-                      name='zip'
-                      className="form-control-dob" 
-                      placeholder='Enter ZIP'
-                      pattern="^\d{5}(-\d{4})?$"
-                      title="Please enter a valid 5-digit ZIP code (optionally with 4-digit extension)"
-                      value={values.zip}
-                      onChange={e => setValues({...values, zip: e.target.value})}
+                      type='tel'
+                      name='phone'
+                      className="input-field" 
+                      placeholder='Enter phone (e.g., 123-456-7890 or 1234567890)'
+                      pattern="^(?:\d{3}-\d{3}-\d{4}|\d{10})$"
+                      title="Please enter a valid phone number (e.g., 123-456-7890 or 1234567890)"
+                      value={values.phone}
+                      onChange={e => {
+                        const input = e.target.value.replace(/\D/g, '');
+                        let formatted = input;
+                        
+                        if (input.length > 3 && input.length <= 6) {
+                          formatted = `${input.slice(0, 3)}-${input.slice(3)}`;
+                        } 
+                        else if (input.length > 6) {
+                          formatted = `${input.slice(0, 3)}-${input.slice(3, 6)}-${input.slice(6, 10)}`;
+                        }
+                        
+                        setValues({...values, phone: formatted});
+                      }}
+                      maxLength="12"
                       onBlur={(e) => {
-                        if (!validateZipCode(e.target.value)) {
-                          showSnack("Please enter a valid 5-digit ZIP code");
+                        if (!validatePhoneNumber(e.target.value)) {
+                          showSnack("Please enter a valid phone number (e.g., 123-456-7890 or 1234567890)");
                         }
                       }}
                       required
                     />
-                  </div>
-                  <div className='labels'>
-                    <label htmlFor="city" className='short-label'>City: </label>
+                  </label>
+                </div>
+                <div className='labels'>
+                  <label className='input-group' htmlFor="address">
+                    Address:
                     <input 
                       type='text'
-                      name='city'
-                      className="form-control-gender" 
-                      placeholder='Enter City'
-                      value={values.city}
-                      onChange={e => setValues({...values, city: e.target.value})}
+                      name='address'
+                      className="input-field" 
+                      placeholder='Enter your address'
+                      value={values.address}
+                      onChange={e => setValues({...values, address: e.target.value})}
                       required
                     />
+                  </label>
+                </div>
+
+                {/*Make fields horizontal again */}
+                <div className='horizontal-bar'>
+                  <div className='labels'>
+                    <label htmlFor="zip" className='input-group'>
+                      Zip code:
+                      <input 
+                        type='text'
+                        name='zip'
+                        className="input-field-small" 
+                        placeholder='Enter ZIP'
+                        pattern="^\d{5}(-\d{4})?$"
+                        title="Please enter a valid 5-digit ZIP code (optionally with 4-digit extension)"
+                        value={values.zip}
+                        onChange={e => setValues({...values, zip: e.target.value})}
+                        onBlur={(e) => {
+                          if (!validateZipCode(e.target.value)) {
+                            showSnack("Please enter a valid 5-digit ZIP code");
+                          }
+                        }}
+                        required
+                      />
+                    </label>
                   </div>
                   <div className='labels'>
-                    <label htmlFor="state" className='gender-label'>State: </label>
-                    <input 
-                      type='text'
-                      name='state'
-                      className="form-control-gender" 
-                      placeholder='Enter state'
-                      value={values.state}
-                      onChange={e => setValues({...values, state: e.target.value})}
-                      required
-                    />
+                    <label htmlFor="city" className='input-group'>
+                      City:
+                      <input 
+                        type='text'
+                        name='city'
+                        className="input-field-small" 
+                        placeholder='Enter City'
+                        value={values.city}
+                        onChange={e => setValues({...values, city: e.target.value})}
+                        required
+                      />
+                    </label>
+                  </div>
+                  <div className='labels'>
+                    <label htmlFor="state" className='input-group'>
+                      State:
+                      <input 
+                        type='text'
+                        name='state'
+                        className="input-field-small" 
+                        placeholder='Enter state'
+                        value={values.state}
+                        onChange={e => setValues({...values, state: e.target.value})}
+                        required
+                      />
+                    </label>
                   </div>
                 </div>
               </div>
@@ -408,100 +429,111 @@ function Doctorsignup() {
               <div className="doctor-info">
                 <h1>Doctor Information</h1>
                 <div className='labels'>
-                  <label htmlFor="license_num" className='medical-num'>Medical License Number: </label>
-                  <input 
-                    type='text'
-                    name='license_num'
-                    className="form-control" 
-                    placeholder='Enter license number'
-                    value={values.license_num}
-                    onChange={e => {
-                      // Only allow numeric input
-                      const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                      setValues({...values, license_num: numericValue});
-                    }}
-                    onBlur={(e) => {
-                      if (!validateLicenseNumber(e.target.value)) {
-                        showSnack("License number must contain only numbers");
-                      }
-                    }}
-                    required
-                  />
+                  <label htmlFor="license_num" className='input-group'>
+                    Medical License Number:
+                    <input 
+                      type='text'
+                      name='license_num'
+                      className="input-field" 
+                      placeholder='Enter license number'
+                      value={values.license_num}
+                      onChange={e => {
+                        const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                        setValues({...values, license_num: numericValue});
+                      }}
+                      onBlur={(e) => {
+                        if (!validateLicenseNumber(e.target.value)) {
+                          showSnack("License number must contain only numbers");
+                        }
+                      }}
+                      required
+                    />
+                  </label>
                 </div>
                 <div className='labels'>
-                  <label htmlFor="license_exp_date" className='exp'>Medical License Exp: </label>
-                  <input 
-                    type='date'
-                    name='license_exp_date'
-                    className="form-control-exp" 
-                    placeholder='Enter expiration date'
-                    value={values.license_exp_date}
-                    onChange={e => setValues({...values, license_exp_date: e.target.value})}
-                    required
-                  />
+                  <label htmlFor="license_exp_date" className='input-group'>
+                    Medical License Exp:
+                    <input 
+                      type='date'
+                      name='license_exp_date'
+                      className="input-field" 
+                      placeholder='Enter expiration date'
+                      value={values.license_exp_date}
+                      onChange={e => setValues({...values, license_exp_date: e.target.value})}
+                      required
+                    />
+                  </label>
                 </div>
                 <div className='labels'>
-                  <label htmlFor="med_school" className='school'>Medical School: </label>
-                  <input 
-                    type='text'
-                    name='med_school'
-                    className="form-control" 
-                    placeholder='Enter Medical School'
-                    value={values.med_school}
-                    onChange={e => setValues({...values, med_school: e.target.value})}
-                    onBlur={(e) => {
-                      if (!validateMedicalSchool(e.target.value)) {
-                        showSnack("Please enter a valid medical school name");
-                      }
-                    }}
-                    required
-                  />
+                  <label htmlFor="med_school" className='input-group'>
+                    Medical School:
+                    <input 
+                      type='text'
+                      name='med_school'
+                      className="input-field" 
+                      placeholder='Enter Medical School'
+                      value={values.med_school}
+                      onChange={e => setValues({...values, med_school: e.target.value})}
+                      onBlur={(e) => {
+                        if (!validateMedicalSchool(e.target.value)) {
+                          showSnack("Please enter a valid medical school name");
+                        }
+                      }}
+                      required
+                    />
+                  </label>
                 </div>
                 <div className='labels'>
-                  <label htmlFor="years_of_practice" className='years'>Years in Practice: </label>
-                  <input 
-                    type='text'
-                    name='years_of_practice'
-                    className="form-control" 
-                    placeholder='Enter number of years'
-                    value={values.years_of_practice}
-                    onChange={e => setValues({...values, years_of_practice: e.target.value})}
-                    onBlur={(e) => {
-                      if (!validateYearsOfPractice(e.target.value)) {
-                        showSnack("Years of practice must be a positive number");
-                      }
-                    }}
-                    required
-                  />
+                  <label htmlFor="years_of_practice" className='input-group'>
+                    Years in Practice:
+                    <input 
+                      type='text'
+                      name='years_of_practice'
+                      className="input-field" 
+                      placeholder='Enter number of years'
+                      value={values.years_of_practice}
+                      onChange={e => setValues({...values, years_of_practice: e.target.value})}
+                      onBlur={(e) => {
+                        if (!validateYearsOfPractice(e.target.value)) {
+                          showSnack("Years of practice must be a positive number");
+                        }
+                      }}
+                      required
+                    />
+                  </label>
                 </div>
                 <div className='labels'>
-                  <label htmlFor="payment_fee" className='med-label'>Payment Fee: </label>
-                  <input 
-                    type='text'
-                    name='payment_fee'
-                    className="form-control" 
-                    placeholder='Enter amount'
-                    value={values.payment_fee}
-                    onChange={e => setValues({...values, payment_fee: e.target.value})}
-                    onBlur={(e) => {
-                      if (!validatePaymentFee(e.target.value)) {
-                        showSnack("Payment fee must be a valid dollar amount (e.g., 100 or 150.50)");
-                      }
-                    }}
-                    required
-                  />
+                  <label htmlFor="payment_fee" className='input-group'>
+                    Payment Fee:
+                    <input 
+                      type='text'
+                      name='payment_fee'
+                      className="input-field" 
+                      placeholder='Enter amount'
+                      value={values.payment_fee}
+                      onChange={e => setValues({...values, payment_fee: e.target.value})}
+                      onBlur={(e) => {
+                        if (!validatePaymentFee(e.target.value)) {
+                          showSnack("Payment fee must be a valid dollar amount (e.g., 100 or 150.50)");
+                        }
+                      }}
+                      required
+                    />
+                  </label>
                 </div>
                 <div className='labels'>
-                  <label htmlFor="specialty" className='med-label'>Specialty: </label>
-                  <input 
-                    type='text'
-                    name='specialty'
-                    className="form-control" 
-                    placeholder='Enter specialty'
-                    value={values.specialty}
-                    onChange={e => setValues({...values, specialty: e.target.value})}
-                    required
-                  />
+                  <label htmlFor="specialty" className='input-group'>
+                    Specialty:
+                    <input 
+                      type='text'
+                      name='specialty'
+                      className="input-field" 
+                      placeholder='Enter specialty'
+                      value={values.specialty}
+                      onChange={e => setValues({...values, specialty: e.target.value})}
+                      required
+                    />
+                  </label>
                 </div>
               </div>
             </div>
@@ -512,8 +544,9 @@ function Doctorsignup() {
               <div className="basic-info">
                 <h1>Other Information</h1>
                 <div className='labels2'>
-                  <label className='def-label' htmlFor="email">Email: </label>
+                  <label className='input-group' htmlFor="email">Email: 
                   <input
+                  className='input-field'
                     type="email"
                     name="email"
                     value={values.email}
@@ -528,15 +561,16 @@ function Doctorsignup() {
                       }
                     }}
                   />
+                  </label>
                 </div>
                 <div className='labels2'>
-                  <label className='def-label'htmlFor="password">Password: </label>
+                  <label className='input-group'htmlFor="password">Password: 
                   <input
                     type={showPassword ? "text" : "password"}
                     id="psw"
                     pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                     name='password'
-                    className="form-control"
+                    className="input-field"
                     placeholder='Enter your password'
                     title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
                     required
@@ -547,10 +581,13 @@ function Doctorsignup() {
                     onClick={() => setShowPassword(!showPassword)}
                     size="small"
                     variant="text"
-                    style={{ marginTop: '5px' }}
+                    className="icon-button2"
                   >
-                    {showPassword ? <VisibilityIcon/> : <VisibilityOffIcon/>}
+                    {showPassword 
+                      ? <VisibilityIcon/> 
+                      : <VisibilityOffIcon />}
                   </Button>
+                  </label>
                 </div>        
                 <div className='labels'> 
                   <label className='terms' onClick={handleOpen}>Do you Accept the terms and conditions? 

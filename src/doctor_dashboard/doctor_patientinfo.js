@@ -14,6 +14,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 function DoctorPatientInfo() {
 
     const [activeTab, setActiveTab] = useState(0);
+    const [pastAppointments, setPastAppointments] = useState([]); // Add this line
     const [chartTab, setChartTab] = useState(0);
     const [dailyInfo, setDailyInfo] = useState(null);
     const [weeklyInfo, setWeeklyInfo] = useState(null);
@@ -24,7 +25,19 @@ function DoctorPatientInfo() {
     const [weeklyGraphIndex, setWeeklyGraphIndex] = useState(0);
 
 
-      
+    useEffect(() => {
+      const fetchPastAppointments = async () => {
+          try {
+              const response = await fetch(`http://localhost:5000/past-appointments/${patientId}`);
+              if (!response.ok) throw new Error("Failed to fetch appointments");
+              const data = await response.json();
+              setPastAppointments(data);
+          } catch (error) {
+              console.error("Error fetching past appointments:", error);
+          }
+      };
+      fetchPastAppointments();
+  }, [patientId]);
 
 
     const [patientInfo, setPatientInfo] = useState({
@@ -291,16 +304,29 @@ function DoctorPatientInfo() {
                     }}
                 />
 
+              {/* NEW: Past Appointments tab */}
+                <Tab
+                  label="Past Appointments"
+                  onClick={() => setActiveTab(1)}
+                  sx={{
+                      background: activeTab === 1 ? '#A2BDF8' : 'transparent',
+                      borderBottom: activeTab === 1 ? '2px solid #1976d2' : 'none',
+                      borderRadius: '4px 4px 0 0',
+                      textTransform: 'none',
+                      fontWeight: activeTab === 1 ? 'bold' : 'normal'
+                  }}
+                />
+
                 {/* Graphs tab (right) */}
                 <Tab
                     label="Graphs"
-                    onClick={() => setActiveTab(1)}
+                    onClick={() => setActiveTab(2)}
                     sx={{
-                    background: activeTab === 1 ? '#9FBDDC' : 'transparent',
-                    borderBottom: activeTab === 1 ? '2px solid #1976d2' : 'none',
+                    background: activeTab === 2 ? '#9FBDDC' : 'transparent',
+                    borderBottom: activeTab === 2 ? '2px solid #1976d2' : 'none',
                     borderRadius: '4px 4px 0 0',
                     textTransform: 'none',
-                    fontWeight: activeTab === 1 ? 'bold' : 'normal'
+                    fontWeight: activeTab === 2 ? 'bold' : 'normal'
                     }}
                 />
                 </Box>
@@ -507,7 +533,52 @@ function DoctorPatientInfo() {
                         </Box>
                     )}
 
+                      {/* // In your DoctorPatientInfo component, update the past appointments section (activeTab === 1) to: */}
+
                     {activeTab === 1 && (
+                      <Box sx={{background: '#A2BDF8', flexGrow: 1, p: 3, height: '100%'}}>
+                        <Typography variant="h6" gutterBottom>Past Appointments</Typography>
+                        {pastAppointments.length > 0 ? (
+                          <Box sx={{ 
+                            maxHeight: '500px', 
+                            overflow: 'auto',
+                            '&::-webkit-scrollbar': {
+                              width: '6px',
+                            },
+                            '&::-webkit-scrollbar-track': {
+                              background: '#f1f1f1',
+                              borderRadius: '10px',
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                              background: '#888',
+                              borderRadius: '10px',
+                            },
+                            '&::-webkit-scrollbar-thumb:hover': {
+                              background: '#555',
+                            }
+                          }}>
+                            {pastAppointments.map((appt, index) => (
+                              <Paper key={index} sx={{ 
+                                p: 2, 
+                                mb: 2,
+                                backgroundColor: "#d9e6f6",
+                                borderRadius: "30px",
+                              }}>
+                                <Typography><strong>Date:</strong> {new Date(appt.appointment_datetime).toLocaleString()}</Typography>
+                                <Typography><strong>Reason:</strong> {appt.reason_for_visit}</Typography>
+                                <Typography><strong>Notes:</strong> {appt.doctor_appointment_note || 'No notes available'}</Typography>
+                              </Paper>
+                            ))}
+                          </Box>
+                        ) : (
+                          <Typography>No past appointments found</Typography>
+                        )}
+                      </Box>
+                    )}
+
+
+
+                    {activeTab === 2 && (
                         <Box sx={{background: '#9FBDDC', flexGrow: 1, p: 3 }}>
                             <Box sx={{ ml: 4 }}>  {/* Adjust "4" to how much space you want */}
                             <Typography variant="h6" gutterBottom>Health Graphs</Typography>

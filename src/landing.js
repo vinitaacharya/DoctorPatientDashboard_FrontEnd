@@ -332,22 +332,24 @@ const handleCopy = (text) => {
                                 Patient Login
                               </Typography>
                                     <div className='labels'>
-                                        <label className = 'def-label' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Email: </label>
+                                        <label className = 'input-group' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Email: 
                                         <input type='text'
                                         name='email'
-                                        className="form-control" 
+                                        className="input-field" 
                                         placeholder='Enter Email'
                                         value={values.email}
                                         onChange={e => setValues({...values, email: e.target.value})}/>
+                                        </label>
                                     </div>
                                     <div className='labels'>
-                                        <label className = 'def-label' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Password: </label>
+                                        <label className = 'input-group' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Password: 
                                         <input type='password'
                                         name='password'
-                                        className="form-control" 
+                                        className="input-field-pass" 
                                         placeholder='Enter Password'
                                         value={values.password}
                                         onChange={e => setValues({...values, password: e.target.value})}/>
+                                    </label>
                                     </div>
                                     <button className="patientlogin btn-info" style={{background: 'teal'}} onClick={() => handleLogin(values.email, values.password)}>
                                             Login
@@ -369,22 +371,24 @@ const handleCopy = (text) => {
                                 Doctor Login
                               </Typography>
                                     <div className='labels'>
-                                        <label className = 'def-label' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Email: </label>
+                                        <label className = 'input-group' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Email: 
                                         <input type='text'
                                         name='email'
-                                        className="form-control" 
+                                        className="input-field" 
                                         placeholder='Enter Email'
                                         value={values.email}
                                         onChange={e => setValues({...values, email: e.target.value})}/>
+                                        </label>
                                     </div>
                                     <div className='labels'>
-                                        <label className = 'def-label' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Password: </label>
+                                        <label className = 'input-group' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Password: 
                                         <input type='password'
                                         name='password'
-                                        className="form-control" 
+                                        className="input-field-pass" 
                                         placeholder='Enter Password'
                                         value={values.password}
                                         onChange={e => setValues({...values, password: e.target.value})}/>
+                                        </label>
                                     </div>
                                     <button className="patientlogin btn-info" onClick={() => handleLogin2(values.email, values.password)}>
                                             Login
@@ -405,22 +409,24 @@ const handleCopy = (text) => {
                                 Pharmacy Login
                               </Typography>
                                     <div className='labels'>
-                                        <label className = 'def-label' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Email: </label>
+                                        <label className = 'input-group' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Email: 
                                         <input type='text'
                                         name='email'
-                                        className="form-control" 
+                                        className="input-field" 
                                         placeholder='Enter Email'
                                         value={values.email}
                                         onChange={e => setValues({...values, email: e.target.value})}/>
+                                        </label>
                                     </div>
                                     <div className='labels'>
-                                        <label className = 'def-label' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Password: </label>
+                                        <label className = 'input-group' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Password: 
                                         <input type='password'
                                         name='password'
-                                        className="form-control" 
+                                        className="input-field-pass" 
                                         placeholder='Enter Password'
                                         value={values.password}
                                         onChange={e => setValues({...values, password: e.target.value})}/>
+                                        </label>
                                     </div>
                                     <button className="patientlogin btn-info" style={{background: 'teal'}} onClick={() => handleLogin3(values.email, values.password)}>
                                             Login
