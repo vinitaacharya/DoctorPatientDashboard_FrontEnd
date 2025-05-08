@@ -62,6 +62,7 @@ function ContactMenu() {
         color="inherit"
         onClick={handleClick}
         endIcon={<MoreVertIcon />}
+        sx={{ fontSize: '2.3vh' }}
       >
         Contact Us
       </Button>
@@ -279,13 +280,13 @@ const handleCopy = (text) => {
       D P P
     </Typography>
 
-    <Button color="inherit" onClick={() => {
+    <Button color="inherit" sx={{ fontSize: '2.3vh' }} onClick={() => {
       const section = document.getElementById("ourStories");
       section?.scrollIntoView({ behavior: 'smooth' });
     }}>
       Our Stories
     </Button>
-    <Button color="inherit" onClick={() => {
+    <Button color="inherit" sx={{ fontSize: '2.3vh' }} onClick={() => {
       const section = document.getElementById("ourDoctors");
       section?.scrollIntoView({ behavior: 'smooth' });
     }}>
