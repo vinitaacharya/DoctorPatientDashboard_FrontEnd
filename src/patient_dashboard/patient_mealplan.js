@@ -122,6 +122,18 @@ function Patient_Mealplan() {
   }, []);
   
 
+  // const [mealPlans, setMealPlans] = useState([]);
+
+  // useEffect(() => {
+  //   fetch('http://127.0.0.1:5000/doctors')
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       setDoctors(data);
+  //     })
+  //     .catch(error => {
+  //       console.error("Error fetching doctor data:", error);
+  //     });
+  // }, [])
   const savedMeals = [
     {
       title: "Cauliflower Fried Rice",
@@ -247,7 +259,7 @@ const handleSaveNew = async () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        meal_plan_name: title,
+        meal_plan_name: selectedOption,
         meal_plan_title: title, // or use a different title if needed
         patient_id: patientId
       })
@@ -256,14 +268,14 @@ const handleSaveNew = async () => {
     if (!response.ok) throw new Error('Failed to create meal plan');
 
     // Refresh meal plans with the correct patient ID
-    const refreshed = await fetch(`http://localhost:5000/get-meal-plans-by-user?patient_id=${patientId}`);
-    const data = await refreshed.json();
-    
+    const refreshed = await fetch(`http://localhost:5000/saved-meal-plans/${patientId}`);
+    const { saved_meal_plans } = await refreshed.json();
+        
     setMealPlans(
-      data.map(plan => ({
-        title: plan.meal_plan_name || "Custom",
-        author: `${plan.first_name} ${plan.last_name}` || "Custom",
-        tags: plan.meal_plan_title || "Custom"
+      saved_meal_plans.map(plan => ({
+        title: plan.title || plan.meal_plan_name,
+        author: plan.creator_name || "Custom", // Use creator_name from backend
+        tags: plan.tag || plan.description || "Custom"
       }))
     );
 
@@ -277,6 +289,20 @@ const handleSaveNew = async () => {
 };
 
   const [selectedOption, setSelectedOption] = useState(""); // ✅ Add this line
+
+  const [mealsDay, setMealsDay] = useState([]);
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:5000/doctors/meal-plan-entries')
+      .then(response => response.json())
+      .then(data => {
+        setMealsDay(data);
+        console.log("Data:", data);
+      })
+      .catch(error => {
+        console.error("Error fetching doctor data:", error);
+      });
+  }, [])
 
 
 

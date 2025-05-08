@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./landing.css";
 import heroImage from "./assets/heroimage.png";
 import patient1 from "./assets/patient1.png";
@@ -14,8 +14,24 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { useNavigate } from "react-router-dom";
-
-
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import Tooltip from '@mui/material/Tooltip';
+import TextField from '@mui/material/TextField';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Container from '@mui/material/Container';
+import Divider from '@mui/material/Divider';
+import Link from '@mui/material/Link';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+const copyToClipboard = (text) => {
+  navigator.clipboard.writeText(text)  
+};
 
 const style = {
   position: 'absolute',
@@ -29,7 +45,84 @@ const style = {
   p: 4,
 };
 
+function ContactMenu() {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <Box>
+      <Button
+        color="inherit"
+        onClick={handleClick}
+        endIcon={<MoreVertIcon />}
+      >
+        Contact Us
+      </Button>
+      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+      <Tooltip title="Copy to clipboard">
+        
+          </Tooltip>
+  <MenuItem onClick={() => copyToClipboard("+1 (555) 123-4567")}>
+    <Typography  sx={{pr:'1vh'}} component="span">Phone: </Typography>
+    <Typography  component="span" sx={{ color: 'primary.main', paddingRight:'12vh' }}>
+      +1 (555) 123-4567
+    </Typography>
+  <ContentCopyIcon color="primary"  fontSize="small" />
+      
+  </MenuItem>
+  <MenuItem onClick={() => copyToClipboard("contact@dpp.com")}>
+    <Typography sx={{pr:'1vh'}} component="span">E-mail:  </Typography>
+    <Typography component="span" sx={{ color: 'primary.main', paddingRight:'12.6vh' }}>
+      contact@dpp.com
+    </Typography>
+    <ContentCopyIcon color="primary" fontSize="small" />
+
+  </MenuItem>
+  <MenuItem onClick={() => copyToClipboard("123 Health St, Wellness City")}>
+    <Typography sx={{pr:'1vh'}} component="span">Location:  </Typography>
+    <Typography component="span" sx={{ color: 'primary.main', paddingRight:'2vh' }}>
+      123 Health St, Wellness City
+    </Typography>
+    <ContentCopyIcon color="primary" fontSize="small" />
+
+  </MenuItem>
+</Menu>
+
+    </Box>
+  );
+}
+
 function Landing() {
+  const [doctors, setDoctors] = useState([]);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [openAbout, setOpenAbout] = useState(false);
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:5000/doctors')
+      .then(response => response.json())
+      .then(data => {
+        const topDoctors = data.sort((a, b) => b.doctor_rating - a.doctor_rating).slice(0, 3);
+        setDoctors(topDoctors);
+      })
+      .catch(error => console.error("Error fetching doctor data:", error));
+  }, []);
+
+  const handleOpenAbout = (doctor) => {
+    setSelectedDoctor(doctor);
+    setOpenAbout(true);
+  };
+
+  const handleCloseAbout = () => {
+    setOpenAbout(false);
+    setSelectedDoctor(null);
+  };
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -135,15 +228,79 @@ function Landing() {
     };
 
 
+  // const [doctors, setDoctors] = useState([]);
+  // useEffect(() => {
+  //   fetch('http://127.0.0.1:5000/doctors')
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       // Sort by doctor_rating (descending) and take top 3
+  //       const topDoctors = data
+  //         .sort((a, b) => b.doctor_rating - a.doctor_rating)
+  //         .slice(0, 3);
+  //       setDoctors(topDoctors);
+  //     })
+  //     .catch(error => {
+  //       console.error("Error fetching doctor data:", error);
+  //     });
+  // }, []);
+
+  const [contactOpen, setContactOpen] = useState(false);
+
+const contactInfo = {
+  phone: "123-456-7890",
+  email: "contact@dpp.com",
+  address: "123 Healthy Way, Wellness City, HW 54321",
+};
+
+const handleCopy = (text) => {
+  navigator.clipboard.writeText(text);
+  alert("Copied to clipboard: " + text);
+};
+
+  
+    useEffect(() => {
+      fetch('http://127.0.0.1:5000/doctors')
+        .then(response => response.json())
+        .then(data => {
+          const topDoctors = data.sort((a, b) => b.doctor_rating - a.doctor_rating).slice(0, 3);
+          setDoctors(topDoctors);
+        })
+        .catch(error => console.error("Error fetching doctor data:", error));
+    }, []);
+
+
+    
   return (
+    <div id="sizeScreen">
     <div className="Landing">
-      <div className="landingnav">
-        <h2>DPP</h2>
-      </div>
+    <AppBar position="static" sx={{ bgcolor: "#5889BD" }}>
+  <Toolbar>
+    <Typography id='signUp' sx={{ flexGrow: 1 , fontSize:'5.5vh'}}>
+      D P P
+    </Typography>
+
+    <Button color="inherit" onClick={() => {
+      const section = document.getElementById("ourStories");
+      section?.scrollIntoView({ behavior: 'smooth' });
+    }}>
+      Our Stories
+    </Button>
+    <Button color="inherit" onClick={() => {
+      const section = document.getElementById("ourDoctors");
+      section?.scrollIntoView({ behavior: 'smooth' });
+    }}>
+      Our Doctors
+    </Button>
+    <ContactMenu />
+  </Toolbar>
+</AppBar>
+
+
+
       <div className="landinghero">
         <div className="herotext">
-            <h3>Have Access To A Health Professional at Any Time</h3>
-            <div className="herobuttons">
+            <h3 >Have Access To A Health Professional at Any Time</h3>
+            <div  className="herobuttons">
             {/*Login Buttons*/}
             <Button className="herobutton" onClick={handleOpenLogin}>Login</Button>
                 <Modal
@@ -312,7 +469,7 @@ function Landing() {
       </div>
 
       <div className="patienttest">
-        <h4 className="white">Patient Testimontials</h4>
+        <h4 id="ourStories" className="white">Patient Testimontials</h4>
         <div className="testcards">
           <div className="patientcard">
             <img src={patient1} alt="patient" className="patientimage"/>
@@ -332,22 +489,196 @@ function Landing() {
 
       
       <div className="doctortest">
-        <h4>Meet Our Doctors</h4>
-        <div className="testcards">
-          <div className="patientcard">
-            <img src={doctor1} alt="patient" className="patientimage"/>
-            <p class="patienttext" id="black">Lorem ipsum odor amet, consectetuer adipiscing elit. Vitae consec</p>
+      <h4 id="ourDoctors">Meet Our Top Rated Doctors</h4>
+      <div className="testcards">
+        {doctors.map((doc, index) => (
+          <div className="patientcard" key={index}>
+            <img
+              src={doctor1} // Or: `data:image/jpeg;base64,${doc.doctor_picture}`
+              alt={`${doc.first_name} ${doc.last_name}`}
+              className="patientimage"
+            />
+            <p className="patienttext" id="black">
+              Dr. {doc.first_name} {doc.last_name}<br />
+              {doc.specialty}<br />
+              Rating: {doc.doctor_rating}/5
+            </p>
+            <Button sx={{marginTop:'1.5vh'}} variant="outlined" onClick={() => handleOpenAbout(doc)}>Learn More</Button>
           </div>
-          <div className="patientcard">
-            <img src={doctor2} alt="patient" className="patientimage"/>
-            <p class="patienttext" id="black">Lorem ipsum odor amet, consectetuer adipiscing elit. Vitae consec</p>
-          </div>
-          <div className="patientcard">
-            <img src={doctor3} alt="patient" className="patientimage"/>
-            <p class="patienttext" id="black">Lorem ipsum odor amet, consectetuer adipiscing elit. Vitae consec</p>
-          </div>
-        </div>
+        ))}
       </div>
+
+      {/* MUI Modal */}
+<Modal open={openAbout} onClose={handleCloseAbout} aria-labelledby="doctor-modal-title">
+  <Box
+    sx={{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: { xs: 350, sm: 450 },
+      bgcolor: '#FFFFFF',
+      borderRadius: 3,
+      boxShadow: 24,
+      p: 4,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 2,
+      borderTop: '6px solid  #5C8CC6', // A subtle purple accent line
+    }}
+  >
+    {selectedDoctor && (
+      <>
+        {/* Optional: Doctor Image */}
+        {/* <img src={`data:image/jpeg;base64,${selectedDoctor.doctor_picture}`} alt="Doctor" style={{ width: '100%', borderRadius: 8, marginBottom: 16 }} /> */}
+
+        <Typography
+          id="doctor-modal-title"
+          variant="h5"
+          fontWeight="bold"
+          color="black"
+        >
+          Dr. {selectedDoctor.first_name} {selectedDoctor.last_name}
+        </Typography>
+
+        <Typography variant="subtitle1" color="#5C8CC6">
+          {selectedDoctor.specialty}
+        </Typography>
+
+        <Typography variant="body1" color="text.primary">
+          <strong>Description:</strong> {selectedDoctor.description}
+        </Typography>
+
+        <Typography variant="body1" color="text.primary">
+          <strong>Years of Practice:</strong> {selectedDoctor.years_of_practice}
+        </Typography>
+
+        <Typography variant="body1" color="text.primary">
+          <strong>Medical School:</strong> {selectedDoctor.med_school}
+        </Typography>
+
+        <Typography variant="body1" color="text.primary">
+          <strong>Accepting New Patients:</strong> {selectedDoctor.accepting_patients ? "Yes" : "No"}
+        </Typography>
+
+        <Button
+          variant="contained"
+          onClick={handleCloseAbout}
+          sx={{
+            alignSelf: 'flex-end',
+            mt: 2,
+            backgroundColor:'#5C8CC6',
+  
+          }}
+        >
+          Close
+        </Button>
+      </>
+    )}
+  </Box>
+</Modal>
+
+
+    </div>
+    </div>
+    (
+    <Box sx={{ bgcolor: '#f5f5f5', mt: 6, pt: 4, pb: 3, fontFamily: 'Roboto, sans-serif' }}>
+      <Container maxWidth="lg">
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            gap: 4,
+            mb: 4,
+          }}
+        >
+          {/* Branding */}
+          <Box display={'flex'} flexDirection={'column'}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+              DPP Wellness
+            </Typography>
+            <Link href="#ourStories"  underline="hover" color="text.primary" sx={{ fontSize: '1.7vh', pt:'.5vh' , pb:'.5vh'}}>
+              Our Stories
+            </Link>
+            <Link href="#ourDoctors" underline="hover" color="text.primary" sx={{ fontSize: '1.7vh', pt:'.5vh', pb:'.5vh' }}>
+              Our Doctors
+            </Link>
+            <Link href="#signUp" underline="hover" color="text.primary" sx={{ fontSize: '1.7vh', pt:'.5vh', pb:'.5vh' }}>
+              Sign Up Today!
+            </Link>
+          </Box>
+
+          {/* Contact Information */}
+          <Box>
+            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 500 }}>
+              Contact Us
+            </Typography>
+
+            {/* Phone */}
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Typography variant="body2" color="text.primary">Phone:</Typography>
+              <Typography variant="body2" sx={{ ml: 1, color: 'primary.main' }}>
+                +1 (555) 123-4567
+              </Typography>
+              <Tooltip title="Copy">
+                <IconButton size="small" onClick={() => copyToClipboard("+1 (555) 123-4567")}>
+                  <ContentCopyIcon color='primary' fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+
+            {/* Email */}
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Typography variant="body2" color="text.primary">Email:</Typography>
+              <Typography variant="body2" sx={{ ml: 1, color: 'primary.main' }}>
+                contact@dpp.com
+              </Typography>
+              <Tooltip title="Copy">
+                <IconButton size="small" onClick={() => copyToClipboard("contact@dpp.com")}>
+                  <ContentCopyIcon color='primary' fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+
+            {/* Address */}
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2" color="text.primary">Address:</Typography>
+              <Typography variant="body2" sx={{ ml: 1, color: 'primary.main' }}>
+                123 Health St, Wellness City
+              </Typography>
+              <Tooltip title="Copy">
+                <IconButton size="small" onClick={() => copyToClipboard("123 Health St, Wellness City")}>
+                  <ContentCopyIcon color='primary' fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
+
+          {/* Social Links */}
+          <Box>
+            <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 500 }}>
+              Follow Us
+            </Typography>
+            <IconButton href="https://facebook.com" target="_blank" aria-label="Facebook" size="small">
+              <FacebookIcon />
+            </IconButton>
+            <IconButton href="https://twitter.com" target="_blank" aria-label="Twitter" size="small">
+              <TwitterIcon />
+            </IconButton>
+            <IconButton href="https://linkedin.com" target="_blank" aria-label="LinkedIn" size="small">
+              <LinkedInIcon />
+            </IconButton>
+          </Box>
+        </Box>
+
+        <Divider sx={{ mb: 2 }} />
+        <Typography variant="body2" color="text.secondary" align="center">
+          © {new Date().getFullYear()} DPP Wellness. All rights reserved.
+        </Typography>
+      </Container>
+    </Box>
     </div>
   );
 }

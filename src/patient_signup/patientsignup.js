@@ -131,15 +131,51 @@ function Patientsignup() {
 
   const savePatient = (e) => {
     e.preventDefault();
-  
+    
     if (!termsAccepted) {
       showSnack("Please accept the terms and conditions.");
+      return;
+    }
+  
+    // Validate ZIP code
+    if (!validateZipCode(values.zip)) {
+      showSnack("Please enter a valid 5-digit ZIP code");
+      return;
+    }
+  
+    // Validate pharmacy ZIP if new pharmacy
+    if (isNewPharmacy && !validateZipCode(values.pharm_zip)) {
+      showSnack("Please enter a valid 5-digit pharmacy ZIP code");
+      return;
+    }
+  
+    // Validate phone number
+    // Validate phone number
+    if (!validatePhoneNumber(values.phone)) {
+      showSnack("Please enter a valid phone number (e.g., 123-456-7890 or 1234567890)");
+      return;
+    }
+  
+    // Validate policy number
+    if (!validatePolicyNumber(values.policy)) {
+      showSnack("Insurance policy number must contain only numbers");
+      return;
+    }
+
+    if (!validateEmail(values.email)) {
+      showSnack("Please enter a valid email address (e.g., user@example.com)");
+      return;
+    }
+
+    if (!validateInsuranceName(values.insur_name)) {
+      showSnack("Please enter a valid insurance name (cannot be just numbers)");
       return;
     }
   
     const today = new Date();
     const dob = new Date(values.dob);
     const exp = new Date(values.exp);
+  
   
     if (dob > today) {
       showSnack("Date of birth cannot be in the future.");
@@ -216,7 +252,37 @@ function Patientsignup() {
       .catch(err => console.error("Failed to fetch pharmacies", err));
   }, []);
 
+  // Validation functions
+  const validateZipCode = (zip) => {
+    const usZipRegex = /^\d{5}(-\d{4})?$/;
+    return usZipRegex.test(zip);
+  };
 
+  const validatePhoneNumber = (phone) => {
+    const phoneRegex = /^(?:\d{3}-\d{3}-\d{4}|\d{10})$/;
+    return phoneRegex.test(phone);
+  };
+
+  const validatePolicyNumber = (policy) => {
+    const policyRegex = /^[0-9]+$/;
+    return policyRegex.test(policy);
+  };
+
+  const validateEmail = (email) => {
+    // More strict email regex that prevents consecutive dots and requires proper format
+    const emailRegex = /^[a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9]+([.-]?[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email) && 
+           email.split('@')[0].length > 0 && 
+           !email.includes('..') && 
+           !email.startsWith('.') && 
+           !email.split('@')[0].endsWith('.');
+  };
+
+  const validateInsuranceName = (name) => {
+    // Requires at least one letter (not just numbers)
+    const insuranceRegex = /^(?=.*[a-zA-Z]).+$/;
+    return insuranceRegex.test(name) && name.trim().length > 0;
+  };
 
   return (
     <>
@@ -283,12 +349,37 @@ function Patientsignup() {
                 {/*Normal Now */}
                 <div className='labels'>
                   <label className='def-label' htmlFor="phone">Phone: </label>
-                  <input type='text'
+                  <input
+                    type='tel'
                     name='phone'
                     className="form-control" 
-                    placeholder='Enter your phone number'
+                    placeholder='Enter phone (e.g., 123-456-7890 or 1234567890)'
+                    pattern="^(?:\d{3}-\d{3}-\d{4}|\d{10})$"
+                    title="Please enter a valid phone number (e.g., 123-456-7890 or 1234567890)"
                     value={values.phone}
-                    onChange={e => setValues({...values, phone: e.target.value})}/>
+                    onChange={e => {
+                      // Auto-format as user types
+                      const input = e.target.value.replace(/\D/g, ''); // Remove all non-digits
+                      let formatted = input;
+                      
+                      // Format as 123-456-7890 if length > 3 and <= 6
+                      if (input.length > 3 && input.length <= 6) {
+                        formatted = `${input.slice(0, 3)}-${input.slice(3)}`;
+                      } 
+                      // Format as 123-456-7890 if length > 6
+                      else if (input.length > 6) {
+                        formatted = `${input.slice(0, 3)}-${input.slice(3, 6)}-${input.slice(6, 10)}`;
+                      }
+                      
+                      setValues({...values, phone: formatted});
+                    }}
+                    maxLength="12" // 123-456-7890 is 12 chars
+                    onBlur={(e) => {
+                      if (!validatePhoneNumber(e.target.value)) {
+                        showSnack("Please enter a valid phone number (e.g., 123-456-7890 or 1234567890)");
+                      }
+                    }}
+                  />  
                 </div>
                 <div className='labels'>
                   <label className='def-label' htmlFor="address">Address: </label>
@@ -304,12 +395,16 @@ function Patientsignup() {
                 <div className='horizontal-bar'>
                   <div className='labels'>
                     <label htmlFor="zip" className='def-label'>Zip code: </label>
-                    <input type='text'
+                    <input
+                      type='text'  // Changed from number to allow dashes
                       name='zip'
                       className="form-control-dob" 
-                      placeholder='Enter ZIP'
+                      placeholder='Enter ZIP (e.g., 12345)'
+                      pattern="^\d{5}(-\d{4})?$"
+                      title="Please enter a valid 5-digit ZIP code (optionally with 4-digit extension)"
                       value={values.zip}
-                      onChange={e => setValues({...values, zip: e.target.value})}/>
+                      onChange={e => setValues({...values, zip: e.target.value})}
+                    />
                   </div>
                   <div className='labels'>
                     <label htmlFor="city" className='short-label'>City: </label>
@@ -621,21 +716,34 @@ function Patientsignup() {
                 <h1>Other Information</h1>
                 <div className='labels'>
                   <label htmlFor="insur_name" className='long-label'>Insurance Name: </label>
-                  <input type='text'
-                    name='insur_name'
-                    className="form-control" 
-                    placeholder='Enter insurance name'
-                    value={values.insur_name}
-                    onChange={e => setValues({...values, insur_name: e.target.value})}/>
-                </div>
+                    <input 
+                      type='text'
+                      name='insur_name'
+                      className="form-control" 
+                      placeholder='Enter insurance name (e.g., Blue Cross)'
+                      value={values.insur_name}
+                      onChange={e => setValues({...values, insur_name: e.target.value})}
+                      pattern="^(?=.*[a-zA-Z]).+$"
+                      title="Insurance name must contain letters (not just numbers)"
+                      onBlur={(e) => {
+                        if (!validateInsuranceName(e.target.value)) {
+                          showSnack("Please enter a valid insurance name (cannot be just numbers)");
+                        }
+                      }}
+                    />
+                  </div>
                 <div className='labels'>
                   <label htmlFor="policy" className='long-label'>Policy Number: </label>
-                  <input type='text'
+                  <input
+                    type='text'
                     name='policy'
                     className="form-control" 
-                    placeholder='Enter policy number'
+                    placeholder='Enter policy number (numbers only)'
+                    pattern="^[0-9]+$"
+                    title="Policy number must contain only numbers"
                     value={values.policy}
-                    onChange={e => setValues({...values, policy: e.target.value})}/>
+                    onChange={e => setValues({...values, policy: e.target.value})}
+                  />
                 </div>
                 {/*Normal Now */}
                 <div className='labels'>
@@ -655,9 +763,14 @@ function Patientsignup() {
                     value={values.email}
                     onChange={e => setValues({...values, email: e.target.value})}
                     required
-                    pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                    pattern="^[a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9]+([.-]?[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$"
                     title="Please enter a valid email address (e.g., user@example.com)"
                     placeholder="Enter your email"
+                    onBlur={(e) => {
+                      if (!validateEmail(e.target.value)) {
+                        showSnack("Please enter a valid email address (e.g., user.name@example.com)");
+                      }
+                    }}
                   />
                 </div>
                 <div className='labels'>
