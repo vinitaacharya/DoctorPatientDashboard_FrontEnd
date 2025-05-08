@@ -123,7 +123,7 @@ function Landing() {
     setOpenAbout(false);
     setSelectedDoctor(null);
   };
-
+//
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -152,7 +152,7 @@ function Landing() {
     const navigate = useNavigate()
     const handleLogin = async (email, password) => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/login-patient', {
+        const response = await fetch('http://localhost:5000/login-patient', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
@@ -179,7 +179,7 @@ function Landing() {
 
     const handleLogin2 = async (email, password) => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/login-doctor', {
+        const response = await fetch('http://localhost:5000/login-doctor', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
@@ -205,7 +205,7 @@ function Landing() {
 
     const handleLogin3 = async (email, password) => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/login-pharmacy', {
+        const response = await fetch('http://localhost:5000/login-pharmacy', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
@@ -259,7 +259,7 @@ const handleCopy = (text) => {
 
   
     useEffect(() => {
-      fetch('http://127.0.0.1:5000/doctors')
+      fetch('http://localhost:5000/doctors')
         .then(response => response.json())
         .then(data => {
           const topDoctors = data.sort((a, b) => b.doctor_rating - a.doctor_rating).slice(0, 3);
