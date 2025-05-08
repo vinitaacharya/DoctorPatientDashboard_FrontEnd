@@ -2046,7 +2046,7 @@ function Patient_Landing() {
                       </>
                     ) : (
                       <Typography sx={{ fontSize: '1.9vh' }}>
-                        Book and attend an appointment to view overview.
+                        {"Book and attend an appointment to view overview :("}
                       </Typography>
                     )}
                   </Box>
