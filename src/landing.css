@@ -1,12 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 .landingnav{
-    width: 99vw;
+    width: 98.99vw;
     height: 8vh;
     background-color: #5889BD;
     display: flex;
     align-items: center;
 }
-
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
 h2{
     color: #FFF;
     font-family: "Montserrat", sans-serif;
@@ -28,7 +32,7 @@ h2{
 }
 
 h3{
-    margin: 0px;
+    margin: 0vh;
 }
 
 .herotext{
@@ -84,43 +88,43 @@ h3{
 
 .aboutdiv{
     height: 50vh;
-    width: 99vw;
+    width: 98.99vw;
     align-content: center;
 }
 
 h4{
     margin: 0px;
-    padding: 0px;
+    padding-bottom: 2vh;
     color: #000;
     text-align: center;
     font-family: Montserrat;
-    font-size: 64px;
+    font-size: 5vh;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
-    letter-spacing: 6.4px;
+    letter-spacing: 0vh;
 }
 
 hr{
-    width: 5vw;
+    width: 7vw;
     height:2px;
     background-color: #5889BD;
     border-color: #5889BD;
     margin: auto;
-    margin-top: 1vh;
+    margin-top: .5vh;
 }
 
 .abouttext{
     color: #000;
     text-align: center;
     font-family: Merriweather;
-    font-size: 30px;
+    font-size: 2.4vh;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
     margin: 0px;
     padding: 0px;
-    width: 50vw;
+    width: 49vw;
     text-align: center;
     margin: auto;
     margin-top: 4vh;
@@ -134,7 +138,8 @@ hr{
 }
 
 .patienttest{
-    width: 99vw;
+    padding-left: 0;
+    width: 98.99vw;
     align-content: center;
     padding-top: 4vh;
     padding-bottom: 4vh;
@@ -153,22 +158,24 @@ hr{
 .patientcard{
     display: flex;
     flex-direction: column;
-    width: 290px;
+    width: 35vh;
+    align-items: center;
 }
 
 .patientimage{
-    width: 290px;
+    width: 29vh;
+    padding-bottom: 2vh;
 }
 
 .patienttext{
     font-family: Merriweather;
     color: white;
-    font-style: italic;
-    font-size: 26px;
+    font-size: 2.2vh;
+    text-align: center;
 }
 
 .doctortest{
-    width: 99vw;
+    width: 98.99vw;
     align-content: center;
     padding-top: 4vh;
     padding-bottom: 4vh;
@@ -258,3 +265,33 @@ hr{
     background-color: rgba(90, 139, 190, 0.38);
     border-radius: 10px;
   }
+
+
+  .input-field-pass {
+    align-content: center;
+    align-items: center;
+    border-radius: 23px;
+    height: 35px;
+    padding: 0 10px;
+    border: none;
+    background-color: white;
+    max-width: 210px; /* Adjust as needed */
+    color: #000000 !important; /* Force black text color */
+    font-weight: 500; /* Make text slightly bolder */
+  }
+
+  input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="tel"],
+input[type="date"],
+input[type="password"] {
+  font-size: 18px;
+  height: 35px;
+  border-radius: 23px;
+  border: 1px solid #D9D9D9;
+  padding: 0 10px;
+  box-sizing: border-box;
+  color: #000000 !important;
+  font-weight: 500;
+}
