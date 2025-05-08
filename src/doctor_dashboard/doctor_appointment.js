@@ -15,9 +15,10 @@ import Button from '@mui/material/Button';
 import { useNavigate } from "react-router-dom";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-const apiUrl = process.env.REACT_APP_API_URL;
 
 import { io } from "socket.io-client";
+
+const apiUrl = process.env.REACT_APP_API_URL;
 const socket = io(`${apiUrl}`);
 
 
@@ -373,7 +374,7 @@ function Doctor_Appointment() {
                         style={{ background: 'teal' }}
                         onClick={async () => {
                           try {
-                            const res = await fetch(`${apiurl}/prescriptions`, {
+                            const res = await fetch(`${apiUrl}/prescriptions`, {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
                               body: JSON.stringify({
