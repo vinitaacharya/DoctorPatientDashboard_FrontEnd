@@ -3,6 +3,7 @@ import Doctor_Navbar from "./doctor_navbar";
 import { Box, Typography, Button, Avatar, Modal, Paper, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import doc1 from "./doctorim/doctor1.png"; // You can use a generic user avatar instead
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const style = {
   position: 'absolute',
@@ -23,14 +24,14 @@ function Doctor_Patientlist() {
   const [selectedPatient, setSelectedPatient] = useState(null);
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:5000/doc_patients/${doctorId}`)
+    fetch(`${apiUrl}/doc_patients/${doctorId}`)
       .then(response => response.json())
       .then(data => setPatients(data))
       .catch(error => console.error("Error fetching patients:", error));
   }, [doctorId]);
 
   const handleLearnMore = async (pat) => {
-    const res = await fetch(`http://127.0.0.1:5000/init-patient-survey/${pat.patient_id}`);
+    const res = await fetch(`${apiUrl}/init-patient-survey/${pat.patient_id}`);
     const data = await res.json();
     setSelectedPatient({ ...pat, ...data });
     setOpenLearnMore(true);

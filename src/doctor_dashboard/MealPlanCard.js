@@ -13,7 +13,7 @@ import {
   IconButton as MuiIconButton
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-
+const apiUrl = process.env.REACT_APP_API_URL;
 
 export default function MealPlanCard({ meal, patientInfo}) {
   

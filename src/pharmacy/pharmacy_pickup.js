@@ -6,7 +6,7 @@ import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 import { TextField, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from "@mui/material";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
-
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const PharmacyPickUp = () => {
     const [pharmacyInfo, setPharmacyInfo] = useState(null);
@@ -21,7 +21,7 @@ const PharmacyPickUp = () => {
             }
 
             try {
-                const res = await fetch(`http://localhost:5000/pharmacy/${id}`);
+                const res = await fetch(`${apiUrl}/pharmacy/${id}`);
                 if (!res.ok) {
                     throw new Error("Failed to fetch patient info");
                 }
@@ -30,7 +30,7 @@ const PharmacyPickUp = () => {
                 setPharmacyInfo(data);
                 console.log("Pharmacy info:", data);
 
-                const pickupRes = await fetch(`http://localhost:5000/pickup/${id}`);
+                const pickupRes = await fetch(`${apiUrl}/pickup/${id}`);
                 if (!pickupRes.ok) throw new Error("Failed to fetch pickup data");
 
                 const pickupData = await pickupRes.json();

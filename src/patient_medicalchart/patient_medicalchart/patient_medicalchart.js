@@ -7,6 +7,7 @@ import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOu
 import Plot from 'react-plotly.js';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 
 
@@ -108,7 +109,7 @@ function Patient_Chart() {
     useEffect(() => {
         const fetchPatientInfo = async () => {
           try {
-            const res = await fetch(`http://localhost:5000/init-patient-survey/${patientId}`);
+            const res = await fetch(`${apiUrl}/init-patient-survey/${patientId}`);
             if (!res.ok) throw new Error("Failed to fetch patient info");
             const data = await res.json();
             setPatientInfo(data);
@@ -245,7 +246,7 @@ function Patient_Chart() {
                 state: patientInfo.patient_state
               };
               
-              const response = await fetch("http://localhost:5000/edit-patient", {
+              const response = await fetch(`${apiUrl}/edit-patient`, {
                 method: "PUT",
                 headers: {
                   "Content-Type": "application/json"

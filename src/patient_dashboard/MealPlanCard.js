@@ -13,6 +13,7 @@ import {
   IconButton as MuiIconButton
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 
 export default function MealPlanCard({ meal, patientInfo}) {
@@ -75,7 +76,7 @@ export default function MealPlanCard({ meal, patientInfo}) {
         post_id: meal.post_id,
         patient_id: patientInfo?.patient_id,
         "doctor_id": null,
-      });      const response = await fetch('http://localhost:5000/posts/like', {
+      });      const response = await fetch(`${apiUrl}/posts/like`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

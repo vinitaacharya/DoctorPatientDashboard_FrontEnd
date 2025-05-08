@@ -12,6 +12,7 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 
 
@@ -77,7 +78,7 @@ function Pharmacysignup(){
     };
     
   
-    fetch("http://127.0.0.1:5000/register-pharmacy", {
+    fetch(`${apiUrl}/register-pharmacy`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

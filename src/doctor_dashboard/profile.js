@@ -10,6 +10,7 @@ import profileBackground from "./profile_assets/profile_background.png"
 import ProfileImg from "./profile_assets/profilePageImg.png"
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const posts = [
   {
@@ -61,7 +62,7 @@ useEffect(() => {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/doctor/${id}`);
+      const res = await fetch(`${apiUrl}/doctor/${id}`);
       if (!res.ok) {
         throw new Error("Failed to fetch patient info");
       }

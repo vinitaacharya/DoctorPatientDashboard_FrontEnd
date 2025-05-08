@@ -13,7 +13,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 
 
-
+const apiUrl = process.env.REACT_APP_API_URL;
 const RoundedPanel = styled(Paper)(({ theme }) => ({
   borderRadius: '30px',
   padding: '2vw',
@@ -92,7 +92,7 @@ function Patient_Mealplan() {
       }
     
       try {
-        const response = await fetch(`http://localhost:5000/saved-meal-plans/${id}`);
+        const response = await fetch(`${apiUrl}/saved-meal-plans/${id}`);
         
         if (!response.ok) {
           const errorData = await response.json();
@@ -255,7 +255,7 @@ const handleSaveNew = async () => {
       return;
     }
 
-    const response = await fetch(`http://localhost:5000/create-meal-plan`, {
+    const response = await fetch(`${apiUrl}/create-meal-plan`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -268,7 +268,7 @@ const handleSaveNew = async () => {
     if (!response.ok) throw new Error('Failed to create meal plan');
 
     // Refresh meal plans with the correct patient ID
-    const refreshed = await fetch(`http://localhost:5000/saved-meal-plans/${patientId}`);
+    const refreshed = await fetch(`${apiUrl}/saved-meal-plans/${patientId}`);
     const { saved_meal_plans } = await refreshed.json();
         
     setMealPlans(

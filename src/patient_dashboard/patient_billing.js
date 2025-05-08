@@ -3,6 +3,7 @@ import Patient_Navbar from "./patient_navbar";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { Select,MenuItem, InputLabel,  Modal, TextField, FormControl} from "@mui/material";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 import {
   Typography,

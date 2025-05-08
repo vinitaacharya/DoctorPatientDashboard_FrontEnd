@@ -10,7 +10,7 @@ import profileBackground from "./profile_assets/profile_background.png"
 import ProfileImg from "./profile_assets/profilePageImg.png"
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-
+const apiUrl = process.env.REACT_APP_API_URL;
 
 
 const Profile = () => {
@@ -38,7 +38,7 @@ useEffect(() => {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/patient/${id}`);
+      const res = await fetch(`${apiUrl}/patient/${id}`);
       if (!res.ok) {
         throw new Error("Failed to fetch patient info");
       }
@@ -56,7 +56,7 @@ useEffect(() => {
 const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/posts') // Update if your API base URL is different
+    fetch(`${apiUrl}/posts`) // Update if your API base URL is different
       .then(res => res.json())
       .then(data => {
         const formattedPosts = data.map(post => ({
@@ -83,7 +83,7 @@ useEffect(() => {
       return;
     }
     try{
-      const res = await fetch(`http://localhost:5000/init-patient-survey/${id}`);
+      const res = await fetch(`${apiUrl}/init-patient-survey/${id}`);
       if (!res.ok) {
         throw new Error("Failed to fetch patient info");
       }
@@ -107,13 +107,13 @@ useEffect(() => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/posts/liked?patient_id=${patientId}`);
+      const response = await fetch(`${apiUrl}/posts/liked?patient_id=${patientId}`);
       const data = await response.json();
 
       if (data.liked_posts) {
         const postDetails = await Promise.all(
           data.liked_posts.map(async (liked) => {
-            const res = await fetch(`http://localhost:5000/posts/liked?patient_id=${liked.post_id}`);
+            const res = await fetch(`${apiUrl}/posts/liked?patient_id=${liked.post_id}`);
             return res.json();
           })
         );

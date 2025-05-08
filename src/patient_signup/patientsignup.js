@@ -15,6 +15,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 
 
@@ -219,7 +220,7 @@ function Patientsignup() {
     };
     console.log("Data:", fullData);
   
-    fetch("http://127.0.0.1:5000/register-patient-with-survey", {
+    fetch(`${apiUrl}/register-patient-with-survey`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(fullData)
@@ -246,7 +247,7 @@ function Patientsignup() {
   const [isNewPharmacy, setIsNewPharmacy] = useState(false);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/pharmacies')
+    fetch(`${apiUrl}/pharmacies`)
       .then(res => res.json())
       .then(data => setPharmacies(data))
       .catch(err => console.error("Failed to fetch pharmacies", err));

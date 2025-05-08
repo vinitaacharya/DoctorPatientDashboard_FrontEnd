@@ -16,6 +16,8 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 function Doctorsignup() {
   const style = {
     position: 'absolute',
@@ -209,7 +211,7 @@ function Doctorsignup() {
       state: values.state
     };
     
-    fetch("http://127.0.0.1:5000/register-doctor", {
+    fetch(`${apiUrl}/register-doctor`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
