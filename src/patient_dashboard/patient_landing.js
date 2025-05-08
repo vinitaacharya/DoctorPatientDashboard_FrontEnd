@@ -29,6 +29,8 @@ import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
 import CalorieGraph from "../patient_medicalchart/patient_medicalchart/calorie_graph";
 import WaterGraph from "../patient_medicalchart/patient_medicalchart/water_graph";
 import WeightGraph from "../patient_medicalchart/patient_medicalchart/weight_graph";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import { formatInTimeZone } from 'date-fns-tz';
 
 
@@ -81,24 +83,24 @@ function Patient_Landing() {
   const { dailyInfo, weeklyInfo } = useSurveyData();
 
 
-  
+
   const openCancelModalFor = (appointmentId) => {
     setAppointmentToCancel(appointmentId);
     setOpenCancelModal(true);
   };
-  
+
   const closeCancelModal = () => {
     setAppointmentToCancel(null);
     setOpenCancelModal(false);
   };
   const handleCancelAppointment = async () => {
     if (!appointmentToCancel) return;
-  
+
     try {
       const response = await fetch(`/cancel-appointment/${appointmentToCancel}`, {
         method: 'DELETE',
       });
-  
+
       if (response.ok) {
         setUpcomingAppointments(prev =>
           prev.filter(appt => appt.patient_appt_id !== appointmentToCancel)
@@ -113,35 +115,35 @@ function Patient_Landing() {
       closeCancelModal();
     }
   };
-  
-  
-const [patientInfo, setPatientInfo] = useState(null);
 
-useEffect(() => {
-  const fetchPatientInfo = async () => {
-    const id = localStorage.getItem("patientId");
-    if (!id) {
-      console.warn("No patient ID in localStorage");
-      return;
-    }
 
-    try {
-      const res = await fetch(`http://localhost:5000/patient/${id}`);
-      if (!res.ok) {
-        throw new Error("Failed to fetch patient info");
+  const [patientInfo, setPatientInfo] = useState(null);
+
+  useEffect(() => {
+    const fetchPatientInfo = async () => {
+      const id = localStorage.getItem("patientId");
+      if (!id) {
+        console.warn("No patient ID in localStorage");
+        return;
       }
 
-      const data = await res.json();
-      setPatientInfo(data);
-      console.log("Patient info:", data);
-    } catch (error) {
-      console.error("Error fetching patient info:", error);
-    }
-  };
+      try {
+        const res = await fetch(`http://localhost:5000/patient/${id}`);
+        if (!res.ok) {
+          throw new Error("Failed to fetch patient info");
+        }
 
-  fetchPatientInfo();
-}, []);
-  
+        const data = await res.json();
+        setPatientInfo(data);
+        console.log("Patient info:", data);
+      } catch (error) {
+        console.error("Error fetching patient info:", error);
+      }
+    };
+
+    fetchPatientInfo();
+  }, []);
+
   const [value, setValue] = React.useState(2);
 
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
@@ -181,7 +183,7 @@ useEffect(() => {
 
         setUpcomingAppointments(upcomingData);
         setPastAppointments(pastData);
-        
+
         if (pastData && pastData.length > 0) {
           const apptId = pastData[0].patient_appt_id;
           setSelectedApptId(apptId);
@@ -200,15 +202,15 @@ useEffect(() => {
 
   //check appointment acceptance status
   const [appointmentAccepted, setAppointmentAccepted] = useState(false);
-  useEffect(()=>{
-    const fetchAppointmentStatus = async () =>{
+  useEffect(() => {
+    const fetchAppointmentStatus = async () => {
       try {
         const res = await fetch(`/appointments/${patientId}`);
         const appointments = await res.json();
         const status = appointments.accepted;
-        console.log("AppointmentStatus:",status);
-        setAppointmentAccepted(status ===0);
-      }catch(error){
+        console.log("AppointmentStatus:", status);
+        setAppointmentAccepted(status === 0);
+      } catch (error) {
         console.error("Error fetching appointment status:", error);
       }
     };
@@ -251,7 +253,7 @@ useEffect(() => {
   //const hasSurveyData = (dailyInfo && dailyInfo.length > 0) || (weeklyInfo && weeklyInfo.length > 0);
   const [hasSurveyData, setHasSurveyData] = useState(false);
 
-  
+
   // Daily survey form states
   const [heartRate, setHeartRate] = useState("");
   const [waterIntake, setWaterIntake] = useState("");
@@ -261,66 +263,66 @@ useEffect(() => {
   const [calorieIntake, setCalorieIntake] = useState("");
   const [error, setError] = useState("");
 
-const handleDailySubmit = async (e) => {
-  e.preventDefault();
-  if (
-    !heartRate ||
-    !waterIntake ||
-    !exerciseMinutes ||
-    !mealPlanFollowed ||
-    !mood ||
-    !calorieIntake
-  ) {
-    setError("Please fill in all fields.");
-    return;
-  }
-
-  // Optional: check numeric fields
-
-  setError(""); 
-  const dailyData = {
-    
-    patient_id: patientId, 
-    date: new Date().toISOString().split('T')[0], // 'YYYY-MM-DD'
-    water_intake: waterIntake,
-    calories_consumed: calorieIntake,
-    heart_rate: heartRate,
-    exercise: exerciseMinutes,
-    mood: mood,
-    follow_plan: mealPlanFollowed ? 1 : 0, // convert to 0 or 1
-  };
-//replace fetch with correct url
-
-  try {
-    const response = await fetch('http://localhost:5000/daily-survey', {
-
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dailyData),
-    });
-
-    if (response.ok) {
-      localStorage.setItem('hasSurveyData', 'true');
-      setHasSurveyData(true);      
-      console.log('Daily survey submitted successfully');
-      setHeartRate("");
-      setWaterIntake("");
-      setExerciseMinutes("");
-      setMealPlanFollowed("");
-      setMood("");
-      setCalorieIntake("");
-
-      closeDailySurveysModal();
-      setDailySubmitted(true);
-    } else {
-      console.error('Failed to submit daily survey');
+  const handleDailySubmit = async (e) => {
+    e.preventDefault();
+    if (
+      !heartRate ||
+      !waterIntake ||
+      !exerciseMinutes ||
+      !mealPlanFollowed ||
+      !mood ||
+      !calorieIntake
+    ) {
+      setError("Please fill in all fields.");
+      return;
     }
-  } catch (error) {
-    console.error('Error submitting daily survey:', error);
-  }
-};
+
+    // Optional: check numeric fields
+
+    setError("");
+    const dailyData = {
+
+      patient_id: patientId,
+      date: new Date().toISOString().split('T')[0], // 'YYYY-MM-DD'
+      water_intake: waterIntake,
+      calories_consumed: calorieIntake,
+      heart_rate: heartRate,
+      exercise: exerciseMinutes,
+      mood: mood,
+      follow_plan: mealPlanFollowed ? 1 : 0, // convert to 0 or 1
+    };
+    //replace fetch with correct url
+
+    try {
+      const response = await fetch('http://localhost:5000/daily-survey', {
+
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dailyData),
+      });
+
+      if (response.ok) {
+        localStorage.setItem('hasSurveyData', 'true');
+        setHasSurveyData(true);
+        console.log('Daily survey submitted successfully');
+        setHeartRate("");
+        setWaterIntake("");
+        setExerciseMinutes("");
+        setMealPlanFollowed("");
+        setMood("");
+        setCalorieIntake("");
+
+        closeDailySurveysModal();
+        setDailySubmitted(true);
+      } else {
+        console.error('Failed to submit daily survey');
+      }
+    } catch (error) {
+      console.error('Error submitting daily survey:', error);
+    }
+  };
 
 
 
@@ -334,25 +336,25 @@ const handleDailySubmit = async (e) => {
   const handleWeeklySubmit = async (e) => {
     e.preventDefault();
 
-   // Empty check
-   if (
-    !weightChange || !weightAmount || !bloodPressure 
-  ) {
-    setError("All fields are required.");
-    return;
-  }
-  if (!weightChange) {
-    setWeeklyError("Please select a weight change type.");
-    return;
-  }
+    // Empty check
+    if (
+      !weightChange || !weightAmount || !bloodPressure
+    ) {
+      setError("All fields are required.");
+      return;
+    }
+    if (!weightChange) {
+      setWeeklyError("Please select a weight change type.");
+      return;
+    }
 
-  if ((weightChange === "Gain" || weightChange === "Loss") && (!weightAmount || isNaN(parseFloat(weightAmount)) || parseFloat(weightAmount) <= 0)) {
-    setWeeklyError("Please enter a valid weight amount greater than 0.");
-    return;
-  }
+    if ((weightChange === "Gain" || weightChange === "Loss") && (!weightAmount || isNaN(parseFloat(weightAmount)) || parseFloat(weightAmount) <= 0)) {
+      setWeeklyError("Please enter a valid weight amount greater than 0.");
+      return;
+    }
 
 
-  setWeeklyError(""); // Clear previous errors
+    setWeeklyError(""); // Clear previous errors
     let parsedWeightAmount = parseFloat(weightAmount) || 0;
 
     if (weightChange === "Loss") {
@@ -363,29 +365,29 @@ const handleDailySubmit = async (e) => {
       parsedWeightAmount = 0;
     }
     // 2. Calculate most recent Sunday (week_start)
-  const today = new Date();
-  const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  const diffToSunday = dayOfWeek;   // How many days to subtract to get to last Sunday
-  const lastSunday = new Date(today);
-  lastSunday.setDate(today.getDate() - diffToSunday);
-  lastSunday.setHours(0, 0, 0, 0); // Reset time to 00:00:00
-console.log("patient", patientId)
-  const weekStart = lastSunday.toISOString().split('T')[0]; // ✅ '2024-09-01'
-  const weeklyData = {
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const diffToSunday = dayOfWeek;   // How many days to subtract to get to last Sunday
+    const lastSunday = new Date(today);
+    lastSunday.setDate(today.getDate() - diffToSunday);
+    lastSunday.setHours(0, 0, 0, 0); // Reset time to 00:00:00
+    console.log("patient", patientId)
+    const weekStart = lastSunday.toISOString().split('T')[0]; // ✅ '2024-09-01'
+    const weeklyData = {
       patient_id: patientId,
       week_start: weekStart,
       weight_change: parsedWeightAmount,
       blood_pressure: bloodPressure
     };
-//replace fetch with correct url
-  try {
-    const response = await fetch('http://localhost:5000/weekly-survey', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(weeklyData),
-    });
+    //replace fetch with correct url
+    try {
+      const response = await fetch('http://localhost:5000/weekly-survey', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(weeklyData),
+      });
 
       if (response.ok) {
         console.log('Weekly survey submitted successfully');
@@ -404,58 +406,58 @@ console.log("patient", patientId)
     }
   };
 
-//Disable Survey
-const [dailySubmitted, setDailySubmitted] = useState(false);
-const [weeklySubmitted, setWeeklySubmitted] = useState(false);
-useEffect(() => {
-  const checkSurveyStatus = async () => {
-    const today = new Date();
-    const todayDateOnly = today.toISOString().split('T')[0]; // 'YYYY-MM-DD'
-    const currentWeekStart = getWeekStart(today); // Get the start of this week (Sunday)
+  //Disable Survey
+  const [dailySubmitted, setDailySubmitted] = useState(false);
+  const [weeklySubmitted, setWeeklySubmitted] = useState(false);
+  useEffect(() => {
+    const checkSurveyStatus = async () => {
+      const today = new Date();
+      const todayDateOnly = today.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+      const currentWeekStart = getWeekStart(today); // Get the start of this week (Sunday)
 
-    try {
-      // Daily survey check
-      const dailyRes = await fetch(`/daily-surveys/${patientId}`);
-      const dailyData = await dailyRes.json();
+      try {
+        // Daily survey check
+        const dailyRes = await fetch(`/daily-surveys/${patientId}`);
+        const dailyData = await dailyRes.json();
 
-      const hasDailyToday = dailyData.some(survey => {
-        const surveyDate = new Date(survey.date);
-        const surveyDateOnly = surveyDate.toISOString().split('T')[0];
-        return surveyDateOnly === todayDateOnly;
-      });
-      console.log("Today (local):", new Date().toLocaleDateString());
-      dailyData.forEach(survey => {
-        console.log("Survey date:", new Date(survey.date).toLocaleDateString());
-      });
-      setDailySubmitted(hasDailyToday);
+        const hasDailyToday = dailyData.some(survey => {
+          const surveyDate = new Date(survey.date);
+          const surveyDateOnly = surveyDate.toISOString().split('T')[0];
+          return surveyDateOnly === todayDateOnly;
+        });
+        console.log("Today (local):", new Date().toLocaleDateString());
+        dailyData.forEach(survey => {
+          console.log("Survey date:", new Date(survey.date).toLocaleDateString());
+        });
+        setDailySubmitted(hasDailyToday);
 
-         // Weekly survey check
-         const weeklyRes = await fetch(`/weekly-surveys/${patientId}`);
-         const weeklyData = await weeklyRes.json();
-   
-         const hasWeeklyThisWeek = weeklyData.some(survey => {
-           const surveyWeekStart = new Date(survey.week_start);
-           // Check if the week_start is within the current week (starting from Sunday)
-           return surveyWeekStart.toISOString().split('T')[0] === currentWeekStart;
-         });
-   
-         setWeeklySubmitted(hasWeeklyThisWeek);
-   
-       } catch (error) {
-         console.error("Error fetching surveys:", error);
-       }
-  };
+        // Weekly survey check
+        const weeklyRes = await fetch(`/weekly-surveys/${patientId}`);
+        const weeklyData = await weeklyRes.json();
 
-  checkSurveyStatus();
-}, []);
+        const hasWeeklyThisWeek = weeklyData.some(survey => {
+          const surveyWeekStart = new Date(survey.week_start);
+          // Check if the week_start is within the current week (starting from Sunday)
+          return surveyWeekStart.toISOString().split('T')[0] === currentWeekStart;
+        });
+
+        setWeeklySubmitted(hasWeeklyThisWeek);
+
+      } catch (error) {
+        console.error("Error fetching surveys:", error);
+      }
+    };
+
+    checkSurveyStatus();
+  }, []);
 
 
-function getWeekStart(date) {
-  const startOfWeek = new Date(date);
-  startOfWeek.setDate(date.getDate() - date.getDay()); // Set to Sunday (start of the week)
-  startOfWeek.setHours(0, 0, 0, 0); // Set to start of the day (midnight)
-  return startOfWeek.toISOString().split('T')[0]; // Return 'YYYY-MM-DD' format
-}
+  function getWeekStart(date) {
+    const startOfWeek = new Date(date);
+    startOfWeek.setDate(date.getDate() - date.getDay()); // Set to Sunday (start of the week)
+    startOfWeek.setHours(0, 0, 0, 0); // Set to start of the day (midnight)
+    return startOfWeek.toISOString().split('T')[0]; // Return 'YYYY-MM-DD' format
+  }
 
 
 
@@ -492,7 +494,7 @@ function getWeekStart(date) {
       }
 
       console.log('Doctor deleted successfully');
-      setDoctorInfo(null); 
+      setDoctorInfo(null);
       closeDeleteCurrentDoctorModal();  // close the modal
       // Optionally refresh data or navigate
     } catch (error) {
@@ -560,16 +562,16 @@ function getWeekStart(date) {
     const formatDateTimeForMySQL = (localDateStr, localTimeStr) => {
       const timeZone = 'America/New_York';
       const localDateTime = new Date(`${localDateStr}T${localTimeStr}:00`);
-    
+
       // Format directly in EDT without converting to UTC
       return formatInTimeZone(localDateTime, timeZone, 'yyyy-MM-dd HH:mm:ss');
     };
-    
+
 
     // 👇 Inside handleCreateAppointment
     const localDateStr = selectedDate.toISOString().split('T')[0];
     const appointment_datetime = formatDateTimeForMySQL(localDateStr, selectedTime);
-    
+
     const newAppointment = {
       patient_id: patientId,
       doctor_id: doctorInfo?.doctor_id,  // make sure doctorInfo is loaded
@@ -643,41 +645,41 @@ function getWeekStart(date) {
   }, [patientId]);
 
 
-//medical chart carousel
-const carouselComponents = [
-  <CalorieGraph refreshTrigger={refreshGraph} />,
-  <Typography sx={{ fontFamily: 'Merriweather', fontSize: '2vh' }}>
-  <WaterGraph refreshTrigger={refreshGraph} />,
-  </Typography>,
-  <Typography sx={{ fontFamily: 'Merriweather', fontSize: '2vh' }}>
-  <WeightGraph refreshTrigger={refreshGraph} />,
-  </Typography>
-];
+  //medical chart carousel
+  const carouselComponents = [
+    <CalorieGraph refreshTrigger={refreshGraph} />,
+    <Typography sx={{ fontFamily: 'Merriweather', fontSize: '2vh' }}>
+      <WaterGraph refreshTrigger={refreshGraph} />,
+    </Typography>,
+    <Typography sx={{ fontFamily: 'Merriweather', fontSize: '2vh' }}>
+      <WeightGraph refreshTrigger={refreshGraph} />,
+    </Typography>
+  ];
 
-const handlePickup = async (prescriptionId) => {
-  try {
-    const res = await fetch('http://localhost:5000/prescription/pickup', {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ prescription_id: prescriptionId }),
-    });
+  const handlePickup = async (prescriptionId) => {
+    try {
+      const res = await fetch('http://localhost:5000/prescription/pickup', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prescription_id: prescriptionId }),
+      });
 
-    if (!res.ok) {
-      throw new Error("Failed to update pickup status");
+      if (!res.ok) {
+        throw new Error("Failed to update pickup status");
+      }
+
+      const result = await res.json();
+      console.log(result.message);
+
+      // Re-fetch prescriptions to update the UI
+      await fetchPrescriptions(selectedApptId);
+    } catch (error) {
+      console.error("Pickup error:", error);
     }
 
-    const result = await res.json();
-    console.log(result.message);
-
-    // Re-fetch prescriptions to update the UI
-    await fetchPrescriptions(selectedApptId);
-  } catch (error) {
-    console.error("Pickup error:", error);
-  }
-  
-};
+  };
 
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -690,15 +692,21 @@ const handlePickup = async (prescriptionId) => {
     setCurrentIndex((prevIndex) => (prevIndex === carouselComponents.length - 1 ? 0 : prevIndex + 1));
   };
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const [ratingValue, setRatingValue] = useState(0);
   const [isRated, setIsRated] = useState(pastAppointments[0]?.appt_rating !== null && pastAppointments[0]?.appt_rating !== undefined);
-  
+
   // Function to handle rating submission
   const handleRateAppointment = async (value) => {
     const appointmentId = pastAppointments[0]?.patient_appt_id;
     if (!appointmentId) return;
-  
+
     try {
       const response = await fetch('/appointment/rate', {
         method: 'PATCH',
@@ -710,19 +718,26 @@ const handlePickup = async (prescriptionId) => {
           rating: value,
         }),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
-        setIsRated(true);  // Set isRated to true after rating is submitted
+        setIsRated(true);
         setRatingValue(value);
-        alert('Thank you for your feedback!'); 
+        setSnackbarMessage('Thank you for your feedback!');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
       } else {
         const error = await response.json();
-        alert(`Failed to rate appointment: ${error.error}`);
+        setSnackbarMessage(`Failed to rate appointment: ${error.error}`);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
       }
+
     } catch (error) {
       console.error(error);
-      alert('An unexpected error occurred.');
+      setSnackbarMessage(`Failed to rate appointment: ${error.error}`);
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
   };
 
@@ -735,10 +750,10 @@ const handlePickup = async (prescriptionId) => {
           const response = await fetch(`/appointment/status/${appointmentId}`);
           if (response.ok) {
             const data = await response.json();
-            if (data?.appt_rating){
+            if (data?.appt_rating) {
               setIsRated(true);
               setRatingValue(data.appt_rating);
-            }else{
+            } else {
               setIsRated(false);
             }
           } else {
@@ -757,25 +772,25 @@ const handlePickup = async (prescriptionId) => {
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = () => {
-    setOpen(!open);  
+    setOpen(!open);
   };
   return (
 
     <div style={{ display: "flex" }}>
       <>
-      {isMobile ? (
-        <>
-          <IconButton onClick={toggleDrawer} sx={{ position: 'fixed', bottom: 10, left: 10, zIndex: 3}}>
-            <MenuIcon sx={{ color: 'white', backgroundColor: '#5b48a5', borderRadius: '100px', padding: '1px', fontSize: 32 }} />
-          </IconButton>
-          <Drawer anchor="left" open={open} onClose={toggleDrawer}>
-            <Patient_Navbar />
-          </Drawer>
-        </>
-      ) : (
-        <Patient_Navbar />
-      )}
-    </>
+        {isMobile ? (
+          <>
+            <IconButton onClick={toggleDrawer} sx={{ position: 'fixed', bottom: 10, left: 10, zIndex: 3 }}>
+              <MenuIcon sx={{ color: 'white', backgroundColor: '#5b48a5', borderRadius: '100px', padding: '1px', fontSize: 32 }} />
+            </IconButton>
+            <Drawer anchor="left" open={open} onClose={toggleDrawer}>
+              <Patient_Navbar />
+            </Drawer>
+          </>
+        ) : (
+          <Patient_Navbar />
+        )}
+      </>
 
       <div style={{ marginLeft: "3px", flexGrow: 1, padding: "20px" }}>
         <Box sx={{ flexGrow: 1 }}>
@@ -851,143 +866,143 @@ const handlePickup = async (prescriptionId) => {
 
                     {/* Survey options*/}
 
-      <Modal
-      
-        open={openSurvey}
-        onClose={closeSurveysModal}
-        //aria-labelledby="modal-modal-title"
-        //aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-           {/* Close Icon */}
-    <IconButton 
-      onClick={closeSurveysModal}
-      sx={{
-        position: 'absolute',
-        top: 8,
-        right: 8,
-        color: 'grey.600', // or any color you prefer
-        zIndex: 1,
-      }}
-    >
-      <CloseIcon />
-    </IconButton>
-          <Typography  sx={{color:"black", fontSize:'4vh'}}>
-            Surveys
-          </Typography>
-          {patientInfo && (
-            <Typography  sx={{color:"black", fontSize:'2vh'}}>
-                {patientInfo.first_name} {patientInfo.last_name}
-            </Typography>)}
-          
-          <Paper
-     sx={{
-      color:'white',
-      background:'transparent',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      boxShadow:0,
-      p:7,
-    }}
-     >
-          <Button 
-        onClick={openDailySurveysModal}
-        variant="contained"
-        fullWidth
-        disabled={dailySubmitted}
+                    <Modal
 
-        sx={{
-          backgroundColor: '#719EC7',
-          color: 'white',
-          borderRadius: '25px',
-          fontWeight: 'bold',
-          textTransform: 'none',
-          margin:2,
-        }}
-      >
-        Daily Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4 }}  />
-      </Button>
-      {dailySubmitted && (
-        <Typography variant="body2" color="gray" sx={{ mb: 2 }}>
-          You've already submitted today's survey.
-        </Typography>
-      )}
-      <Button 
-        onClick={openWeeklySurveysModal}
-        variant="contained"
-        fullWidth
-        disabled={weeklySubmitted}
-        sx={{
-          backgroundColor: '#719EC7',
-          color: 'white',
-          borderRadius: '25px',
-          fontWeight: 'bold',
-          textTransform: 'none',
-        }}
-      >
-       Weekly Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4}}/>
-      </Button>
-      {weeklySubmitted && (
-        <Typography variant="body2" color="gray">
-          You've already submitted this week's survey.
-        </Typography>
-      )}
-      </Paper>
-        </Box>
-      </Modal>
-    </Box>
+                      open={openSurvey}
+                      onClose={closeSurveysModal}
+                    //aria-labelledby="modal-modal-title"
+                    //aria-describedby="modal-modal-description"
+                    >
+                      <Box sx={style}>
+                        {/* Close Icon */}
+                        <IconButton
+                          onClick={closeSurveysModal}
+                          sx={{
+                            position: 'absolute',
+                            top: 8,
+                            right: 8,
+                            color: 'grey.600', // or any color you prefer
+                            zIndex: 1,
+                          }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                        <Typography sx={{ color: "black", fontSize: '4vh' }}>
+                          Surveys
+                        </Typography>
+                        {patientInfo && (
+                          <Typography sx={{ color: "black", fontSize: '2vh' }}>
+                            {patientInfo.first_name} {patientInfo.last_name}
+                          </Typography>)}
+
+                        <Paper
+                          sx={{
+                            color: 'white',
+                            background: 'transparent',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            boxShadow: 0,
+                            p: 7,
+                          }}
+                        >
+                          <Button
+                            onClick={openDailySurveysModal}
+                            variant="contained"
+                            fullWidth
+                            disabled={dailySubmitted}
+
+                            sx={{
+                              backgroundColor: '#719EC7',
+                              color: 'white',
+                              borderRadius: '25px',
+                              fontWeight: 'bold',
+                              textTransform: 'none',
+                              margin: 2,
+                            }}
+                          >
+                            Daily Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4 }} />
+                          </Button>
+                          {dailySubmitted && (
+                            <Typography variant="body2" color="gray" sx={{ mb: 2 }}>
+                              You've already submitted today's survey.
+                            </Typography>
+                          )}
+                          <Button
+                            onClick={openWeeklySurveysModal}
+                            variant="contained"
+                            fullWidth
+                            disabled={weeklySubmitted}
+                            sx={{
+                              backgroundColor: '#719EC7',
+                              color: 'white',
+                              borderRadius: '25px',
+                              fontWeight: 'bold',
+                              textTransform: 'none',
+                            }}
+                          >
+                            Weekly Survey <ArrowCircleRightOutlinedIcon sx={{ ml: 4 }} />
+                          </Button>
+                          {weeklySubmitted && (
+                            <Typography variant="body2" color="gray">
+                              You've already submitted this week's survey.
+                            </Typography>
+                          )}
+                        </Paper>
+                      </Box>
+                    </Modal>
+                  </Box>
 
 
                   {/* DailySurvey*/}
 
-    <Modal
-        open={openDailySurvey}
-        onClose={closeDailySurveysModal}
-        //aria-labelledby="modal-modal-title"
-        //aria-describedby="modal-modal-description"
-      >
-        <Box  sx={{
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: { xs: '90%', sm: '75%', md: '60%' },
-    maxWidth: 600,
-    bgcolor: '#EEF2FE',
-    boxShadow: 24,
-    borderRadius: 3,
-    p: 3,
-    maxHeight: '85vh',
-    overflowY: 'auto',
-  }}  >
-        {/* Close Icon */}
-        <IconButton 
-      onClick={closeDailySurveysModal}
-      sx={{
-        position: 'absolute',
-        top: 8,
-        right: 8,
-        color: 'grey.600', // or any color you prefer
-        zIndex: 1,
-      }}
-    >
-      <CloseIcon />
-    </IconButton>
-          <Typography  sx={{color:"black", fontSize:'4vh', paddingLeft:"1.5vh"}}>
-            Daily Survey
-          </Typography>
-          {patientInfo && (
-          <Typography sx={{color:"black", fontSize:'2vh',paddingLeft:"1.5vh"}}>
-            {patientInfo.first_name} {patientInfo.last_name}
-          </Typography>
-)}
+                  <Modal
+                    open={openDailySurvey}
+                    onClose={closeDailySurveysModal}
+                  //aria-labelledby="modal-modal-title"
+                  //aria-describedby="modal-modal-description"
+                  >
+                    <Box sx={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: { xs: '90%', sm: '75%', md: '60%' },
+                      maxWidth: 600,
+                      bgcolor: '#EEF2FE',
+                      boxShadow: 24,
+                      borderRadius: 3,
+                      p: 3,
+                      maxHeight: '85vh',
+                      overflowY: 'auto',
+                    }}  >
+                      {/* Close Icon */}
+                      <IconButton
+                        onClick={closeDailySurveysModal}
+                        sx={{
+                          position: 'absolute',
+                          top: 8,
+                          right: 8,
+                          color: 'grey.600', // or any color you prefer
+                          zIndex: 1,
+                        }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                      <Typography sx={{ color: "black", fontSize: '4vh', paddingLeft: "1.5vh" }}>
+                        Daily Survey
+                      </Typography>
+                      {patientInfo && (
+                        <Typography sx={{ color: "black", fontSize: '2vh', paddingLeft: "1.5vh" }}>
+                          {patientInfo.first_name} {patientInfo.last_name}
+                        </Typography>
+                      )}
 
-                    {error && (
-                          <Typography color="error" sx={{paddingLeft:"1.5vh"}}>
-                            {error}
-                          </Typography>
-                        )}
+                      {error && (
+                        <Typography color="error" sx={{ paddingLeft: "1.5vh" }}>
+                          {error}
+                        </Typography>
+                      )}
                       <Paper
                         sx={{
                           background: "transparent",
@@ -995,7 +1010,7 @@ const handlePickup = async (prescriptionId) => {
                           p: 2,
                         }}
                       >
-                
+
 
                         <form onSubmit={handleDailySubmit} >
                           <Typography fontSize='1.5vh' mb={1}>
@@ -1070,100 +1085,100 @@ const handlePickup = async (prescriptionId) => {
                               displayEmpty
                               size="small"
 
-          >
-            <MenuItem value="" disabled><em style={{ color: 'gray', opacity: 0.7 }}>Dropdown option</em></MenuItem>
-            <MenuItem value="Good">Good</MenuItem>
-            <MenuItem value="Okay">Okay</MenuItem>
-            <MenuItem value="Bad">Bad</MenuItem>
-          </Select>
-        </FormControl>
-    
-        <Typography fontSize= '1.5vh' mb={1}>
-          What is your calorie intake for today?
-        </Typography>
-        <TextField
-          fullWidth
-          placeholder="Type here"
-          value={calorieIntake}
-          size="small"
-          onChange={(e) => setCalorieIntake(e.target.value)}
-          sx={{ mb: 2 }}
-          type="number"
-        />
-    
-        <Button
-          type="submit"
-          variant="contained"
-          fullWidth
-          sx={{
-            mt: 2,
-            backgroundColor: '#719EC7',
-            borderRadius: '25px',
-            fontWeight: 'bold',
-            textTransform: 'none',
-          }}
-        >
-          Submit
-        </Button>
-      </form>
-  
+                            >
+                              <MenuItem value="" disabled><em style={{ color: 'gray', opacity: 0.7 }}>Dropdown option</em></MenuItem>
+                              <MenuItem value="Good">Good</MenuItem>
+                              <MenuItem value="Okay">Okay</MenuItem>
+                              <MenuItem value="Bad">Bad</MenuItem>
+                            </Select>
+                          </FormControl>
+
+                          <Typography fontSize='1.5vh' mb={1}>
+                            What is your calorie intake for today?
+                          </Typography>
+                          <TextField
+                            fullWidth
+                            placeholder="Type here"
+                            value={calorieIntake}
+                            size="small"
+                            onChange={(e) => setCalorieIntake(e.target.value)}
+                            sx={{ mb: 2 }}
+                            type="number"
+                          />
+
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            fullWidth
+                            sx={{
+                              mt: 2,
+                              backgroundColor: '#719EC7',
+                              borderRadius: '25px',
+                              fontWeight: 'bold',
+                              textTransform: 'none',
+                            }}
+                          >
+                            Submit
+                          </Button>
+                        </form>
+
 
                       </Paper>
                     </Box>
                   </Modal>
 
 
-    {/* WeeklySurvey*/}
-    <Modal
-  open={openWeeklySurvey}
-  onClose={closeWeeklySurveysModal}
->
-<Box
-      sx={{
-        position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: { xs: '90%', sm: '75%', md: '60%' },
-    maxWidth: 400,
-    bgcolor: '#EEF2FE',
-    boxShadow: 24,
-    borderRadius: 3,
-    p: 3,
-    maxHeight: '90vh',
-    minHeight:'45vh',
-    overflowY: 'auto',
-  }} 
-      
-      component={Paper}
-    >
-       {/* Close Icon */}
-    <IconButton 
-      onClick={closeWeeklySurveysModal}
-      sx={{
-        position: 'absolute',
-        top: 8,
-        right: 8,
-        color: 'grey.600', // or any color you prefer
-        zIndex: 1,
-      }}
-    >
-      <CloseIcon />
-    </IconButton>
-      <Typography sx={{color:"black", fontSize:'4vh'}}>
-        Weekly Survey
-      </Typography>
-      {patientInfo && (
-        <Typography sx={{color:"black", fontSize:'2vh'}}>
-          {patientInfo.first_name} {patientInfo.last_name}
-        </Typography>
-      )}
-      
-      {weeklyError && (
-  <Typography color="error" sx={{ mb: 2 }}>
-    {weeklyError}
-  </Typography>
-)}
+                  {/* WeeklySurvey*/}
+                  <Modal
+                    open={openWeeklySurvey}
+                    onClose={closeWeeklySurveysModal}
+                  >
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: { xs: '90%', sm: '75%', md: '60%' },
+                        maxWidth: 400,
+                        bgcolor: '#EEF2FE',
+                        boxShadow: 24,
+                        borderRadius: 3,
+                        p: 3,
+                        maxHeight: '90vh',
+                        minHeight: '45vh',
+                        overflowY: 'auto',
+                      }}
+
+                      component={Paper}
+                    >
+                      {/* Close Icon */}
+                      <IconButton
+                        onClick={closeWeeklySurveysModal}
+                        sx={{
+                          position: 'absolute',
+                          top: 8,
+                          right: 8,
+                          color: 'grey.600', // or any color you prefer
+                          zIndex: 1,
+                        }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                      <Typography sx={{ color: "black", fontSize: '4vh' }}>
+                        Weekly Survey
+                      </Typography>
+                      {patientInfo && (
+                        <Typography sx={{ color: "black", fontSize: '2vh' }}>
+                          {patientInfo.first_name} {patientInfo.last_name}
+                        </Typography>
+                      )}
+
+                      {weeklyError && (
+                        <Typography color="error" sx={{ mb: 2 }}>
+                          {weeklyError}
+                        </Typography>
+                      )}
 
                       <form onSubmit={handleWeeklySubmit}>
                         <Typography fontSize='1.5vh' mb={1} paddingTop={2}>
@@ -1235,98 +1250,98 @@ const handlePickup = async (prescriptionId) => {
                     alignItems: 'center',
                   }}>
 
-{(dailyInfo?.length > 0 || weeklyInfo?.length > 0) ? (
+                    {(dailyInfo?.length > 0 || weeklyInfo?.length > 0) ? (
 
 
-<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-  
-  {/* White Card */}
-  <Box
-    sx={{
-      backgroundColor: 'white',
-      borderRadius: '20px',
-      p: 2,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      boxShadow: 3,
-    }}
-  >
-<Box
-  sx={{
-    height: '28vh', // or '300px' if you prefer
-    width: '24vw',
-    borderRadius: 2,
-    overflow: 'hidden',
-  }}
->
-  {carouselComponents[currentIndex]}
-</Box>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
+                        {/* White Card */}
+                        <Box
+                          sx={{
+                            backgroundColor: 'white',
+                            borderRadius: '20px',
+                            p: 2,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            boxShadow: 3,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              height: '28vh', // or '300px' if you prefer
+                              width: '24vw',
+                              borderRadius: 2,
+                              overflow: 'hidden',
+                            }}
+                          >
+                            {carouselComponents[currentIndex]}
+                          </Box>
 
 
 
-  </Box>
+                        </Box>
 
-  {/* Navigation (outside the card) */}
-  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-    <IconButton size="small" onClick={handlePrev} sx={{ color: 'white' }}>
-      <ArrowCircleLeftOutlinedIcon  fontSize="large" />
-    </IconButton>
- {/* Dots */}
- <Box sx={{ display: 'flex', gap: 1 }}>
-          {carouselComponents.map((_, index) => (
+                        {/* Navigation (outside the card) */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <IconButton size="small" onClick={handlePrev} sx={{ color: 'white' }}>
+                            <ArrowCircleLeftOutlinedIcon fontSize="large" />
+                          </IconButton>
+                          {/* Dots */}
+                          <Box sx={{ display: 'flex', gap: 1 }}>
+                            {carouselComponents.map((_, index) => (
 
-            <span
-              key={index}
-              style={{
-                fontSize: '8px',
-                color: index === currentIndex ? 'blue' : 'lightgray',
-              }}
-            >
-              ●
-            </span>
-          ))}
-        </Box>
+                              <span
+                                key={index}
+                                style={{
+                                  fontSize: '8px',
+                                  color: index === currentIndex ? 'blue' : 'lightgray',
+                                }}
+                              >
+                                ●
+                              </span>
+                            ))}
+                          </Box>
 
-        <IconButton size="small"  onClick={handleNext} sx={{ color: 'white' }}>
-          <ArrowCircleRightOutlinedIcon fontSize="large" />
-        </IconButton>
-  </Box>
+                          <IconButton size="small" onClick={handleNext} sx={{ color: 'white' }}>
+                            <ArrowCircleRightOutlinedIcon fontSize="large" />
+                          </IconButton>
+                        </Box>
 
-</Box>
+                      </Box>
 
 
-) : (
-  <Box
-    sx={{
-      backgroundColor: 'white',
-      borderRadius: '20px',
-      p: 2,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '28vh',
-      width: '24vw',
-      boxShadow: 3,
-    }}
-  >
-    <Typography sx={{ fontFamily: 'Montserrat', textAlign: 'center', fontSize: '2vh', mb: 2 }}>
-      Looks like you don’t have any data. Come back after filling out the surveys.
-    </Typography>
-    <Box
-      component="img"
-      src={noSurveysImg}
-      alt="Survey"
-      sx={{
-        width: '50%',
-        height: 'auto',
-        maxHeight: '10vh',
-        objectFit: 'contain'
-      }}
-    />
-  </Box>
-)}
+                    ) : (
+                      <Box
+                        sx={{
+                          backgroundColor: 'white',
+                          borderRadius: '20px',
+                          p: 2,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          height: '28vh',
+                          width: '24vw',
+                          boxShadow: 3,
+                        }}
+                      >
+                        <Typography sx={{ fontFamily: 'Montserrat', textAlign: 'center', fontSize: '2vh', mb: 2 }}>
+                          Looks like you don’t have any data. Come back after filling out the surveys.
+                        </Typography>
+                        <Box
+                          component="img"
+                          src={noSurveysImg}
+                          alt="Survey"
+                          sx={{
+                            width: '50%',
+                            height: 'auto',
+                            maxHeight: '10vh',
+                            objectFit: 'contain'
+                          }}
+                        />
+                      </Box>
+                    )}
 
                   </Box>
 
@@ -1395,8 +1410,8 @@ const handlePickup = async (prescriptionId) => {
                             minute: "2-digit",
                             hour12: true,
                             timeZoneName: "short"
-                          })}                        
-                          </Typography>
+                          })}
+                        </Typography>
                         <Typography
                           variant="body1"
                           sx={{
@@ -1410,35 +1425,49 @@ const handlePickup = async (prescriptionId) => {
                         >
                           {appointment.doctor_name}
                         </Typography>
-                        {appointment.accepted === 1 ? 
+                        {appointment.accepted === 1 ? (
+                          <Button
+                            variant="contained"
+                            onClick={() =>
+                              navigate("/patient_dashboard/patient_appointment", {
+                                state: { appointmentId: appointment.patient_appt_id },
+                              })
+                            }
+                            sx={{
+                              backgroundColor: "#5A8BBE",
+                              color: "#22252C",
+                              textTransform: "none",
+                              "&:hover": { backgroundColor: "#5A8BCF" },
+                              width: "70%",
+                              borderRadius: "30px",
+                              fontFamily: "Merrriweather",
+                              fontSize: "2vh",
+                              fontWeight: "700px",
+                              marginTop: "2%",
+                              marginBottom: "1%",
+                            }}
+                          >
+                            Go to Appointment
+                          </Button>
+                        ) : appointment.accepted === 2 ? (
+                          <Typography
+                            sx={{
+                              color: "#C62828",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Denied
+                          </Typography>
+                        ) : (
+                          "Pending..."
+                        )}
 
-                        <Button
-                          variant="contained"
-                          onClick={() => navigate('/patient_dashboard/patient_appointment', {
-                            state: { appointmentId: appointment.patient_appt_id }
-                          })}
-                          sx={{
-                            backgroundColor: "#5A8BBE",
-                            color: "#22252C",
-                            textTransform: "none",
-                            "&:hover": { backgroundColor: "#5A8BCF" },
-                            width: "70%",
-                            borderRadius: "30px",
-                            fontFamily: "Merrriweather",
-                            fontSize: "2vh",
-                            fontWeight: "700px",
-                            marginTop: "2%",
-                            marginBottom: "1%",
-                          }}
-                        >
-                           Go to Appointment
-                        </Button> : "Pending..." }
                       </Box>
                     ))}
 
                   </Box>
 
-                  <Box display="flex" justifyContent="center"  alignItems="center" anchor="end">
+                  <Box display="flex" justifyContent="center" alignItems="center" anchor="end">
                     {/* Left Arrow */}
                     <IconButton onClick={() => setShowUpcoming(!showUpcoming)} sx={{ backgroundColor: 'none', borderRadius: '50%', mx: 0.5 }}>
                       <ArrowBackIcon sx={{ color: '#5A8BBE' }} />
@@ -1456,50 +1485,50 @@ const handlePickup = async (prescriptionId) => {
                     </IconButton>
                   </Box>
                   <Modal open={openCancelModal}>
-  <Box sx={{ ...style, display: 'flex', flexDirection: 'column', alignItems: "center" }}>
-    <Typography sx={{ color: "black", fontSize: '3.5vh', p: 2 }}>
-      You are canceling this appointment.
-    </Typography>
-    <Typography sx={{ color: "black", fontSize: '3.5vh', p: 2 }}>
-      This action cannot be reversed!
-    </Typography>
+                    <Box sx={{ ...style, display: 'flex', flexDirection: 'column', alignItems: "center" }}>
+                      <Typography sx={{ color: "black", fontSize: '3.5vh', p: 2 }}>
+                        You are canceling this appointment.
+                      </Typography>
+                      <Typography sx={{ color: "black", fontSize: '3.5vh', p: 2 }}>
+                        This action cannot be reversed!
+                      </Typography>
 
-    <Button
-      onClick={handleCancelAppointment}
-      variant="contained"
-      sx={{
-        alignContent: 'center',
-        backgroundColor: '#D15254',
-        color: 'black',
-        borderRadius: '25px',
-        fontWeight: 'bold',
-        textTransform: 'none',
-        marginTop: '2vh',
-        marginBottom: '2vh',
-        width: '30vh',
-        fontFamily: 'Merriweather',
-      }}
-    >
-      Cancel Appointment
-    </Button>
+                      <Button
+                        onClick={handleCancelAppointment}
+                        variant="contained"
+                        sx={{
+                          alignContent: 'center',
+                          backgroundColor: '#D15254',
+                          color: 'black',
+                          borderRadius: '25px',
+                          fontWeight: 'bold',
+                          textTransform: 'none',
+                          marginTop: '2vh',
+                          marginBottom: '2vh',
+                          width: '30vh',
+                          fontFamily: 'Merriweather',
+                        }}
+                      >
+                        Cancel Appointment
+                      </Button>
 
-    <Button
-      onClick={closeCancelModal}
-      variant="contained"
-      sx={{
-        backgroundColor: '#719EC7',
-        color: 'white',
-        borderRadius: '25px',
-        fontWeight: 'bold',
-        textTransform: 'none',
-        width: '30vh',
-        fontFamily: 'Merriweather',
-      }}
-    >
-      Close
-    </Button>
-  </Box>
-</Modal>
+                      <Button
+                        onClick={closeCancelModal}
+                        variant="contained"
+                        sx={{
+                          backgroundColor: '#719EC7',
+                          color: 'white',
+                          borderRadius: '25px',
+                          fontWeight: 'bold',
+                          textTransform: 'none',
+                          width: '30vh',
+                          fontFamily: 'Merriweather',
+                        }}
+                      >
+                        Close
+                      </Button>
+                    </Box>
+                  </Modal>
 
                 </Box>
 
@@ -1584,14 +1613,14 @@ const handlePickup = async (prescriptionId) => {
                     <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '3.5vh' }}>
                       Doctors & Booking
                     </Typography>
-                    <Box className = "custom-scroll" sx={{
-                                height: '38vh',
-                                width: '100%',
-                                objectFit: "cover",
-                                mr: 2,
-                                fontFamily: 'Montserrat',
-                                overflowY: 'auto'
-                              }}>
+                    <Box className="custom-scroll" sx={{
+                      height: '38vh',
+                      width: '100%',
+                      objectFit: "cover",
+                      mr: 2,
+                      fontFamily: 'Montserrat',
+                      overflowY: 'auto'
+                    }}>
 
                       {doctorInfo ? (
                         <>
@@ -1609,17 +1638,17 @@ const handlePickup = async (prescriptionId) => {
                                 fontFamily: 'Montserrat'
                               }}
                             />
-                            <Box sx={{fontFamily: 'Montserrat'}}>
-                              <Typography sx={{fontWeight: 'bold', fontSize:'1.3em'}}>
+                            <Box sx={{ fontFamily: 'Montserrat' }}>
+                              <Typography sx={{ fontWeight: 'bold', fontSize: '1.3em' }}>
                                 {doctorInfo ? `Dr. ${doctorInfo.first_name} ${doctorInfo.last_name}` : "Loading..."}
                               </Typography>
 
                               <Typography>
-                              {doctorInfo
-                              ? doctorInfo.description.length > 75
-                                ? `${doctorInfo.description.slice(0, 75)}...`
-                                : doctorInfo.description
-                              : "Loading..."}
+                                {doctorInfo
+                                  ? doctorInfo.description.length > 75
+                                    ? `${doctorInfo.description.slice(0, 75)}...`
+                                    : doctorInfo.description
+                                  : "Loading..."}
                               </Typography>
                               <Button onClick={openLearnMoreModal} variant="contained" sx={{ color: "white", borderRadius: 5, textTransform: "none", backgroundColor: "#5A8BBE", fontFamily: 'Montserrat', marginTop: '7px', fontSize: '1.6vh' }}>
                                 Learn More
@@ -1677,7 +1706,7 @@ const handlePickup = async (prescriptionId) => {
                                     }}
                                   />
                                   <Box>
-                                    <Typography variant="h6" fontWeight="bold" sx={{fontFamily: 'Montserrat'}}>
+                                    <Typography variant="h6" fontWeight="bold" sx={{ fontFamily: 'Montserrat' }}>
                                       Dr. {doctorInfo.first_name} {doctorInfo.last_name}
                                     </Typography>
                                     <Typography variant="body2">
@@ -1737,7 +1766,7 @@ const handlePickup = async (prescriptionId) => {
                                 p: 4,
                               }}>
                                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                                  <Typography variant="h5" sx={{ fontFamily: 'Montserrat', fontSize: '1.6vh'}}>Book Appointment</Typography>
+                                  <Typography variant="h5" sx={{ fontFamily: 'Montserrat', fontSize: '1.6vh' }}>Book Appointment</Typography>
                                   <IconButton onClick={handleCloseBookAppt}>
                                     <CloseIcon />
                                   </IconButton>
@@ -1878,49 +1907,49 @@ const handlePickup = async (prescriptionId) => {
                           </Box>
                         </>
                       ) : (<>
-                      <Box>
-                          <Typography sx={{ fontFamily: 'Montserrat', fontSize: '1.3em', wieght: '600px'}}>
+                        <Box>
+                          <Typography sx={{ fontFamily: 'Montserrat', fontSize: '1.3em', wieght: '600px' }}>
                             Looks like you don’t have a doctor set. Click on ‘Find a Doctor’ to request one!
                           </Typography>
-                        <Box sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          textAlign: 'center',
-                          height: '100%',
-                          width: '100%',
-                        }}>
-                        <Box
-                          component="img"
-                          src={sadDoctorImg} // Replace with your actual image path or import
-                          alt="Sad doctor"
-                          sx={{
-                            maxHeight: '22vh',
-                            mr: 2,
-                            margin: 'auto'
-                          }}
-                        />
-                        <Box>
-                          
-                          <Button
-                            onClick={() => navigate('/patient_dashboard/patient_doctorlist')}
-                            variant="contained"
-                            sx={{
-                              color: "white",
-                              borderRadius: 5,
-                              textTransform: "none",
-                              backgroundColor: "#5A8BBE",
-                              fontFamily: 'Montserrat',
-                              marginTop: '7px',
-                              fontSize: '1.3em',
-                              width: '15vw'
-                            }}
-                          >
-                            Find A Doctor
-                          </Button>
-                        </Box>
-                        </Box>
+                          <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            textAlign: 'center',
+                            height: '100%',
+                            width: '100%',
+                          }}>
+                            <Box
+                              component="img"
+                              src={sadDoctorImg} // Replace with your actual image path or import
+                              alt="Sad doctor"
+                              sx={{
+                                maxHeight: '22vh',
+                                mr: 2,
+                                margin: 'auto'
+                              }}
+                            />
+                            <Box>
+
+                              <Button
+                                onClick={() => navigate('/patient_dashboard/patient_doctorlist')}
+                                variant="contained"
+                                sx={{
+                                  color: "white",
+                                  borderRadius: 5,
+                                  textTransform: "none",
+                                  backgroundColor: "#5A8BBE",
+                                  fontFamily: 'Montserrat',
+                                  marginTop: '7px',
+                                  fontSize: '1.3em',
+                                  width: '15vw'
+                                }}
+                              >
+                                Find A Doctor
+                              </Button>
+                            </Box>
+                          </Box>
                         </Box>
 
                       </>)}
@@ -1936,114 +1965,131 @@ const handlePickup = async (prescriptionId) => {
             {/* item 5 */}
             <Grid item md={4} xs={12}>
               <Item sx={{ background: "linear-gradient(110deg, #5889BD 6.67%, #719EC7 34.84%, #99C6DB 93.33%)", backgroundSize: "cover", fontFamily: 'Montserrat' }}>
-                <Box sx={{ position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2, paddingTop: 0}}>
+                <Box sx={{ position: "relative", zIndex: 2, color: "white", textAlign: "left", p: 2, paddingTop: 0 }}>
                   <Typography variant="h6" fontWeight="medium" sx={{ mb: 1, fontFamily: 'Montserrat', fontSize: '3.5vh' }}>
                     Appointment Overview
                   </Typography>
                   <Box
-                  className = "custom-scroll"
-                  sx={{
-                    height: '35vh',
-                    width: '100%',
-                    overflowY: 'auto',
-                    fontFamily: 'Montserrat',
-                  }}>
+                    className="custom-scroll"
+                    sx={{
+                      height: '35vh',
+                      width: '100%',
+                      overflowY: 'auto',
+                      fontFamily: 'Montserrat',
+                    }}>
 
-                  {pastAppointments.length > 0 ? (
-                    <>
-                      <Typography sx={{fontFamily: "montserrat", fontSize: '1.7vh' }}>
-                        <strong>Date:</strong> {new Date(pastAppointments[0].appointment_datetime).toLocaleString()}
-                      </Typography>
-                      {prescriptions.map((prescription, index) => (
-                        <Box key={index} sx={{ mb: 2 }}>
-                          <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
-                            <strong>Prescription:</strong> {prescription.medicine_name}
-                          </Typography>
-
-                          <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
-                            <strong>Status:</strong>{' '}
-                            {!prescription.filled ? (
-                              // Pending, not filled yet
-                              <span>Pending</span>
-                            ) : prescription.picked_up ? (
-                              // Filled and picked up
-                              <span>Picked up</span>
-                            ) : (
-                              // Filled but not picked up
-                              <>
-                                Ready
-                                <Button
-                                  size="small"
-                                  variant="contained"
-                                  sx={{
-                                    ml: 1,
-                                    backgroundColor: '#5889BD',
-                                    color: '#fff',
-                                    textTransform: 'none',
-                                    borderRadius: '16px',
-                                    fontSize: '1.5vh',
-                                    padding: '2px 12px',
-                                    fontFamily: 'Montserrat',
-                                    '&:hover': {
-                                      backgroundColor: '#6c97c8',
-                                    },
-                                  }}
-                                  onClick={() => handlePickup(prescription.prescription_id)}
-                                >
-                                  Pick Up
-                                </Button>
-                              </>
-                            )}
-                          </Typography>
-                        </Box>
-                      ))}
-
-                      <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
-                        <strong>Pickup Location:</strong> {pharmacyInfo}
-                      </Typography>
-                      <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
-                        <strong>Diet:</strong> {pastAppointments[0].meal_prescribed || "N/A"}
-                      </Typography>
-                      <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
-                        <strong>Notes:</strong> {pastAppointments[0].doctor_appointment_note || "No notes provided"}
-                      </Typography>
-
-                      <Typography component="legend" sx={{ fontSize: '1.2em', fontWeight: 'bold', mt: 2 }}>
-                        Rate Your Appointment:
-                      </Typography>
-                      {isRated ? (
-                        <Typography sx={{fontSize: '1.7vh', fontFamily: 'montserrat' }}>
-                          You rated this appointment <strong>{pastAppointments[0].appt_rating}</strong> out of 5.
+                    {pastAppointments.length > 0 ? (
+                      <>
+                        <Typography sx={{ fontFamily: "montserrat", fontSize: '1.7vh' }}>
+                          <strong>Date:</strong> {new Date(pastAppointments[0].appointment_datetime).toLocaleString()}
                         </Typography>
-                      ) : (
-                        <StyledRating
-                          name="customized-color"
-                          defaultValue={0}
-                          precision={1}
-                          icon={<FavoriteIcon fontSize="inherit" sx={{ fontSize: '2vw' }} />}
-                          emptyIcon={<FavoriteBorderIcon fontSize="inherit" sx={{ fontSize: '2vw', color: '#FEFEFD' }} />}
-                          onChange={(event, newValue) => {
-                            setRatingValue(newValue);
-                            handleRateAppointment(newValue);
-                          }}
-                        />
-                      )}
-                    </>
-                  ) : (
-                    <Typography sx={{ fontSize: '1.9vh' }}>
-                      Book and attend an appointment to view overview.
-                    </Typography>
-                  )}
-                </Box>
+                        {prescriptions.map((prescription, index) => (
+                          <Box key={index} sx={{ mb: 2 }}>
+                            <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
+                              <strong>Prescription:</strong> {prescription.medicine_name}
+                            </Typography>
+
+                            <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
+                              <strong>Status:</strong>{' '}
+                              {!prescription.filled ? (
+                                // Pending, not filled yet
+                                <span>Pending</span>
+                              ) : prescription.picked_up ? (
+                                // Filled and picked up
+                                <span>Picked up</span>
+                              ) : (
+                                // Filled but not picked up
+                                <>
+                                  Ready
+                                  <Button
+                                    size="small"
+                                    variant="contained"
+                                    sx={{
+                                      ml: 1,
+                                      backgroundColor: '#5889BD',
+                                      color: '#fff',
+                                      textTransform: 'none',
+                                      borderRadius: '16px',
+                                      fontSize: '1.5vh',
+                                      padding: '2px 12px',
+                                      fontFamily: 'Montserrat',
+                                      '&:hover': {
+                                        backgroundColor: '#6c97c8',
+                                      },
+                                    }}
+                                    onClick={() => handlePickup(prescription.prescription_id)}
+                                  >
+                                    Pick Up
+                                  </Button>
+                                </>
+                              )}
+                            </Typography>
+                          </Box>
+                        ))}
+
+                        <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
+                          <strong>Pickup Location:</strong> {pharmacyInfo}
+                        </Typography>
+                        <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
+                          <strong>Diet:</strong> {pastAppointments[0].meal_prescribed || "N/A"}
+                        </Typography>
+                        <Typography sx={{ fontSize: '1.7vh', fontFamily: "montserrat" }}>
+                          <strong>Notes:</strong> {pastAppointments[0].doctor_appointment_note || "No notes provided"}
+                        </Typography>
+
+                        <Typography component="legend" sx={{ fontSize: '1.2em', fontWeight: 'bold', mt: 2 }}>
+                          Rate Your Appointment:
+                        </Typography>
+                        {isRated ? (
+                          <Typography sx={{ fontSize: '1.7vh', fontFamily: 'montserrat' }}>
+                            You rated this appointment <strong>{ratingValue}</strong> out of 5.
+                          </Typography>
+                        ) : (
+                          <StyledRating
+                            name="customized-color"
+                            defaultValue={0}
+                            precision={1}
+                            icon={<FavoriteIcon fontSize="inherit" sx={{ fontSize: '2vw' }} />}
+                            emptyIcon={<FavoriteBorderIcon fontSize="inherit" sx={{ fontSize: '2vw', color: '#FEFEFD' }} />}
+                            onChange={(event, newValue) => {
+                              setRatingValue(newValue);
+                              handleRateAppointment(newValue);
+                            }}
+                          />
+                        )}
+                      </>
+                    ) : (
+                      <Typography sx={{ fontSize: '1.9vh' }}>
+                        {"Book and attend an appointment to view overview :("}
+                      </Typography>
+                    )}
+                  </Box>
                 </Box>
               </Item>
 
 
-          </Grid>
+            </Grid>
 
 
           </Grid>
+
         </Box>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={4000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <MuiAlert
+            onClose={handleSnackbarClose}
+            severity={snackbarSeverity}
+            elevation={6}
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {snackbarMessage}
+          </MuiAlert>
+        </Snackbar>
       </div>
     </div>
   );
