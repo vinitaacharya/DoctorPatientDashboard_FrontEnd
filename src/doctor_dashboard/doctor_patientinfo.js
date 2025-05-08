@@ -14,7 +14,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 function DoctorPatientInfo() {
 
     const [activeTab, setActiveTab] = useState(0);
-    const [pastAppointments, setPastAppointments] = useState([]); // Add this line
+    const [pastAppointments, setPastAppointments] = useState([]);
     const [chartTab, setChartTab] = useState(0);
     const [dailyInfo, setDailyInfo] = useState(null);
     const [weeklyInfo, setWeeklyInfo] = useState(null);
@@ -23,21 +23,65 @@ function DoctorPatientInfo() {
     const [originalPatientInfo, setOriginalPatientInfo] = useState(null);
     const [dailyGraphIndex, setDailyGraphIndex] = useState(0);
     const [weeklyGraphIndex, setWeeklyGraphIndex] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
 
 
     useEffect(() => {
       const fetchPastAppointments = async () => {
-          try {
-              const response = await fetch(`http://localhost:5000/past-appointments/${patientId}`);
-              if (!response.ok) throw new Error("Failed to fetch appointments");
-              const data = await response.json();
-              setPastAppointments(data);
-          } catch (error) {
-              console.error("Error fetching past appointments:", error);
+        setIsLoading(true);
+        try {
+          const doctorId = localStorage.getItem("doctorId");
+          if (!doctorId) {
+            console.error("No doctor ID found in localStorage");
+            return;
           }
+          if (!patientId) {
+            console.error("No patient ID found");
+            return;
+          }
+          if (!apiUrl) {
+            console.error("API URL is not defined");
+            return;
+          }
+
+          console.log("Fetching appointments with:", {
+            doctorId,
+            patientId,
+            apiUrl: `${apiUrl}/appointmentspastpd/${patientId}/${doctorId}`
+          });
+
+          const response = await fetch(`${apiUrl}/appointmentspastpd/${patientId}/${doctorId}`);
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Server responded with ${response.status}: ${errorText}`);
+          }
+          
+          const data = await response.json();
+          console.log("Received appointments data:", data);
+          
+          if (Array.isArray(data)) {
+            // Sort appointments by date, most recent first
+            const sortedData = data.sort((a, b) => 
+              new Date(b.appointment_datetime) - new Date(a.appointment_datetime)
+            );
+            setPastAppointments(sortedData);
+          } else {
+            console.error("Received non-array data:", data);
+            setPastAppointments([]);
+          }
+        } catch (error) {
+          console.error("Error fetching past appointments:", error);
+          setPastAppointments([]);
+        } finally {
+          setIsLoading(false);
+        }
       };
-      fetchPastAppointments();
-  }, [patientId]);
+
+      if (patientId && apiUrl) {
+        fetchPastAppointments();
+      }
+    }, [patientId, apiUrl]);
 
 
     const [patientInfo, setPatientInfo] = useState({
@@ -536,38 +580,126 @@ function DoctorPatientInfo() {
                       {/* // In your DoctorPatientInfo component, update the past appointments section (activeTab === 1) to: */}
 
                     {activeTab === 1 && (
-                      <Box sx={{background: '#A2BDF8', flexGrow: 1, p: 3, height: '100%'}}>
-                        <Typography variant="h6" gutterBottom>Past Appointments</Typography>
-                        {pastAppointments.length > 0 ? (
-                          <Box sx={{ 
-                            maxHeight: '500px', 
-                            overflow: 'auto',
-                            '&::-webkit-scrollbar': {
-                              width: '6px',
-                            },
-                            '&::-webkit-scrollbar-track': {
-                              background: '#f1f1f1',
-                              borderRadius: '10px',
-                            },
-                            '&::-webkit-scrollbar-thumb': {
-                              background: '#888',
-                              borderRadius: '10px',
-                            },
-                            '&::-webkit-scrollbar-thumb:hover': {
-                              background: '#555',
-                            }
-                          }}>
-                            {pastAppointments.map((appt, index) => (
-                              <Paper key={index} sx={{ 
-                                p: 2, 
-                                mb: 2,
-                                backgroundColor: "#d9e6f6",
-                                borderRadius: "30px",
-                              }}>
-                                <Typography><strong>Date:</strong> {new Date(appt.appointment_datetime).toLocaleString()}</Typography>
-                                <Typography><strong>Reason:</strong> {appt.reason_for_visit}</Typography>
-                                <Typography><strong>Notes:</strong> {appt.doctor_appointment_note || 'No notes available'}</Typography>
-                              </Paper>
+                      <Box sx={{
+                        background: '#A2BDF8', 
+                        flexGrow: 1, 
+                        p: 3, 
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'flex-start'
+                      }}>
+                        <Typography 
+                          variant="h6" 
+                          gutterBottom 
+                          sx={{ 
+                            fontFamily: "Montserrat", 
+                            color: "#22252C", 
+                            fontSize: '3.5vh', 
+                            textAlign: 'center',
+                            width: '100%',
+                            mb: 3
+                          }}
+                        >
+                          Past Appointments
+                        </Typography>
+                        {isLoading ? (
+                          <Typography>Loading appointments...</Typography>
+                        ) : pastAppointments.length > 0 ? (
+                          <Box 
+                            className="custom-scroll" 
+                            sx={{ 
+                              minHeight: '30vh',
+                              maxHeight: '60vh', // Add max height to prevent excessive stretching
+                              width: '90%', 
+                              margin: '0 auto',
+                              overflowY: "auto",
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              justifyContent: 'flex-start',
+                              pb: 2 // Add bottom padding to prevent content from being cut off
+                            }}
+                          >
+                            {pastAppointments.map((appointment, index) => (
+                              <Box
+                                key={index}
+                                sx={{
+                                  backgroundColor: "#d9e6f6",
+                                  width: "90%",
+                                  margin: "auto",
+                                  borderRadius: "30px",
+                                  height: "fit-content",
+                                  paddingTop: "1.2vh",
+                                  paddingBottom: "1vh",
+                                  marginBottom: "2vh",
+                                  position: "relative",
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  alignItems: 'center',
+                                  alignSelf: 'flex-start'
+                                }}
+                              >
+                                <Typography
+                                  variant="subtitle1"
+                                  fontWeight="medium"
+                                  sx={{
+                                    fontFamily: "Montserrat",
+                                    color: "#22252C",
+                                    fontSize: "1.8vh",
+                                    textAlign: "center",
+                                    width: '100%',
+                                    mb: 1
+                                  }}
+                                >
+                                  {new Date(appointment.appointment_datetime).toLocaleString("en-US", {
+                                    timeZone: "America/New_York",
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                    hour: "numeric",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                    timeZoneName: "short"
+                                  })}
+                                </Typography>
+                                <Typography
+                                  variant="body1"
+                                  sx={{
+                                    fontFamily: "Merrriweather",
+                                    fontWeight: "bold",
+                                    color: "#22252C",
+                                    fontSize: "1.7vh",
+                                    textAlign: "center",
+                                    width: '100%',
+                                    mb: 2
+                                  }}
+                                >
+                                  {appointment.reason_for_visit}
+                                </Typography>
+                                <Button
+                                  variant="contained"
+                                  onClick={() => {
+                                    console.log("Viewing appointment:", appointment);
+                                  }}
+                                  sx={{
+                                    backgroundColor: "#5A8BBE",
+                                    color: "#22252C",
+                                    textTransform: "none",
+                                    "&:hover": { backgroundColor: "#5A8BCF" },
+                                    width: "70%",
+                                    borderRadius: "30px",
+                                    fontFamily: "Merrriweather",
+                                    fontSize: "2vh",
+                                    fontWeight: "700px",
+                                    marginTop: "2%",
+                                    marginBottom: "1%",
+                                  }}
+                                >
+                                  View Details
+                                </Button>
+                              </Box>
                             ))}
                           </Box>
                         ) : (

@@ -274,8 +274,8 @@ hr{
     height: 35px;
     padding: 0 10px;
     border: none;
-    background-color: white;
-    max-width: 210px; /* Adjust as needed */
+    background-color: #D9D9D9;
+    max-width: 200px; /* Adjust as needed */
     color: #000000 !important; /* Force black text color */
     font-weight: 500; /* Make text slightly bolder */
   }
