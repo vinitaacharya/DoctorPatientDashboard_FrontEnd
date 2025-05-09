@@ -482,16 +482,25 @@ const handleCopy = (text) => {
         <div className="testcards">
           <div className="patientcard">
             <img src={patient1} alt="patient" className="patientimage"/>
-            <p class="patienttext">"Three years ago, I could barely walk up a flight of stairs without gasping for air. I was borderline diabetic, severely overweight, and emotionally drained.
+            <Typography sx={{color:'white', fontSize:'3vh'}}>Health Discipline</Typography>
+            <p class="patienttext">"Three years ago, I could barely walk up a flight of stairs without gasping for air. I was borderline diabetic, severe
 Read more..."</p>
+            <Button sx={{borderColor:'white',color:'white', marginTop:'1.5vh'}} variant="outlined" onClick={() => handleOpenAbout()}>Learn More</Button>
+
           </div>
           <div className="patientcard">
             <img src={patient2} alt="patient" className="patientimage"/>
-            <p class="patienttext">"I used to be heavily overweight and it sucked. Now after a few appointments I was able to get my life together. I even donated $100M"</p>
+            <Typography sx={{color:'white', fontSize:'3vh'}}>Health to Wealth</Typography>
+            <p class="patienttext">"I used to be the ‘big guy’ in the office — always smiling, but hiding a lot. I was 280 pounds, living on caffeine 
+Read more..."</p>
+            <Button sx={{borderColor:'white',color:'white', marginTop:'1.5vh'}} variant="outlined" onClick={() => handleOpenAbout()}>Learn More</Button>
           </div>
           <div className="patientcard">
             <img src={patient3} alt="patient" className="patientimage"/>
-            <p class="patienttext">"I used to be heavily overweight and it sucked. Now after a few appointments I was able to get my life together. I even donated $100M"</p>
+            <Typography sx={{color:'white', fontSize:'3vh'}}>Feeling Fantastic</Typography>
+            <p class="patienttext">"My name is Rachel, and I used to eat out for almost every meal. I thought I was too far gone to change.
+Read more..."</p>
+            <Button sx={{borderColor:'white',color:'white', marginTop:'1.5vh'}} variant="outlined" onClick={() => handleOpenAbout()}>Learn More</Button>
           </div>
         </div>
       </div>
