@@ -482,7 +482,8 @@ const handleCopy = (text) => {
         <div className="testcards">
           <div className="patientcard">
             <img src={patient1} alt="patient" className="patientimage"/>
-            <p class="patienttext">"I used to be heavily overweight and it sucked. Now after a few appointments I was able to get my life together. I even donated $100M"</p>
+            <p class="patienttext">"Three years ago, I could barely walk up a flight of stairs without gasping for air. I was borderline diabetic, severely overweight, and emotionally drained.
+Read more..."</p>
           </div>
           <div className="patientcard">
             <img src={patient2} alt="patient" className="patientimage"/>
