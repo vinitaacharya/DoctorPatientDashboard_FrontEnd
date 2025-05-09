@@ -336,7 +336,7 @@ function Doctor_Appointment() {
                           onChange={(e) => {
                             const selectedId = parseInt(e.target.value);
                             setPills(selectedId);
-                            setValues({ ...values, prescription: selectedId });
+                            setValues({ ...values, medicine_id: selectedId });
                           }}
                           displayEmpty
                           renderValue={(selected) => {
@@ -374,13 +374,13 @@ function Doctor_Appointment() {
                         style={{ background: 'teal' }}
                         onClick={async () => {
                           try {
-                            const res = await fetch(`${apiUrl}/prescriptions`, {
+                            const res = await fetch(`${apiUrl}/request-prescription`, {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
                               body: JSON.stringify({
                                 appt_id: appointmentId,
                                 medicine_id: pills,
-                                quantity: parseInt(values.quantity)
+                                quantity: parseInt(values.quantity),
                               }),
                             });
                             const data = await res.json();
