@@ -271,29 +271,7 @@ const handleCopy = (text) => {
         .catch(error => console.error("Error fetching doctor data:", error));
     }, []);
 
-const testimonials = [
-  {
-    id: 1,
-    image: patient1,
-    name: "Patient 1",
-    story:
-      "I used to be heavily overweight and it sucked. Now after a few appointments I was able to get my life together. I even donated $100M. Since then, I've been helping others do the same. It’s been a life-changing experience I will never forget.",
-  },
-  {
-    id: 2,
-    image: patient2,
-    name: "Patient 2",
-    story:
-      "I was stuck in an unhealthy cycle for years. With just a few consultations, my life turned around. The team really cared. I now advocate for others to get help early. This clinic gave me a second chance.",
-  },
-  {
-    id: 3,
-    image: patient3,
-    name: "Patient 3",
-    story:
-      "I had tried everything before — diets, trainers, you name it. But nothing clicked until I came here. The support was real, and it helped me regain control. I now mentor others trying to do the same.",
-  },
-];
+
     
   return (
     <div id="sizeScreen">
