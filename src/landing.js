@@ -282,13 +282,13 @@ const handleCopy = (text) => {
       D P P
     </Typography>
 
-    <Button color="inherit" sx={{ fontSize: '2.3vh' }} onClick={() => {
+    <Button color="inherit" sx={{ p:'2vh',fontSize: '2.3vh' }} onClick={() => {
       const section = document.getElementById("ourStories");
       section?.scrollIntoView({ behavior: 'smooth' });
     }}>
       Our Stories
     </Button>
-    <Button color="inherit" sx={{ fontSize: '2.3vh' }} onClick={() => {
+    <Button color="inherit" sx={{pl:'2vh',pr:'2vh', fontSize: '2.3vh' }} onClick={() => {
       const section = document.getElementById("ourDoctors");
       section?.scrollIntoView({ behavior: 'smooth' });
     }}>
