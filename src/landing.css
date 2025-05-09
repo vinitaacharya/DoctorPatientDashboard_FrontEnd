@@ -170,8 +170,10 @@ hr{
 .patienttext{
     font-family: Merriweather;
     color: white;
-    font-size: 2.2vh;
+    font-size: 1.7vh;
     text-align: center;
+    line-height: 3vh;
+    
 }
 
 .doctortest{
