@@ -13,9 +13,8 @@ import {
   Grid,
   Divider
 } from '@mui/material';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import Pagination from '@mui/material/Pagination';
+
 import MealCard from "./patient_dashboard/MealPlanCard"; // Make sure MealCard is exported from mealPlanCard.js
 
 import PatientNavbar from './patient_dashboard/patient_navbar';
@@ -69,6 +68,8 @@ useEffect(() => {
     }
   };
 
+
+
   fetchPatientInfo();
 }, []);
 const [posts, setPosts] = useState([]);
@@ -81,6 +82,7 @@ const [selectedCategory, setSelectedCategory] = useState("All");
       .then(res => res.json())
       .then(data => {
         const formattedPosts = data.map(post => ({
+          post_id: post.post_id,
           author: `${post.first_name} ${post.last_name}`,
           title: post.meal_name,
           tags: [`#${post.tag}`],
@@ -108,7 +110,15 @@ const [selectedCategory, setSelectedCategory] = useState("All");
   }, [searchQuery, selectedCategory, posts]);
 
 
-  
+    //pagination
+const [currentPage, setCurrentPage] = useState(1);
+const itemsPerPage = 12;
+const displayedPosts = (filteredPosts.length > 0 ? filteredPosts : posts);
+const totalPages = Math.ceil(displayedPosts.length / itemsPerPage);
+const paginatedPosts = displayedPosts.slice(
+  (currentPage - 1) * itemsPerPage,
+  currentPage * itemsPerPage
+);
   return (
     
     <Box >
@@ -215,11 +225,12 @@ const [selectedCategory, setSelectedCategory] = useState("All");
         </Typography>
 
         <Grid container spacing={3}>
-        {patientInfo && (filteredPosts.length > 0 ? filteredPosts : posts).map((post, index) => (
+  {patientInfo && paginatedPosts.map((post, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
               <MealCard
                 meal={post}
                 patientInfo={{
+                  patient_id: patientInfo.patient_id, //  
                   firstName: patientInfo.first_name,
                   lastName: patientInfo.last_name,
                 }}
@@ -227,6 +238,14 @@ const [selectedCategory, setSelectedCategory] = useState("All");
             </Grid>
           ))}
         </Grid>
+        <Box display="flex" justifyContent="center" mt={4}>
+  <Pagination
+    count={totalPages}
+    page={currentPage}
+    onChange={(event, value) => setCurrentPage(value)}
+    color="primary"
+  />
+</Box>
         </Box>
 
     

@@ -365,7 +365,6 @@ const handleCloseAboutMe = () => setOpenAboutMe(false);
         <Grid item xs={12} sm={6} md={4} key={index}>
           <MealCard
             meal={post}
-            like={true}
             patientInfo={{
               patient_id: patientInfo.patient_id, //  corrected key
               firstName: patientInfo.first_name,

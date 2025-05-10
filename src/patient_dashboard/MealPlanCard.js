@@ -16,7 +16,7 @@ import CloseIcon from '@mui/icons-material/Close';
 const apiUrl = process.env.REACT_APP_API_URL;
 
 
-export default function MealPlanCard({ meal, patientInfo, like}) {
+export default function MealPlanCard({ meal, patientInfo}) {
   
   const {
     image = '',
@@ -40,7 +40,7 @@ export default function MealPlanCard({ meal, patientInfo, like}) {
   const [comments, setComments] = useState(meal.comments || []);
   const [newComment, setNewComment] = useState("");
   const [likes, setLikes] = useState(initialLikes);
-const [liked, setLiked] = useState(like || false);
+const [liked, setLiked] = useState( false);
   const [added, setAdded] = useState(false);
 
   const [expanded, setExpanded] = useState(false);
@@ -59,16 +59,16 @@ const [liked, setLiked] = useState(like || false);
   };
   
 useEffect(()=>{
+  
   const post_id = meal.post_id;
   const patient_id = patientInfo.patient_id;
-
-  const fetchLikedPosts = async () => {
+    if (!post_id || !patient_id) return;
+ const initLikedStatus = async () => {
+     
     try{
     const response = await fetch(`${apiUrl}/posts/liked?patient_id=${patient_id}`);
     const data = await response.json();
- if (like !== undefined) {
-    setLiked(like);
-  }else if (data.liked_posts && Array.isArray(data.liked_posts)){
+    if (data.liked_posts && Array.isArray(data.liked_posts)){
       const isLiked = data.liked_posts.some(liked => liked.post_id == post_id);
       setLiked(isLiked);
     }else {
@@ -78,15 +78,10 @@ useEffect(()=>{
       setLiked(false);
     }
   };
-  fetchLikedPosts();
-}, []);
+  initLikedStatus();
+}, [meal, patientInfo]);
   
-useEffect(() => {
 
-  if (like !== undefined) {
-    setLiked(like);
-  }
-}, []);
 const handleLike = async () => {
     
     const post_id = meal.post_id;
