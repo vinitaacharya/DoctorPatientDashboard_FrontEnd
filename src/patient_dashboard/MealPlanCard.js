@@ -126,11 +126,30 @@ const handleLike = async () => {
         }else {
           console.error("Like failed:", data);
         }
-      }else{
-        //delete from
-        
-      }
+      }else {
+      // Unliking the post
+      const response = await fetch(`${apiUrl}/posts/unlike`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          post_id: post_id,
+          patient_id: patient_id,
+          doctor_id: null,
+        }),
+      });
 
+      const data = await response.json();
+
+      if (response.status === 200) {
+        setLikes(Math.max(likes - 1, 0));
+        console.log("Post unliked successfully:", data);
+        localStorage.removeItem(`liked-${post_id}`);
+      } else {
+        console.error("Unlike failed:", data);
+      }
+    }
     } catch (error) {
       console.error("Error while liking post:", error);
     }
