@@ -17,7 +17,8 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 
 export default function MealPlanCard({ meal, patientInfo}) {
-  
+  console.log("Meal object:", meal);
+
   const {
     image = '',
     title = 'Untitled',
@@ -39,25 +40,82 @@ export default function MealPlanCard({ meal, patientInfo}) {
   //const [likes, setLikes] = useState(meal.likes);
   const [comments, setComments] = useState(meal.comments || []);
   const [newComment, setNewComment] = useState("");
+  const [commentsLoaded, setCommentsLoaded] = useState(false);
   const [likes, setLikes] = useState(initialLikes);
   const [liked, setLiked] = useState(false);
   const [added, setAdded] = useState(false);
 
   const [expanded, setExpanded] = useState(false);
 
-  const handleExpandClick = () => setExpanded(!expanded);
-  //const handleLike = () => setLikes(likes + 1);
-  const handleAddComment = () => {
-    if (newComment.trim() === "") return;
+const handleExpandClick = async () => {
+  setExpanded(!expanded);
+  const post_id = meal.post_id;
 
-    const fullName = `${patientInfo.firstName} ${patientInfo.lastName}`;
-    const updatedComments = [
-      ...comments,
-      { firstName: patientInfo.firstName, lastName: patientInfo.lastName, text: newComment }
-    ];
-    setComments(updatedComments);
-    setNewComment("");
+  if (!commentsLoaded) {
+    try {
+      const response = await fetch(`${apiUrl}/posts/comment/${post_id}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        const formattedComments = data.map(comment => ({
+          firstName: comment.first_name,
+          lastName: comment.last_name,
+          text: comment.comment_text,
+          created_at: comment.created_at
+        }));
+
+        setComments(formattedComments);
+        setCommentsLoaded(true);
+      } else {
+        console.error("Failed to load comments:", data);
+      }
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  }
+};
+  //const handleLike = () => setLikes(likes + 1);
+
+  const handleAddComment = async () => {
+  const post_id=meal.post_id
+  console.log('here', post_id);
+  if (newComment.trim() === "") return;
+  const commentData = {
+    post_id: post_id,
+    user_id: patientInfo.patient_id,  // Ensure you have this in patientInfo
+    comment_text: newComment
   };
+
+  try {
+    const response = await fetch(`${apiUrl}/posts/comment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(commentData)
+    });
+
+    const data = await response.json();
+
+    if (response.status === 201) {
+      const newCommentObj = {
+        post_id:post_id,
+        firstName: patientInfo.firstName,
+        lastName: patientInfo.lastName,
+        text: newComment,
+        created_at: new Date().toISOString()  // or use data.created_at if returned
+      };
+
+      setComments([newCommentObj, ...comments]);
+      setNewComment("");
+    } else {
+      console.error("Failed to add comment:", data);
+    }
+  } catch (error) {
+    console.error("Error while adding comment:", error);
+  }
+};
+
   
 
 
@@ -353,9 +411,9 @@ const handleCloseModal = () => setOpenModal(false);
           gap: 1,
         }}
       >
-{comments.map((comment, index) => (
+{comments.map((comment) => (
   <Box
-    key={index}
+    key={comment.comment_id}
     sx={{
       backgroundColor: '#f5f5f5',
       p: 1,
@@ -367,7 +425,7 @@ const handleCloseModal = () => setOpenModal(false);
     <Typography  sx={{ fontWeight: 'bold', pr:'1vh' }}>
       {comment.firstName} {comment.lastName}
     </Typography>
-    <Typography >{comment.text}</Typography>
+    <Typography >{comment.text || comment.comment_text}</Typography>
   </Box>
 ))}
 

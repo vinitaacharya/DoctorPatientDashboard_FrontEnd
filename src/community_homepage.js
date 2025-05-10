@@ -81,6 +81,7 @@ const [selectedCategory, setSelectedCategory] = useState("All");
       .then(res => res.json())
       .then(data => {
         const formattedPosts = data.map(post => ({
+          post_id:`${post.post_id}`,
           author: `${post.first_name} ${post.last_name}`,
           title: post.meal_name,
           tags: [`#${post.tag}`],
