@@ -50,7 +50,6 @@ useEffect(() => {
       console.error("Error fetching patient info:", error);
     }
   };
-
   fetchPatientInfo();
 }, []);
 const [posts, setPosts] = useState([]);
@@ -99,12 +98,13 @@ useEffect(() => {
 const [likedPosts, setLikedPosts] = useState([]);
 
 useEffect(() => {
-  const fetchLikedPosts = async () => {
-    const patientId = localStorage.getItem("patientId");
-    if (!patientId) {
-      console.warn("No patient ID found in localStorage");
-      return;
-    }
+  if (changeTab === 1) {
+    const fetchLikedPosts = async () => {
+      const patientId = localStorage.getItem("patientId");
+      if (!patientId) {
+        console.warn("No patient ID found in localStorage");
+        return;
+      }
 
     try {
       const response = await fetch(`${apiUrl}/posts/liked?patient_id=${patientId}`);
@@ -113,12 +113,13 @@ useEffect(() => {
       if (data.liked_posts) {
         const postDetails = await Promise.all(
           data.liked_posts.map(async (liked) => {
-            const res = await fetch(`${apiUrl}/posts/liked?patient_id=${liked.post_id}`);
+            const res = await fetch(`${apiUrl}/posts/${liked.post_id}`);
             return res.json();
           })
         );
 
         const formattedPosts = postDetails.map(post => ({
+          post_id: post.post_id,
           author: `${post.first_name} ${post.last_name}`,
           title: post.meal_name,
           tags: [`#${post.tag}`],
@@ -135,7 +136,8 @@ useEffect(() => {
   };
 
   fetchLikedPosts();
-}, []);
+}
+}, [changeTab]);
 
 const [openAboutMe, setOpenAboutMe] = useState(false);
 const handleOpenAboutMe = () => setOpenAboutMe(true);
@@ -363,7 +365,9 @@ const handleCloseAboutMe = () => setOpenAboutMe(false);
         <Grid item xs={12} sm={6} md={4} key={index}>
           <MealCard
             meal={post}
+            like={true}
             patientInfo={{
+              patient_id: patientInfo.patient_id, //  corrected key
               firstName: patientInfo.first_name,
               lastName: patientInfo.last_name,
             }}

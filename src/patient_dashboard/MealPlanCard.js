@@ -16,7 +16,7 @@ import CloseIcon from '@mui/icons-material/Close';
 const apiUrl = process.env.REACT_APP_API_URL;
 
 
-export default function MealPlanCard({ meal, patientInfo}) {
+export default function MealPlanCard({ meal, patientInfo, like}) {
   
   const {
     image = '',
@@ -40,7 +40,7 @@ export default function MealPlanCard({ meal, patientInfo}) {
   const [comments, setComments] = useState(meal.comments || []);
   const [newComment, setNewComment] = useState("");
   const [likes, setLikes] = useState(initialLikes);
-  const [liked, setLiked] = useState(false);
+const [liked, setLiked] = useState(like || false);
   const [added, setAdded] = useState(false);
 
   const [expanded, setExpanded] = useState(false);
@@ -50,7 +50,6 @@ export default function MealPlanCard({ meal, patientInfo}) {
   const handleAddComment = () => {
     if (newComment.trim() === "") return;
 
-    const fullName = `${patientInfo.firstName} ${patientInfo.lastName}`;
     const updatedComments = [
       ...comments,
       { firstName: patientInfo.firstName, lastName: patientInfo.lastName, text: newComment }
@@ -59,50 +58,84 @@ export default function MealPlanCard({ meal, patientInfo}) {
     setNewComment("");
   };
   
+useEffect(()=>{
+  const post_id = meal.post_id;
+  const patient_id = patientInfo.patient_id;
 
+  const fetchLikedPosts = async () => {
+    try{
+    const response = await fetch(`${apiUrl}/posts/liked?patient_id=${patient_id}`);
+    const data = await response.json();
+ if (like !== undefined) {
+    setLiked(like);
+  }else if (data.liked_posts && Array.isArray(data.liked_posts)){
+      const isLiked = data.liked_posts.some(liked => liked.post_id == post_id);
+      setLiked(isLiked);
+    }else {
+      setLiked(false);
+    }
+    }catch(error){
+      setLiked(false);
+    }
+  };
+  fetchLikedPosts();
+}, []);
+  
+useEffect(() => {
 
-  const handleLike = async () => {
-    setLiked(!liked);
+  if (like !== undefined) {
+    setLiked(like);
+  }
+}, []);
+const handleLike = async () => {
+    
     const post_id = meal.post_id;
     const patient_id = patientInfo.patient_id; // assuming this is passed correctly
-    console.log(post_id);
+  
+
     if (!post_id || !patient_id) {
       console.error("Missing post_id or patient_id");
+   
       return;
     }
-  
+    const wasLiked = liked;
+    setLiked(!wasLiked)
     try {
-      console.log('Sending like request:', {
-        post_id: meal.post_id,
-        patient_id: patientInfo?.patient_id,
-        "doctor_id": null,
-      });      const response = await fetch(`${apiUrl}/posts/like`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          post_id: post_id,
-          patient_id:patient_id,
-          doctor_id: null,
-        }),
-      });
-  
-      const data = await response.json();
-      
-      if (response.status === 201) {
-  
-        setLiked(true);
-        setLikes(likes + 1);
-        console.log("Post liked successfully:", data);
-        localStorage.setItem(`liked-${post_id}`, 'true');
+      if(!wasLiked){
+        
+          console.log('Sending like request:', {
+          post_id: meal.post_id,
+          patient_id: patientInfo?.patient_id,
+          "doctor_id": null,
+        });      const response = await fetch(`${apiUrl}/posts/like`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            post_id: post_id,
+            patient_id:patient_id,
+            doctor_id: null,
+          }),
+        });
+    
+        const data = await response.json();
+        
+        if (response.status === 201) {
+    
+          //setLiked(true);
+          setLikes(likes + 1);
+          console.log("Post liked successfully:", data);
+          localStorage.setItem(`liked-${post_id}`, 'true');
 
-      } else if (response.status === 409) {
-        console.warn("Post already liked:", data);
-        setLiked(true); // Optional, still show UI as liked
-      } else {
-        console.error("Like failed:", data);
+        }else {
+          console.error("Like failed:", data);
+        }
+      }else{
+        //delete from
+        
       }
+
     } catch (error) {
       console.error("Error while liking post:", error);
     }
