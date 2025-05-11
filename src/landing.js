@@ -31,6 +31,8 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const copyToClipboard = (text) => {
@@ -109,6 +111,19 @@ function Landing() {
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [openAbout, setOpenAbout] = useState(false);
+  
+
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackMsg, setSnackMsg] = useState("");
+  const [snackType, setSnackType] = useState("error");
+
+  const showSnack = (msg, type = "error") => {
+    setSnackMsg(msg);
+    setSnackType(type);
+    setSnackOpen(true);
+  };
+
+
 
   useEffect(() => {
     fetch(`${apiUrl}/doctors`)
@@ -178,11 +193,11 @@ function Landing() {
           // Redirect to dashboard
           navigate("/patient_dashboard/patient_landing");
         } else {
-          alert(data.error || "Login failed");
+          showSnack(data.error || "Login failed");
         }
       } catch (error) {
         console.error("Login error:", error);
-        alert("An error occurred. Please try again.");
+        showSnack("An error occurred. Please try again.");
       }
     };
 
@@ -204,11 +219,11 @@ function Landing() {
           // Redirect to dashboard
           navigate("/doctor_dashboard/doctor_landing");
         } else {
-          alert(data.error || "Login failed");
+          showSnack(data.error || "Login failed");
         }
       } catch (error) {
         console.error("Login error:", error);
-        alert("An error occurred. Please try again.");
+        showSnack("An error occurred. Please try again.");
       }
     };
 
@@ -228,11 +243,11 @@ function Landing() {
           // Redirect to dashboard
           navigate("/pharmacy/pharmacy_landing");
         } else {
-          alert(data.error || "Login failed");
+          showSnack(data.error || "Login failed");
         }
       } catch (error) {
         console.error("Login error:", error);
-        alert("An error occurred. Please try again.");
+        showSnack("An error occurred. Please try again.");
       }
     };
 
@@ -263,7 +278,7 @@ const contactInfo = {
 
 const handleCopy = (text) => {
   navigator.clipboard.writeText(text);
-  alert("Copied to clipboard: " + text);
+  showSnack("Copied to clipboard: " + text);
 };
 
   
@@ -990,6 +1005,18 @@ const stories = [
         </Typography>
       </Container>
     </Box>
+
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={4000}
+        onClose={() => setSnackOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <MuiAlert onClose={() => setSnackOpen(false)} severity={snackType} variant="filled" sx={{ width: '100%' }}>
+          {snackMsg}
+        </MuiAlert>
+      </Snackbar>
+
     </div>
   );
 }
