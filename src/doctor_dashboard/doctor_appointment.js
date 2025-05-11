@@ -287,6 +287,29 @@ function Doctor_Appointment() {
         .catch(err => console.error('Error fetching meds:', err));
     }, []);
 
+    const fetchPrescriptions = async (appointmentId) => {
+      try {
+        const response = await fetch(`/patient/${appointmentId}/prescriptions`);
+        if (!response.ok) throw new Error("Failed to fetch prescriptions");
+        const data = await response.json();
+        setHasPrescribed(data.length > 0);
+        return data;
+      } catch (error) {
+        console.error("Error fetching prescriptions:", error);
+        return [];
+      }
+    };
+
+    const [prescriptions, setPrescriptions] = useState([]);
+
+    useEffect(() => {
+      fetchPrescriptions(appointmentId).then(setPrescriptions);
+    }, [appointmentId]);
+
+    const [hasPrescribed, setHasPrescribed] = useState(false);
+
+
+
     
 
 
@@ -314,9 +337,13 @@ function Doctor_Appointment() {
                 <Typography sx={{fontSize: "1.3em"}}><strong>Pre-existing conditions:</strong> {appointmentData.conditions}</Typography>
                 <Typography sx={{fontSize: "1.3em"}}><strong>Reason for visit:</strong> {appointmentData.reason}</Typography>
                 <Typography sx={{ mt: 2, fontSize: "1.3em"}}><strong>Notes:</strong> {appointmentData.notes}</Typography>
-                <Typography sx={{fontSize: "1.3em"}}>
+                <Typography sx={{fontSize: "1.3em", display: 'flex'}}>
                   <strong>Prescription:</strong>
-                  <Button sx={buttonStyle} onClick={handleOpen}> Prescribe </Button>
+                  {prescriptions.length === 0 && !hasPrescribed ? (
+                    <Button sx={buttonStyle} onClick={handleOpen}>Prescribe</Button>
+                  ) : (
+                    <span style={{ marginLeft: '1vw'}}>Sent</span>
+                  )}
                   <Modal
                     open={open}
                     onClose={handleClose}
@@ -386,6 +413,7 @@ function Doctor_Appointment() {
                             const data = await res.json();
                             if (res.ok) {
                               alert("Prescription submitted successfully!");
+                              setHasPrescribed(true);
                               handleClose();
                             } else {
                               alert(data.error || "Failed to submit prescription.");
