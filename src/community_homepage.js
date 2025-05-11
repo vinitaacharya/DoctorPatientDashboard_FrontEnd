@@ -103,8 +103,10 @@ const [selectedCategory, setSelectedCategory] = useState("All");
   
     const results = posts.filter(post => {
       const matchesTitle = post.title.toLowerCase().includes(query);
+      const matchesAuthor = post.author.toLowerCase().includes(query);
+
       const matchesCategory = category === "All" || post.tags.some(tag => tag.toLowerCase().includes(category.toLowerCase()));
-      return matchesTitle && matchesCategory;
+  return (matchesTitle || matchesAuthor) && matchesCategory;
     });
   
     setFilteredPosts(results);
