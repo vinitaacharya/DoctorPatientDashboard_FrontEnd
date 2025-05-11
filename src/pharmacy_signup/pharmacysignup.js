@@ -122,33 +122,36 @@ function Pharmacysignup(){
             <div className="basic-info">
                   <h1>Pharmacy Information</h1>
                     <div className='labels'>
-                        <label className='long-label' htmlFor="pharmacy_name">Pharmacy Name: </label>
+                        <label className='input-group' htmlFor="pharmacy_name">Pharmacy Name: 
                         <input type='text'
                         name='pharmacy_name'
-                        className="form-control" 
+                        className="input-field" 
                         placeholder='Enter Pharmacy Name'
                         value={values.pharmacy_name}
                         onChange={e => setValues({...values, pharmacy_name: e.target.value})}/>
+                        </label>
                     </div>
 
                     <div className='labels'>
-                        <label className='long-label' htmlFor="address">Pharmacy Address: </label>
+                        <label className='input-group' htmlFor="address">Pharmacy Address: 
                         <input type='text'
                         name='address'
-                        className="form-control" 
+                        className="input-field" 
                         placeholder='Enter your address'
                         value={values.address}
                         onChange={e => setValues({...values, address: e.target.value})}/>
+                        </label>
                     </div>
 
                     <div className='labels'>
-                        <label className='long-label' htmlFor="address">Pharmacy Hours: </label>
+                        <label className='input-group' htmlFor="address">Pharmacy Hours: 
                         <input type='text'
                         name='address'
-                        className="form-control" 
+                        className="input-field" 
                         placeholder='Enter your hours'
                         value={values.store_hours}
                         onChange={e => setValues({...values, store_hours: e.target.value})}/>
+                        </label>
                     </div>
 
 
@@ -156,31 +159,34 @@ function Pharmacysignup(){
                               
                     <div className='horizontal-bar'>
                       <div className='labels'>
-                          <label htmlFor="zip" className='def-label'>Zip code: </label>
+                          <label htmlFor="zip" className='input-group'>Zip code: 
                           <input type='text'
                           name='zip'
-                          className="form-control-dob" 
+                          className="input-field-small" 
                           placeholder='Enter ZIP'
                           value={values.zip}
                           onChange={e => setValues({...values, zip: e.target.value})}/>
+                      </label>  
                       </div>
                       <div className='labels'>
-                          <label htmlFor="city" className='short-label'>City: </label>
+                          <label htmlFor="city" className='input-group'>City: 
                           <input type='text'
                           name='city'
-                          className="form-control-gender" 
+                          className="input-field-small" 
                           placeholder='Enter City'
                           value={values.city}
                           onChange={e => setValues({...values, city: e.target.value})}/>
+                          </label>
                       </div>
                       <div className='labels'>
-                          <label htmlFor="state" className='gender-label'>State: </label>
+                          <label htmlFor="state" className='input-group'>State: 
                           <input type='text'
                           name='state'
-                          className="form-control-gender" 
+                          className="input-field-small" 
                           placeholder='Enter state'
                           value={values.state}
                           onChange={e => setValues({...values, state: e.target.value})}/>
+                          </label>
                       </div>
                   </div>
               </div>
@@ -189,7 +195,7 @@ function Pharmacysignup(){
 
         {/* <div>
               <label htmlFor="phone">Phone:</label>
-              <input type='text' name='phone' className="form-control" placeholder='Enter Phone'
+              <input type='text' name='phone' className="input-field" placeholder='Enter Phone'
               value={values.phone} onChange={e => setValues({...values, phone: e.target.value})}/>
         </div> */}
 
@@ -204,8 +210,9 @@ function Pharmacysignup(){
             <div className="basic-info">
                   <h1>Other Information</h1>
                   <div className='labels2'>
-                  <label className='def-label' htmlFor="email">Email: </label>
+                  <label className='input-group' htmlFor="email">Email: 
                   <input
+                    className="input-field"
                     type="email"
                     name="email"
                     value={values.email}
@@ -215,21 +222,23 @@ function Pharmacysignup(){
                     title="Please enter a valid email address (e.g., user@example.com)"
                     placeholder="Enter your email"
                   />
+                  </label>
                 </div>
                 <div className='labels2'>
-                  <label className='def-label'htmlFor="password">Password: </label>
+                  <label className='input-group'htmlFor="password">Password: 
                   <input
                     type={showPassword ? "text" : "password"}
                     id="psw"
                     pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                     name='password'
-                    className="form-control"
+                    className="input-field"
                     placeholder='Enter your password'
                     title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
                     required
                     value={values.password}
                     onChange={e => setValues({...values, password: e.target.value})}
                   />
+                  </label>
                   <Button
                     onClick={() => setShowPassword(!showPassword)}
                     size="small"
@@ -241,7 +250,7 @@ function Pharmacysignup(){
 
                 </div>        
                     <div className='labels'> 
-                        <label className='terms' onClick={handleOpen}>Do you Accept the terms and conditions? 
+                        <label className='input-group' onClick={handleOpen}>Do you Accept the terms and conditions? 
                           <Checkbox checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)}  />
                         </label>
                           <Modal

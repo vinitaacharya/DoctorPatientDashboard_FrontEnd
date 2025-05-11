@@ -29,6 +29,8 @@ import Link from '@mui/material/Link';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const copyToClipboard = (text) => {
@@ -45,6 +47,7 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  justifyContent: 'center'
 };
 
 function ContactMenu() {
@@ -146,6 +149,9 @@ function Landing() {
     const [openPharmacyLogin, setOpenPharmacyLogin] = React.useState(false);
     const handleOpenPharmacyLogin = () => setOpenPharmacyLogin(true);
     const handleClosePharmacyLogin = () => setOpenPharmacyLogin(false);
+
+    const [showPassword, setShowPassword] = useState(false);
+    
 
       const [values, setValues] = useState({
         email: '',
@@ -276,19 +282,19 @@ const stories = [
     title: "Health Discipline",
     image: patient1,
     short: `"Three years ago, I could barely walk up a flight of stairs without gasping for air. I was borderline diabetic, Read more..."`,
-    full: `"Three years ago, I could barely walk up a flight of stairs without gasping for air. I was borderline diabetic, severely overweight, and emotionally drained. I had tried every crash diet imaginable, from keto to juice cleanses, but nothing ever lasted. Then a friend told me about this clinic — how their doctors focused on sustainable meal plans tailored to your lifestyle. From the very first consultation, I felt heard. My nutritionist helped me replace shame with structure. They built me a custom plan that didn’t just include what to eat, but when and why. Within six months, I had lost 40 pounds and had energy I hadn’t felt in years. A year later, I ran my first 5K. I still follow the meal plan today — it's become second nature. I regained my health, my joy, and most importantly, my hope."`
+    full: `"Three years ago, I could barely walk up a flight of stairs without gasping for air. I was borderline diabetic, severely overweight, and emotionally drained. I had tried every crash diet imaginable, from keto to juice cleanses, but nothing ever lasted. Then a friend told me about this clinic — how their doctors focused on sustainable meal plans tailored to your lifestyle. From the very first consultation, I felt heard. My nutritionist helped me replace shame with structure. They built me a custom plan that didn't just include what to eat, but when and why. Within six months, I had lost 40 pounds and had energy I hadn't felt in years. A year later, I ran my first 5K. I still follow the meal plan today — it's become second nature. I regained my health, my joy, and most importantly, my hope."`
   },
   {
     title: "Health to Wealth",
     image: patient2,
-    short: `"I used to be the ‘big guy’ in the office — always smiling, but hiding a lot. I was 280 pounds, living on caffeine Read more..."`,
-    full: `"I used to be the ‘big guy’ in the office — always smiling, but hiding a lot. I was 280 pounds, living on caffeine and junk food. I felt sluggish, insecure, and too embarrassed to ask for help. A friend practically dragged me to this clinic. I expected judgment, but what I got was support and a game plan. My doctor understood my crazy travel schedule and built a meal plan I could stick to even on the road. He taught me how to navigate hotel breakfasts and late-night cravings. The weight started coming off slowly, then steadily. Over 18 months, I dropped 90 pounds. I gained confidence, started a fitness blog, and even launched my own meal prep brand. Last year, I made my first million — and donated $100,000 back to the clinic to help others start their journey too. My transformation wasn’t just physical — it changed the course of my life."`
+    short: `"I used to be the 'big guy' in the office — always smiling, but hiding a lot. I was 280 pounds, living on caffeine Read more..."`,
+    full: `"I used to be the 'big guy' in the office — always smiling, but hiding a lot. I was 280 pounds, living on caffeine and junk food. I felt sluggish, insecure, and too embarrassed to ask for help. A friend practically dragged me to this clinic. I expected judgment, but what I got was support and a game plan. My doctor understood my crazy travel schedule and built a meal plan I could stick to even on the road. He taught me how to navigate hotel breakfasts and late-night cravings. The weight started coming off slowly, then steadily. Over 18 months, I dropped 90 pounds. I gained confidence, started a fitness blog, and even launched my own meal prep brand. Last year, I made my first million — and donated $100,000 back to the clinic to help others start their journey too. My transformation wasn't just physical — it changed the course of my life."`
   },
   {
     title: "Feeling Fantastic",
     image: patient3,
     short: `"My name is Rachel, and I used to eat out for almost every meal. I thought I was too far gone to change. Read more..."`,
-    full: `"My name is Rachel, and I used to eat out for almost every meal. I thought I was too far gone to change. Life was hectic — long shifts, zero motivation, and comfort food everywhere. When my doctor told me my blood pressure was sky-high at just 32, I was terrified. A co-worker referred me to this clinic, and I expected another lecture. What I got instead was compassion and strategy. My dietitian worked with me to build realistic meal plans I could cook even on my busiest nights. She even included my favorite foods in healthier forms. Over 14 months, I lost 60 pounds, lowered my blood pressure, and found myself again. I sleep better, think clearer, and even cook for fun now. The clinic didn’t just change my health — they gave me a second shot at living well."`
+    full: `"My name is Rachel, and I used to eat out for almost every meal. I thought I was too far gone to change. Life was hectic — long shifts, zero motivation, and comfort food everywhere. When my doctor told me my blood pressure was sky-high at just 32, I was terrified. A co-worker referred me to this clinic, and I expected another lecture. What I got instead was compassion and strategy. My dietitian worked with me to build realistic meal plans I could cook even on my busiest nights. She even included my favorite foods in healthier forms. Over 14 months, I lost 60 pounds, lowered my blood pressure, and found myself again. I sleep better, think clearer, and even cook for fun now. The clinic didn't just change my health — they gave me a second shot at living well."`
   }
 ];
     const [openReadMore, setOpenReadMore] = useState(false);
@@ -340,126 +346,289 @@ const stories = [
                   aria-describedby="modal-modal-description"
                 >
                   {/*opens first popup asking if youre a doctor/patient*/}
-                  <Box sx={style}>
+                  <Box sx={{
+                  ...style,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 2,
+                  textAlign: 'center'
+                }}>
                     <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
-                      Are you a patient or a doctor? Or logging into a pharmacy?
+                      Are you a patient or a doctor?
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
 
-                    {/*If you select patient*/}
-                    <Button className="patientlgn btn-info" onClick={handleOpenPatientLogin}> Patient </Button>
-                          <Modal
-                            open={openPatientLogin}
-                            onClose={handleClosePatientLogin}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                          >
-                            <Box sx={style}>
-                              <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
-                                Patient Login
-                              </Typography>
-                                    <div className='labels'>
-                                        <label className = 'input-group' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Email: 
-                                        <input type='text'
-                                        name='email'
-                                        className="input-field" 
-                                        placeholder='Enter Email'
-                                        value={values.email}
-                                        onChange={e => setValues({...values, email: e.target.value})}/>
-                                        </label>
-                                    </div>
-                                    <div className='labels'>
-                                        <label className = 'input-group' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Password: 
-                                        <input type='password'
-                                        name='password'
-                                        className="input-field-pass" 
-                                        placeholder='Enter Password'
-                                        value={values.password}
-                                        onChange={e => setValues({...values, password: e.target.value})}/>
-                                    </label>
-                                    </div>
-                                    <button className="patientlogin btn-info" style={{background: 'teal'}} onClick={() => handleLogin(values.email, values.password)}>
-                                            Login
-                                    </button>
-                            </Box>
-                          </Modal>
+                    <Box sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 2,
+                      width: '100%',
+                      alignItems: 'center'
+                    }}>
+                            {/*If you select patient*/}
+                          <Button 
+                            variant="contained" 
+                            onClick={handleOpenPatientLogin}
+                            sx={{
+                              width: '80%',
+                              borderRadius: '28px',
+                              py: 1.5,
+                              backgroundColor: '#5C8CC6',
+                              '&:hover': { backgroundColor: '#4A76A8' }
+                            }}>
+                                  Patient 
+                            </Button>
+<Modal
+  open={openPatientLogin}
+  onClose={handleClosePatientLogin}
+  aria-labelledby="modal-modal-title"
+  aria-describedby="modal-modal-description"
+>
+  <Box sx={{
+    ...style,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+    borderRadius: '23px',
+    padding: '30px'
+  }}>
+    <Typography id="modal-modal-title" variant="h6" component="h2" color="black" sx={{ textAlign: 'center' }}>
+      Patient Login
+    </Typography>
+    
+    {/* Email Field */}
+    <div className='labels'>
+      <label className='input-group' htmlFor="email">
+        Email:
+        <input
+          type='text'
+          name='email'
+          className="input-field" 
+          placeholder='Enter Email'
+          value={values.email}
+          onChange={e => setValues({...values, email: e.target.value})}
+          style={{ width: '100%', padding: '8px 12px', boxSizing: 'border-box' }}
+        />
+      </label>
+    </div>
+    
+    {/* Password Field */}
+    <div className='labels'>
+      <label className='input-group' htmlFor="password">
+        Password:
+        <input
+          type='password'
+          name='password'
+          className="input-field" 
+          placeholder='Enter Password'
+          value={values.password}
+          onChange={e => setValues({...values, password: e.target.value})}
+          style={{ width: '100%', padding: '8px 12px', boxSizing: 'border-box' }}
+        />
+      </label>
+    </div>
+    
+    <Button 
+      variant="contained" 
+      onClick={() => handleLogin(values.email, values.password)}
+      sx={{
+        width: '100%',
+        borderRadius: '23px',
+        py: 1.5,
+        backgroundColor: '#5C8CC6',
+        '&:hover': { backgroundColor: '#4A76A8' },
+        marginTop: '20px'
+      }}
+    >
+      Login
+    </Button>
+                                    </Box>
+                                  </Modal>
+                                  
                           
-                  
-                    {/*If you select doctor*/}
-                    <Button className="doctorlgn btn-info" onClick={handleOpenDoctorLogin}> Doctor </Button>
-                          <Modal
-                            open={openDoctorLogin}
-                            onClose={handleCloseDoctorLogin}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                          >
-                            <Box sx={style}>
-                              <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
-                                Doctor Login
+                            {/*If you select doctor*/}
+                                  <Button 
+                                    variant="contained" 
+                                    onClick={handleOpenDoctorLogin}
+                                    sx={{
+                                      width: '80%',
+                                      borderRadius: '28px',
+                                      py: 1.5,
+                                      backgroundColor: '#5C8CC6',
+                                      '&:hover': { backgroundColor: '#4A76A8' }
+                                    }}
+                                  > Doctor </Button>
+                                  <Modal
+                                    open={openDoctorLogin}
+                                    onClose={handleCloseDoctorLogin}
+                                    aria-labelledby="modal-modal-title"
+                                    aria-describedby="modal-modal-description"
+                                  >
+                                    <Box sx={{
+                                      ...style,
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      gap: '20px',
+                                      borderRadius: '23px',
+                                      padding: '30px'
+                                    }}>
+                                      <Typography id="modal-modal-title" variant="h6" component="h2" color="black" sx={{ textAlign: 'center' }}>
+                                        Doctor Login
+                                      </Typography>
+                                      
+                                      {/* Email Field */}
+                                      <div className='labels'>
+                                        <label className='input-group' htmlFor="email">
+                                          Email:
+                                          <input
+                                            style={{ width: '100%',  padding: '8px 12px', boxSizing: 'border-box' }}
+                                            type='text'
+                                            name='email'
+                                            className="input-field" 
+                                            placeholder='Enter Email'
+                                            value={values.email}
+                                            onChange={e => setValues({...values, email: e.target.value})}
+                                          />
+                                        </label>
+                                      </div>
+                                      
+                                      {/* Password Field */}
+                                      <div className='labels'>
+                                        <label className='input-group' htmlFor="password">
+                                          Password:
+                                          <input
+                                            style={{ width: '100%',  padding: '8px 12px', boxSizing: 'border-box' }}
+                                            type='password'
+                                            name='password'
+                                            className="input-field" 
+                                            placeholder='Enter Password'
+                                            value={values.password}
+                                            onChange={e => setValues({...values, password: e.target.value})}
+                                          />
+                                          {/* <Button
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            size="small"
+                                            variant="text"
+                                            className="icon-button"
+                                          >
+                                            {showPassword ? <VisibilityIcon/> : <VisibilityOffIcon />}
+                                          </Button> */}
+                                        </label>
+                                      </div>
+                                      
+                                      <Button 
+                                        variant="contained" 
+                                        onClick={() => handleLogin2(values.email, values.password)}
+                                        sx={{
+                                          width: '100%',
+                                          borderRadius: '23px',
+                                          py: 1.5,
+                                          backgroundColor: '#5C8CC6',
+                                          '&:hover': { backgroundColor: '#4A76A8' },
+                                          marginTop: '20px'
+                                        }}
+                                      >
+                                        Login
+                                      </Button>
+                                    </Box>
+                                  </Modal>
+                          
+                              <Typography 
+                                id="modal-modal-title" 
+                                variant="h6" 
+                                component="h2" 
+                                color="black"
+                                sx={{
+                                  width: '100%',
+                                  textAlign: 'center',
+                                  mt: 1,
+                                  mb: 1
+                                }}
+                              >
+                              Or logging into a pharmacy?
                               </Typography>
-                                    <div className='labels'>
-                                        <label className = 'input-group' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Email: 
-                                        <input type='text'
-                                        name='email'
-                                        className="input-field" 
-                                        placeholder='Enter Email'
-                                        value={values.email}
-                                        onChange={e => setValues({...values, email: e.target.value})}/>
-                                        </label>
-                                    </div>
-                                    <div className='labels'>
-                                        <label className = 'input-group' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Password: 
-                                        <input type='password'
-                                        name='password'
-                                        className="input-field-pass" 
-                                        placeholder='Enter Password'
-                                        value={values.password}
-                                        onChange={e => setValues({...values, password: e.target.value})}/>
-                                        </label>
-                                    </div>
-                                    <button className="patientlogin btn-info" onClick={() => handleLogin2(values.email, values.password)}>
-                                            Login
-                                    </button>
-                            </Box>
-                          </Modal>
                           
                           {/*Selecting pharmacy*/} 
-                          <Button className="patientlgn btn-info" onClick={handleOpenPharmacyLogin}> Pharmacy </Button>
+                          <Button 
+                          variant="contained" 
+                          onClick={handleOpenPharmacyLogin}
+                          sx={{
+                            width: '80%',
+                            borderRadius: '28px',
+                            py: 1.5,
+                            backgroundColor: '#5C8CC6',
+                            '&:hover': { backgroundColor: '#4A76A8' }
+                          }}>
+                              Pharmacy 
+                          </Button>
                           <Modal
                             open={openPharmacyLogin}
                             onClose={handleClosePharmacyLogin}
                             aria-labelledby="modal-modal-title"
                             aria-describedby="modal-modal-description"
                           >
-                            <Box sx={style}>
-                              <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
+                            <Box sx={{
+                              ...style,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '20px',
+                              borderRadius: '23px',
+                              padding: '30px'
+                            }}>
+                              <Typography id="modal-modal-title" variant="h6" component="h2" color="black" sx={{ textAlign: 'center' }}>
                                 Pharmacy Login
                               </Typography>
-                                    <div className='labels'>
-                                        <label className = 'input-group' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Email: 
-                                        <input type='text'
-                                        name='email'
-                                        className="input-field" 
-                                        placeholder='Enter Email'
-                                        value={values.email}
-                                        onChange={e => setValues({...values, email: e.target.value})}/>
-                                        </label>
-                                    </div>
-                                    <div className='labels'>
-                                        <label className = 'input-group' style={{background: "#54a0ff", color: "white"}} htmlFor="first_name">Password: 
-                                        <input type='password'
-                                        name='password'
-                                        className="input-field-pass" 
-                                        placeholder='Enter Password'
-                                        value={values.password}
-                                        onChange={e => setValues({...values, password: e.target.value})}/>
-                                        </label>
-                                    </div>
-                                    <button className="patientlogin btn-info" style={{background: 'teal'}} onClick={() => handleLogin3(values.email, values.password)}>
-                                            Login
-                                    </button>
+                              
+                              {/* Email Field */}
+                              <div className='labels'>
+                                <label className='input-group' htmlFor="email">
+                                  Email:
+                                  <input
+                                    type='text'
+                                    name='email'
+                                    className="input-field" 
+                                    placeholder='Enter Email'
+                                    value={values.email}
+                                    onChange={e => setValues({...values, email: e.target.value})}
+                                    style={{ width: '100%', padding: '8px 12px', boxSizing: 'border-box' }}
+                                  />
+                                </label>
+                              </div>
+                              
+                              {/* Password Field */}
+                              <div className='labels'>
+                                <label className='input-group' htmlFor="password">
+                                  Password:
+                                  <input
+                                    type='password'
+                                    name='password'
+                                    className="input-field" 
+                                    placeholder='Enter Password'
+                                    value={values.password}
+                                    onChange={e => setValues({...values, password: e.target.value})}
+                                    style={{ width: '100%', padding: '8px 12px', boxSizing: 'border-box' }}
+                                  />
+                                </label>
+                              </div>
+                              
+                              <Button 
+                                variant="contained" 
+                                onClick={() => handleLogin3(values.email, values.password)}
+                                sx={{
+                                  width: '100%',
+                                  borderRadius: '23px',
+                                  py: 1.5,
+                                  backgroundColor: '#5C8CC6',
+                                  '&:hover': { backgroundColor: '#4A76A8' },
+                                  marginTop: '20px'
+                                }}
+                              >
+                                Login
+                              </Button>
                             </Box>
                           </Modal>
+                          </Box>
                     </Typography>
                   </Box>
                 </Modal>
@@ -472,22 +641,81 @@ const stories = [
                   aria-labelledby="modal-modal-title"
                   aria-describedby="modal-modal-description"
                 >
-                  <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
-                      Are you a patient or a doctor?
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    <button className="patientbtn btn-info" onClick={() => navigate('/patientsignup')}>
-                        Patient
-                    </button>
-                    <button className="doctorbtn btn-info" onClick={() => navigate('/doctorsignup')}>
-                        Doctor
-                    </button>
-                    <button className="patientbtn btn-info" onClick={() => navigate('/pharmacysignup')}>
-                        Pharmacy
-                    </button>
-                    </Typography>
-                  </Box>
+                      <Box sx={{
+                        ...style,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        textAlign: 'center'
+                      }}>
+                      <Typography id="modal-modal-title" variant="h6" component="h2" color="black">
+                          Are you a patient or a doctor?
+                        </Typography>
+                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                          <Box sx={{ 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            gap: 2,
+                            alignItems: 'center',
+                            width: '100%'
+                          }}>                 
+                                     
+                          <Button 
+                              variant="contained" 
+                              onClick={() => navigate('/patientsignup')}
+                                   sx={{
+                                      width: '80%',
+                                      borderRadius: '28px',
+                                      py: 1.5,
+                                      backgroundColor: '#5C8CC6',
+                                      '&:hover': { backgroundColor: '#4A76A8' }
+                                    }}     
+                            >
+                              Patient
+                            </Button>
+                            <Button 
+                              variant="contained" 
+                              onClick={() => navigate('/doctorsignup')}
+                                   sx={{
+                                      width: '80%',
+                                      borderRadius: '28px',
+                                      py: 1.5,
+                                      backgroundColor: '#5C8CC6',
+                                      '&:hover': { backgroundColor: '#4A76A8' }
+                                    }}     
+                            >
+                              Doctor
+                            </Button>
+                              <Typography 
+                                id="modal-modal-title" 
+                                variant="h6" 
+                                component="h2" 
+                                color="black"
+                                sx={{
+                                  width: '100%',
+                                  textAlign: 'center',
+                                  mt: 1,
+                                  mb: 1
+                                }}
+                              >
+                                Or signing up as a pharmacy?                              
+                              </Typography>
+                            <Button 
+                              variant="contained" 
+                              onClick={() => navigate('/pharmacysignup')}
+                                   sx={{
+                                      width: '80%',
+                                      borderRadius: '28px',
+                                      py: 1.5,
+                                      backgroundColor: '#5C8CC6',
+                                      '&:hover': { backgroundColor: '#4A76A8' }
+                                    }}     
+                            >
+                              Pharmacy
+                            </Button>
+                          </Box>
+                        </Typography>
+                      </Box>
                 </Modal>
             </div>
         </div>
