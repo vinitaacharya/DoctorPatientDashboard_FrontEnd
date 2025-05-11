@@ -298,24 +298,24 @@ const handleAddToMealPlan = async () => {
       } else {
         console.error("Failed to save meal:", data);
       }
-    // } else {
-    //   // Unsaving logic (DELETE request — you need a backend endpoint for this)
-    //   const response = await fetch(`${apiUrl}/posts/unsave`, {
-    //     method: 'DELETE',
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({ post_id, user_id })
-    //   });
+    } else {
+      // Unsaving logic (DELETE request — you need a backend endpoint for this)
+      const response = await fetch(`${apiUrl}/posts/unsave`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ post_id, user_id })
+      });
 
-    //   const data = await response.json();
+      const data = await response.json();
 
-    //   if (response.ok) {
-    //     setAdded(false);
-    //     console.log("Meal unsaved:", data);
-    //   } else {
-    //     console.error("Failed to unsave meal:", data);
-    //   }
+      if (response.ok) {
+        setAdded(false);
+        console.log("Meal unsaved:", data);
+      } else {
+        console.error("Failed to unsave meal:", data);
+      }
     }
   } catch (error) {
     console.error("Error while toggling saved state:", error);
