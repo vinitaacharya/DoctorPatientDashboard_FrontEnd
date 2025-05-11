@@ -42,7 +42,7 @@ export default function MealPlanCard({ meal, patientInfo}) {
   const [newComment, setNewComment] = useState("");
   const [commentsLoaded, setCommentsLoaded] = useState(false);
   const [likes, setLikes] = useState(initialLikes);
-  const [liked, setLiked] = useState(false);
+const [liked, setLiked] = useState( false);
   const [added, setAdded] = useState(false);
 
   const [expanded, setExpanded] = useState(false);
@@ -119,50 +119,98 @@ const handleExpandClick = async () => {
 };
 
   
+useEffect(()=>{
+  
+  const post_id = meal.post_id;
+  const patient_id = patientInfo.patient_id;
+    if (!post_id || !patient_id) return;
+ const initLikedStatus = async () => {
+     
+    try{
+    const response = await fetch(`${apiUrl}/posts/liked?patient_id=${patient_id}`);
+    const data = await response.json();
+    if (data.liked_posts && Array.isArray(data.liked_posts)){
+      const isLiked = data.liked_posts.some(liked => liked.post_id == post_id);
+      setLiked(isLiked);
+    }else {
+      setLiked(false);
+    }
+    }catch(error){
+      setLiked(false);
+    }
+  };
+  initLikedStatus();
+}, [meal, patientInfo]);
+  
 
-
-  const handleLike = async () => {
-    setLiked(!liked);
+const handleLike = async () => {
+    
     const post_id = meal.post_id;
     const patient_id = patientInfo.patient_id; // assuming this is passed correctly
-    console.log(post_id);
+  
+
     if (!post_id || !patient_id) {
       console.error("Missing post_id or patient_id");
+   
       return;
     }
-  
+    const wasLiked = liked;
+    setLiked(!wasLiked)
     try {
-      console.log('Sending like request:', {
-        post_id: meal.post_id,
-        patient_id: patientInfo?.patient_id,
-        "doctor_id": null,
-      });      const response = await fetch(`${apiUrl}/posts/like`, {
-        method: 'POST',
+      if(!wasLiked){
+        
+          console.log('Sending like request:', {
+          post_id: meal.post_id,
+          patient_id: patientInfo?.patient_id,
+          "doctor_id": null,
+        });      const response = await fetch(`${apiUrl}/posts/like`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            post_id: post_id,
+            patient_id:patient_id,
+            doctor_id: null,
+          }),
+        });
+    
+        const data = await response.json();
+        
+        if (response.status === 201) {
+    
+          //setLiked(true);
+          setLikes(likes + 1);
+          console.log("Post liked successfully:", data);
+          localStorage.setItem(`liked-${post_id}`, 'true');
+
+        }else {
+          console.error("Like failed:", data);
+        }
+      }else {
+      // Unliking the post
+      const response = await fetch(`${apiUrl}/posts/unlike`, {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           post_id: post_id,
-          patient_id:patient_id,
+          patient_id: patient_id,
           doctor_id: null,
         }),
       });
-  
-      const data = await response.json();
-      
-      if (response.status === 201) {
-  
-        setLiked(true);
-        setLikes(likes + 1);
-        console.log("Post liked successfully:", data);
-        localStorage.setItem(`liked-${post_id}`, 'true');
 
-      } else if (response.status === 409) {
-        console.warn("Post already liked:", data);
-        setLiked(true); // Optional, still show UI as liked
+      const data = await response.json();
+
+      if (response.status === 200) {
+        setLikes(Math.max(likes - 1, 0));
+        console.log("Post unliked successfully:", data);
+        localStorage.removeItem(`liked-${post_id}`);
       } else {
-        console.error("Like failed:", data);
+        console.error("Unlike failed:", data);
       }
+    }
     } catch (error) {
       console.error("Error while liking post:", error);
     }
@@ -180,11 +228,88 @@ const handleCommentIcon = () => {
     }
   }, 100);
 };
+useEffect(() => {
+  const checkIfSaved = async () => {
+    const post_id = meal?.post_id;
+    const user_id = patientInfo?.patient_id;
 
-  const handleAddToMealPlan = () =>{
-    setAdded(!added);
+    if (!post_id || !user_id) return;
 
+    try {
+      const response = await fetch(`${apiUrl}/posts/is-saved`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ post_id, user_id })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setAdded(data.is_saved);
+      } else {
+        console.error("Failed to check saved state:", data);
+      }
+    } catch (error) {
+      console.error("Error checking saved state:", error);
+    }
   };
+
+  checkIfSaved();
+}, [meal?.post_id, patientInfo?.patient_id]);
+
+const handleAddToMealPlan = async () => {
+  const post_id = meal?.post_id;
+  const user_id = patientInfo?.user_id;
+
+  if (!post_id || !user_id) {
+    console.error("Missing post_id or user_id");
+    return;
+  }
+
+  try {
+    if (!added) {
+      // Save the meal
+      const response = await fetch(`${apiUrl}/posts/save`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ post_id, user_id })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setAdded(true);
+        console.log("Meal saved:", data);
+      } else {
+        console.error("Failed to save meal:", data);
+      }
+    // } else {
+    //   // Unsaving logic (DELETE request — you need a backend endpoint for this)
+    //   const response = await fetch(`${apiUrl}/posts/unsave`, {
+    //     method: 'DELETE',
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({ post_id, user_id })
+    //   });
+
+    //   const data = await response.json();
+
+    //   if (response.ok) {
+    //     setAdded(false);
+    //     console.log("Meal unsaved:", data);
+    //   } else {
+    //     console.error("Failed to unsave meal:", data);
+    //   }
+    }
+  } catch (error) {
+    console.error("Error while toggling saved state:", error);
+  }
+};
+
   const handleExpand = () => {
     setExpanded(!expanded);
   };
