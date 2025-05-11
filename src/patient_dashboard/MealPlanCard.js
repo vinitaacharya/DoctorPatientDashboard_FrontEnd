@@ -45,7 +45,7 @@ export default function MealPlanCard({ meal, patientInfo, removeFromLikedPosts }
   const [likes, setLikes] = useState(initialLikes);
 const [liked, setLiked] = useState( false);
   const [added, setAdded] = useState(false);
-
+  const [likeCount, setLikeCount] = useState(0);
   const [expanded, setExpanded] = useState(false);
 
 const handleExpandClick = async () => {
@@ -133,7 +133,10 @@ useEffect(() => {
   if (meal.comment_count !== undefined) {
     setCommentCount(meal.comment_count);
   }
-}, [meal.comment_count]);
+  if (meal.like_count !== undefined) {
+    setLikeCount(meal.like_count);
+  }
+}, [meal.comment_count, meal.like_count]);
 
 
 useEffect(() => {
@@ -209,9 +212,17 @@ const handleLike = async () => {
         if (response.status === 201) {
     
           //setLiked(true);
-          setLikes(likes + 1);
-          console.log("Post liked successfully:", data);
-          localStorage.setItem(`liked-${post_id}`, 'true');
+          console.log("Post  successfully liked:", data);
+
+          const updatedPostRes = await fetch(`${apiUrl}/posts/${post_id}`);
+          const updatedPost = await updatedPostRes.json();
+
+          if (updatedPostRes.ok && updatedPost.like_count !== undefined) {
+            setLikeCount(updatedPost.like_count);
+          }
+         else {
+          console.error("Failed to update like:", data);
+        }
 
         }else {
           console.error("Like failed:", data);
@@ -233,7 +244,15 @@ const handleLike = async () => {
       const data = await response.json();
 
       if (response.status === 200) {
-        setLikes(Math.max(likes - 1, 0));
+        const updatedPostRes = await fetch(`${apiUrl}/posts/${post_id}`);
+      const updatedPost = await updatedPostRes.json();
+
+        if (updatedPostRes.ok && updatedPost.like_count !== undefined) {
+          setLikeCount(updatedPost.like_count);
+        }
+      else {
+        console.error("Failed to update like:", data);
+      }
         console.log("Post unliked successfully:", data);
         localStorage.removeItem(`liked-${post_id}`);
         if (typeof removeFromLikedPosts === 'function') {
@@ -406,7 +425,7 @@ const handleCloseModal = () => setOpenModal(false);
   <IconButton onClick={handleLike}>
     {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
   </IconButton>
-  {likes > 0 && (
+  
     <Typography
       variant="caption"
       sx={{
@@ -419,9 +438,9 @@ const handleCloseModal = () => setOpenModal(false);
         padding: '0 4px',
       }}
     >
-      {likes}
+      {likeCount}
     </Typography>
-  )}
+  
 </Box>
 
 <Box position="relative" display="inline-flex">
@@ -517,7 +536,6 @@ const handleCloseModal = () => setOpenModal(false);
   <IconButton onClick={handleLike}>
     {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
   </IconButton>
-  {likes > 0 && (
     <Typography
       variant="caption"
       sx={{
@@ -530,9 +548,9 @@ const handleCloseModal = () => setOpenModal(false);
         padding: '0 4px',
       }}
     >
-      {likes}
+      {likeCount}
     </Typography>
-  )}
+ 
 </Box>
 <Box position="relative" display="inline-flex">
   <IconButton onClick={handleExpandClick}>
