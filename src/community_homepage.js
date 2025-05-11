@@ -230,6 +230,7 @@ const paginatedPosts = displayedPosts.slice(
               <MealCard
                 meal={post}
                 patientInfo={{
+                  user_id: patientInfo.user_id,
                   patient_id: patientInfo.patient_id, //  
                   firstName: patientInfo.first_name,
                   lastName: patientInfo.last_name,
