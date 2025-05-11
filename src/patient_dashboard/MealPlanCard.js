@@ -299,9 +299,7 @@ useEffect(() => {
       });
 
       const data = await response.json();
-      console.log("added",data.is_saved)
       const val = data.is_saved;
-      console.log(val);
       if (response.ok) {
         setAdded(data.is_saved);
       } else {
