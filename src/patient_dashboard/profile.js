@@ -53,29 +53,13 @@ useEffect(() => {
   fetchPatientInfo();
 }, []);
 const [posts, setPosts] = useState([]);
+useEffect(() => {
+  if (patientInfo && changeTab === 0) {
+    fetchUserPosts(patientInfo.user_id);
+  }
+}, [changeTab, patientInfo]);
 
-  useEffect(() => {
-    if(!patientInfo)return;
-    const user_id = patientInfo.user_id
-    fetch(`${apiUrl}/posts/user/${user_id}`) // Update if your API base URL is different
-      .then(res => res.json())
-      .then(data => {
-        const formattedPosts = data.map(post => ({
-        
-          post_id: post.post_id,
-          author: `${post.first_name} ${post.last_name}`,
-          title: post.meal_name,
-          tags: [`#${post.tag}`],
-          description: post.description,
-          image: `data:image/jpeg;base64,${post.picture}`, // Assuming JPEG, adjust if needed
-          comments: [], // You can add comment logic here if you have a comments endpoint
-        }));
-        setPosts(formattedPosts);
-      })
-      .catch(error => {
-        console.error("Error fetching posts:", error);
-      });
-  }, [patientInfo]);
+
 const [patientInitSurvey, setPatientInitSurvey] = useState(null);
 useEffect(() => {
   const fetchInitialSurvey = async () => {
@@ -122,6 +106,8 @@ useEffect(() => {
         );
 
         const formattedPosts = postDetails.map(post => ({
+          like_count: post.like_count,
+          comment_count:post.comment_count,
           post_id: post.post_id,
           author: `${post.first_name} ${post.last_name}`,
           title: post.meal_name,
@@ -141,10 +127,32 @@ useEffect(() => {
   fetchLikedPosts();
 }
 }, [changeTab]);
-
+const handleRemoveLikedPost = (postIdToRemove) => {
+  setLikedPosts(prevPosts => prevPosts.filter(post => post.post_id !== postIdToRemove));
+};
 const [openAboutMe, setOpenAboutMe] = useState(false);
 const handleOpenAboutMe = () => setOpenAboutMe(true);
 const handleCloseAboutMe = () => setOpenAboutMe(false);
+const fetchUserPosts = async (user_id) => {
+  try {
+    const res = await fetch(`${apiUrl}/posts/user/${user_id}`);
+    const data = await res.json();
+    const formattedPosts = data.map(post => ({
+      like_count: post.like_count,
+      comment_count: post.comment_count,
+      post_id: post.post_id,
+      author: `${post.first_name} ${post.last_name}`,
+      title: post.meal_name,
+      tags: [`#${post.tag}`],
+      description: post.description,
+      image: `data:image/jpeg;base64,${post.picture}`,
+    }));
+    setPosts(formattedPosts);
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+  }
+};
+
   return (
     <Box display="flex">
       <Navbar />
@@ -226,7 +234,7 @@ const handleCloseAboutMe = () => setOpenAboutMe(false);
       meal={post}
       patientInfo={{
         user_id:patientInfo.user_id,
-        patient_id: patientInfo.patient_id, //  corrected key
+        patient_id: patientInfo.patient_id, 
         firstName: patientInfo.first_name,
         lastName: patientInfo.last_name,
       }}
@@ -371,10 +379,11 @@ const handleCloseAboutMe = () => setOpenAboutMe(false);
             meal={post}
             patientInfo={{
               user_id:patientInfo.user_id,
-              patient_id: patientInfo.patientId,
+              patient_id: patientInfo.patient_id,
               firstName: patientInfo.first_name,
               lastName: patientInfo.last_name,
             }}
+            removeFromLikedPosts={handleRemoveLikedPost}
           />
         </Grid>
       ))
