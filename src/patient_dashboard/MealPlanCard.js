@@ -119,28 +119,40 @@ const handleExpandClick = async () => {
 };
 
   
-useEffect(()=>{
-  
-  const post_id = meal.post_id;
-  const patient_id = patientInfo.patient_id;
-    if (!post_id || !patient_id) return;
- const initLikedStatus = async () => {
-     
-    try{
-    const response = await fetch(`${apiUrl}/posts/liked?patient_id=${patient_id}`);
-    const data = await response.json();
-    if (data.liked_posts && Array.isArray(data.liked_posts)){
-      const isLiked = data.liked_posts.some(liked => liked.post_id == post_id);
-      setLiked(isLiked);
-    }else {
-      setLiked(false);
-    }
-    }catch(error){
+useEffect(() => {
+  const post_id = meal?.post_id;
+  const user_id = patientInfo?.user_id;
+  if (!post_id || !user_id) return;
+
+  const checkIfLiked = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/posts/is-liked`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          post_id,
+          user_id: user_id
+        })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setLiked(data.is_liked);
+      } else {
+        console.error("Failed to fetch liked status:", data);
+        setLiked(false);
+      }
+    } catch (error) {
+      console.error("Error checking if post is liked:", error);
       setLiked(false);
     }
   };
-  initLikedStatus();
-}, [meal, patientInfo]);
+
+  checkIfLiked();
+}, [meal?.post_id, patientInfo?.user_id]);
+
   
 
 const handleLike = async () => {
