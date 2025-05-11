@@ -55,7 +55,9 @@ useEffect(() => {
 const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    fetch(`${apiUrl}/posts`) // Update if your API base URL is different
+    if(!patientInfo)return;
+    const user_id = patientInfo.user_id
+    fetch(`${apiUrl}/posts/user/${user_id}`) // Update if your API base URL is different
       .then(res => res.json())
       .then(data => {
         const formattedPosts = data.map(post => ({
@@ -72,7 +74,7 @@ const [posts, setPosts] = useState([]);
       .catch(error => {
         console.error("Error fetching posts:", error);
       });
-  }, []);
+  }, [patientInfo]);
 const [patientInitSurvey, setPatientInitSurvey] = useState(null);
 useEffect(() => {
   const fetchInitialSurvey = async () => {
@@ -222,6 +224,7 @@ const handleCloseAboutMe = () => setOpenAboutMe(false);
     <MealCard
       meal={post}
       patientInfo={{
+        user_id: patientInfo.user_id,
         patient_id: patientInfo.patient_id, //  corrected key
         firstName: patientInfo.first_name,
         lastName: patientInfo.last_name,

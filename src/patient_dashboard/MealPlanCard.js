@@ -167,11 +167,88 @@ const handleCommentIcon = () => {
     }
   }, 100);
 };
+useEffect(() => {
+  const checkIfSaved = async () => {
+    const post_id = meal?.post_id;
+    const user_id = patientInfo?.patient_id;
 
-  const handleAddToMealPlan = () =>{
-    setAdded(!added);
+    if (!post_id || !user_id) return;
 
+    try {
+      const response = await fetch(`${apiUrl}/posts/is_saved`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ post_id, user_id })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setAdded(data.is_saved);
+      } else {
+        console.error("Failed to check saved state:", data);
+      }
+    } catch (error) {
+      console.error("Error checking saved state:", error);
+    }
   };
+
+  checkIfSaved();
+}, [meal?.post_id, patientInfo?.patient_id]);
+
+const handleAddToMealPlan = async () => {
+  const post_id = meal?.post_id;
+  const user_id = patientInfo?.patient_id;
+
+  if (!post_id || !user_id) {
+    console.error("Missing post_id or user_id");
+    return;
+  }
+
+  try {
+    if (!added) {
+      // Save the meal
+      const response = await fetch(`${apiUrl}/posts/save`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ post_id, user_id })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setAdded(true);
+        console.log("Meal saved:", data);
+      } else {
+        console.error("Failed to save meal:", data);
+      }
+    // } else {
+    //   // Unsaving logic (DELETE request — you need a backend endpoint for this)
+    //   const response = await fetch(`${apiUrl}/posts/unsave`, {
+    //     method: 'DELETE',
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({ post_id, user_id })
+    //   });
+
+    //   const data = await response.json();
+
+    //   if (response.ok) {
+    //     setAdded(false);
+    //     console.log("Meal unsaved:", data);
+    //   } else {
+    //     console.error("Failed to unsave meal:", data);
+    //   }
+    }
+  } catch (error) {
+    console.error("Error while toggling saved state:", error);
+  }
+};
+
   const handleExpand = () => {
     setExpanded(!expanded);
   };
