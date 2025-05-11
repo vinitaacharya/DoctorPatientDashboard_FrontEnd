@@ -61,14 +61,14 @@ const [posts, setPosts] = useState([]);
       .then(res => res.json())
       .then(data => {
         const formattedPosts = data.map(post => ({
-        
+          like_count: post.like_count,
+          comment_count:post.comment_count,
           post_id: post.post_id,
           author: `${post.first_name} ${post.last_name}`,
           title: post.meal_name,
           tags: [`#${post.tag}`],
           description: post.description,
           image: `data:image/jpeg;base64,${post.picture}`, // Assuming JPEG, adjust if needed
-          comments: [], // You can add comment logic here if you have a comments endpoint
         }));
         setPosts(formattedPosts);
       })
@@ -122,6 +122,8 @@ useEffect(() => {
         );
 
         const formattedPosts = postDetails.map(post => ({
+          like_count: post.like_count,
+          comment_count:post.comment_count,
           post_id: post.post_id,
           author: `${post.first_name} ${post.last_name}`,
           title: post.meal_name,
@@ -141,7 +143,9 @@ useEffect(() => {
   fetchLikedPosts();
 }
 }, [changeTab]);
-
+const handleRemoveLikedPost = (postIdToRemove) => {
+  setLikedPosts(prevPosts => prevPosts.filter(post => post.post_id !== postIdToRemove));
+};
 const [openAboutMe, setOpenAboutMe] = useState(false);
 const handleOpenAboutMe = () => setOpenAboutMe(true);
 const handleCloseAboutMe = () => setOpenAboutMe(false);
@@ -226,7 +230,7 @@ const handleCloseAboutMe = () => setOpenAboutMe(false);
       meal={post}
       patientInfo={{
         user_id:patientInfo.user_id,
-        patient_id: patientInfo.patient_id, //  corrected key
+        patient_id: patientInfo.patient_id, 
         firstName: patientInfo.first_name,
         lastName: patientInfo.last_name,
       }}
@@ -371,10 +375,11 @@ const handleCloseAboutMe = () => setOpenAboutMe(false);
             meal={post}
             patientInfo={{
               user_id:patientInfo.user_id,
-              patient_id: patientInfo.patientId,
+              patient_id: patientInfo.patient_id,
               firstName: patientInfo.first_name,
               lastName: patientInfo.last_name,
             }}
+            removeFromLikedPosts={handleRemoveLikedPost}
           />
         </Grid>
       ))

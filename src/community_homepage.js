@@ -82,13 +82,14 @@ const [selectedCategory, setSelectedCategory] = useState("All");
       .then(res => res.json())
       .then(data => {
         const formattedPosts = data.map(post => ({
+          like_count:post.like_count,
+          comment_count:post.comment_count,
           post_id: post.post_id,
           author: `${post.first_name} ${post.last_name}`,
           title: post.meal_name,
           tags: [`#${post.tag}`],
           description: post.description,
           image: `data:image/jpeg;base64,${post.picture}`, // Assuming JPEG, adjust if needed
-          comments: [], // You can add comment logic here if you have a comments endpoint
         }));
         setPosts(formattedPosts);
       })
