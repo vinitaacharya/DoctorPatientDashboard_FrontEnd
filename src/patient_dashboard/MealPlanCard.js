@@ -175,7 +175,7 @@ useEffect(() => {
     if (!post_id || !user_id) return;
 
     try {
-      const response = await fetch(`${apiUrl}/posts/is_saved`, {
+      const response = await fetch(`${apiUrl}/posts/is-saved`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

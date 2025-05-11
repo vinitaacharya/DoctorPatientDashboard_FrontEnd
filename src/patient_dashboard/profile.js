@@ -61,6 +61,7 @@ const [posts, setPosts] = useState([]);
       .then(res => res.json())
       .then(data => {
         const formattedPosts = data.map(post => ({
+        
           post_id: post.post_id,
           author: `${post.first_name} ${post.last_name}`,
           title: post.meal_name,
@@ -369,6 +370,7 @@ const handleCloseAboutMe = () => setOpenAboutMe(false);
           <MealCard
             meal={post}
             patientInfo={{
+              user_id:patientInfo.user_id,
               patient_id: patientInfo.patient_id, //  corrected key
               firstName: patientInfo.first_name,
               lastName: patientInfo.last_name,
