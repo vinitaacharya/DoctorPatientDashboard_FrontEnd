@@ -199,7 +199,7 @@ useEffect(() => {
 
 const handleAddToMealPlan = async () => {
   const post_id = meal?.post_id;
-  const user_id = patientInfo?.patient_id;
+  const user_id = patientInfo?.user_id;
 
   if (!post_id || !user_id) {
     console.error("Missing post_id or user_id");
