@@ -172,7 +172,7 @@ const handleExpandClick = async () => {
 const commentInputRef = useRef(null);
 const handleCommentIcon = () => {
   handleOpenModal(); // Make sure to call the function (add parentheses)
-
+  
   // Focus after a short delay to ensure modal has rendered
   setTimeout(() => {
     if (commentInputRef.current) {
@@ -191,7 +191,10 @@ const handleCommentIcon = () => {
 
   //Modal to View Full Reciepe
 const [openModal, setOpenModal] = useState(false);
-const handleOpenModal = () => setOpenModal(true);
+const handleOpenModal = () => {
+  setOpenModal(true);
+  handleExpandClick();
+};
 const handleCloseModal = () => setOpenModal(false);
 
   return (
@@ -202,7 +205,7 @@ const handleCloseModal = () => setOpenModal(false);
       
       <CardContent>
       <div style={{ marginBottom: 8 }}>
-      <Typography sx={{ fontFamily: 'Montserrat', fontWeight: 600, cursor:'pointer' }} onClick={handleOpenModal}>{title}</Typography>
+      <Typography sx={{ fontFamily: 'Montserrat', fontWeight: 600, cursor:'pointer' }} onClick={handleOpenModal} >{title}</Typography>
       <Box mt={1} display="flex" alignItems="center" gap={1}>
 
     {tags.map(tag => (
