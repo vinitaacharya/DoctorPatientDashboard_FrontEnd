@@ -106,6 +106,7 @@ const handleExpandClick = async () => {
         text: newComment,
         created_at: new Date().toISOString()  // or use data.created_at if returned
       };
+      console.log("successfully added comment to backend")
 
       setComments([newCommentObj, ...comments]);
       setNewComment("");
