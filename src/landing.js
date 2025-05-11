@@ -59,6 +59,7 @@ function ContactMenu() {
   };
 
   return (
+    <div>
     <Box>
       <Button
         color="inherit"
@@ -69,9 +70,7 @@ function ContactMenu() {
         Contact Us
       </Button>
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-      <Tooltip title="Copy to clipboard">
-        
-          </Tooltip>
+      
   <MenuItem onClick={() => copyToClipboard("+1 (555) 123-4567")}>
     <Typography  sx={{pr:'1vh'}} component="span">Phone: </Typography>
     <Typography  component="span" sx={{ color: 'primary.main', paddingRight:'12vh' }}>
@@ -99,6 +98,7 @@ function ContactMenu() {
 </Menu>
 
     </Box>
+    </div>
   );
 }
 
@@ -271,8 +271,35 @@ const handleCopy = (text) => {
         .catch(error => console.error("Error fetching doctor data:", error));
     }, []);
 
+const stories = [
+  {
+    title: "Health Discipline",
+    image: patient1,
+    short: `"Three years ago, I could barely walk up a flight of stairs without gasping for air. I was borderline diabetic, Read more..."`,
+    full: `"Three years ago, I could barely walk up a flight of stairs without gasping for air. I was borderline diabetic, severely overweight, and emotionally drained. I had tried every crash diet imaginable, from keto to juice cleanses, but nothing ever lasted. Then a friend told me about this clinic — how their doctors focused on sustainable meal plans tailored to your lifestyle. From the very first consultation, I felt heard. My nutritionist helped me replace shame with structure. They built me a custom plan that didn’t just include what to eat, but when and why. Within six months, I had lost 40 pounds and had energy I hadn’t felt in years. A year later, I ran my first 5K. I still follow the meal plan today — it's become second nature. I regained my health, my joy, and most importantly, my hope."`
+  },
+  {
+    title: "Health to Wealth",
+    image: patient2,
+    short: `"I used to be the ‘big guy’ in the office — always smiling, but hiding a lot. I was 280 pounds, living on caffeine Read more..."`,
+    full: `"I used to be the ‘big guy’ in the office — always smiling, but hiding a lot. I was 280 pounds, living on caffeine and junk food. I felt sluggish, insecure, and too embarrassed to ask for help. A friend practically dragged me to this clinic. I expected judgment, but what I got was support and a game plan. My doctor understood my crazy travel schedule and built a meal plan I could stick to even on the road. He taught me how to navigate hotel breakfasts and late-night cravings. The weight started coming off slowly, then steadily. Over 18 months, I dropped 90 pounds. I gained confidence, started a fitness blog, and even launched my own meal prep brand. Last year, I made my first million — and donated $100,000 back to the clinic to help others start their journey too. My transformation wasn’t just physical — it changed the course of my life."`
+  },
+  {
+    title: "Feeling Fantastic",
+    image: patient3,
+    short: `"My name is Rachel, and I used to eat out for almost every meal. I thought I was too far gone to change. Read more..."`,
+    full: `"My name is Rachel, and I used to eat out for almost every meal. I thought I was too far gone to change. Life was hectic — long shifts, zero motivation, and comfort food everywhere. When my doctor told me my blood pressure was sky-high at just 32, I was terrified. A co-worker referred me to this clinic, and I expected another lecture. What I got instead was compassion and strategy. My dietitian worked with me to build realistic meal plans I could cook even on my busiest nights. She even included my favorite foods in healthier forms. Over 14 months, I lost 60 pounds, lowered my blood pressure, and found myself again. I sleep better, think clearer, and even cook for fun now. The clinic didn’t just change my health — they gave me a second shot at living well."`
+  }
+];
+    const [openReadMore, setOpenReadMore] = useState(false);
+  const [selectedStory, setSelectedStory] = useState(null);
 
-    
+  const handleOpenReadMore = (story) => {
+    setSelectedStory(story);
+    setOpenReadMore(true);
+  };
+
+  const handleCloseReadMore = () => setOpenReadMore(false);
   return (
     <div id="sizeScreen">
     <div className="Landing">
@@ -477,22 +504,69 @@ const handleCopy = (text) => {
         </div>
       </div>
 
-      <div className="patienttest">
-        <h4 id="ourStories" className="white">Patient Testimontials</h4>
-        <div className="testcards">
-          <div className="patientcard">
-            <img src={patient1} alt="patient" className="patientimage"/>
-            <p class="patienttext">"I used to be heavily overweight and it sucked. Now after a few appointments I was able to get my life together. I even donated $100M"</p>
+<div className="patienttest">
+      <h4 id="ourStories" className="white">Patient Testimonials</h4>
+      <div className="testcards">
+        {stories.map((story, index) => (
+          <div className="patientcard" key={index}>
+            <img src={story.image} alt="patient" className="patientimage" />
+            <Typography sx={{ color: 'white', fontSize: '3vh' }}>{story.title}</Typography>
+            <p className="patienttext">{story.short}</p>
+            <Button
+              sx={{ borderColor: 'white', color: 'white', marginTop: '1.5vh' }}
+              variant="outlined"
+              onClick={() => handleOpenReadMore(story)}
+            >
+              Read More
+            </Button>
           </div>
-          <div className="patientcard">
-            <img src={patient2} alt="patient" className="patientimage"/>
-            <p class="patienttext">"I used to be heavily overweight and it sucked. Now after a few appointments I was able to get my life together. I even donated $100M"</p>
-          </div>
-          <div className="patientcard">
-            <img src={patient3} alt="patient" className="patientimage"/>
-            <p class="patienttext">"I used to be heavily overweight and it sucked. Now after a few appointments I was able to get my life together. I even donated $100M"</p>
-          </div>
-        </div>
+        ))}
+      </div>
+
+<Modal open={openReadMore} onClose={handleCloseReadMore} aria-labelledby="doctor-modal-title">
+  <Box
+    sx={{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: { xs: 350, sm: 450 },
+      bgcolor: '#FFFFFF',
+      borderRadius: 3,
+      boxShadow: 24,
+      p: 4,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 2,
+      borderTop: '6px solid  #5C8CC6', // A subtle purple accent line
+    }}
+  >
+      <Typography  variant="h5"
+          fontWeight="bold"
+          color="black">
+            {selectedStory?.title}
+          </Typography>
+          <Typography variant="body1">
+            {selectedStory?.full}
+          </Typography>
+        <Button
+          variant="contained"
+          onClick={handleCloseReadMore}
+          sx={{
+            alignSelf: 'flex-end',
+            mt: 2,
+            backgroundColor:'#5C8CC6',
+  
+          }}
+        >
+          Close
+        </Button>
+      
+    
+  </Box>
+</Modal>
+
+    </div>
       </div>
 
 
@@ -589,7 +663,7 @@ const handleCopy = (text) => {
 
 
     </div>
-    </div>
+    
     (
     <Box sx={{ bgcolor: '#f5f5f5', mt: 6, pt: 4, pb: 3, fontFamily: 'Roboto, sans-serif' }}>
       <Container maxWidth="lg">
