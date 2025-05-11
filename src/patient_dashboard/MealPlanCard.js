@@ -16,7 +16,7 @@ import CloseIcon from '@mui/icons-material/Close';
 const apiUrl = process.env.REACT_APP_API_URL;
 
 
-export default function MealPlanCard({ meal, patientInfo}) {
+export default function MealPlanCard({ meal, patientInfo, removeFromLikedPosts }) {
   console.log("Meal object:", meal);
 
   const {
@@ -40,6 +40,7 @@ export default function MealPlanCard({ meal, patientInfo}) {
   //const [likes, setLikes] = useState(meal.likes);
   const [comments, setComments] = useState(meal.comments || []);
   const [newComment, setNewComment] = useState("");
+  const [commentCount, setCommentCount]= useState(0);
   const [commentsLoaded, setCommentsLoaded] = useState(false);
   const [likes, setLikes] = useState(initialLikes);
 const [liked, setLiked] = useState( false);
@@ -83,7 +84,7 @@ const handleExpandClick = async () => {
   if (newComment.trim() === "") return;
   const commentData = {
     post_id: post_id,
-    user_id: user_id,  // Ensure you have this in patientInfo
+    user_id: user_id,  
     comment_text: newComment
   };
 
@@ -110,6 +111,16 @@ const handleExpandClick = async () => {
 
       setComments([newCommentObj, ...comments]);
       setNewComment("");
+      
+      //add code ot chnage the comment count in the database
+      const updatedPostRes = await fetch(`${apiUrl}/posts/${post_id}`);
+      const updatedPost = await updatedPostRes.json();
+
+      if (updatedPostRes.ok && updatedPost.comment_count !== undefined) {
+        setCommentCount(updatedPost.comment_count);
+      }else {
+      console.error("Failed to add comment:", data);
+      }
     } else {
       console.error("Failed to add comment:", data);
     }
@@ -118,7 +129,13 @@ const handleExpandClick = async () => {
   }
 };
 
-  
+useEffect(() => {
+  if (meal.comment_count !== undefined) {
+    setCommentCount(meal.comment_count);
+  }
+}, [meal.comment_count]);
+
+
 useEffect(() => {
   const post_id = meal?.post_id;
   const user_id = patientInfo?.user_id;
@@ -219,6 +236,9 @@ const handleLike = async () => {
         setLikes(Math.max(likes - 1, 0));
         console.log("Post unliked successfully:", data);
         localStorage.removeItem(`liked-${post_id}`);
+        if (typeof removeFromLikedPosts === 'function') {
+          removeFromLikedPosts(post_id);
+        }
       } else {
         console.error("Unlike failed:", data);
       }
@@ -322,9 +342,6 @@ const handleAddToMealPlan = async () => {
   }
 };
 
-  const handleExpand = () => {
-    setExpanded(!expanded);
-  };
 
   //Modal to View Full Reciepe
 const [openModal, setOpenModal] = useState(false);
@@ -412,7 +429,7 @@ const handleCloseModal = () => setOpenModal(false);
   <IconButton onClick={handleCommentIcon}>
     <ChatBubbleOutline />
   </IconButton>
-  {comments.length > 0 && (
+  
     <Typography
       variant="caption"
       sx={{
@@ -424,9 +441,9 @@ const handleCloseModal = () => setOpenModal(false);
         px: 0.5,
       }}
     >
-      {comments.length}
+      {commentCount}
     </Typography>
-  )}
+  
 </Box>
         </Box>
 
@@ -521,7 +538,6 @@ const handleCloseModal = () => setOpenModal(false);
   <IconButton onClick={handleExpandClick}>
     <ChatBubbleOutline />
   </IconButton>
-  {comments.length > 0 && (
     <Typography
       variant="caption"
       sx={{
@@ -533,9 +549,9 @@ const handleCloseModal = () => setOpenModal(false);
         px: 0.5,
       }}
     >
-      {comments.length}
+      {commentCount}
     </Typography>
-  )}
+  
 </Box>
         </Box>
       </Box>
