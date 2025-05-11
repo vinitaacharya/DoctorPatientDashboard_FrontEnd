@@ -221,6 +221,7 @@ const [selectedCategory, setSelectedCategory] = useState("All");
               <MealCard
                 meal={post}
                 patientInfo={{
+                  user_id:patientInfo.user_id,
                   firstName: patientInfo.first_name,
                   lastName: patientInfo.last_name,
                 }}

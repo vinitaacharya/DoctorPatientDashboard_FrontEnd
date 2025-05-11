@@ -220,6 +220,7 @@ const handleCloseAboutMe = () => setOpenAboutMe(false);
     <MealCard
       meal={post}
       patientInfo={{
+        user_id:patientInfo.user_id,
         patient_id: patientInfo.patient_id, //  corrected key
         firstName: patientInfo.first_name,
         lastName: patientInfo.last_name,
@@ -364,6 +365,8 @@ const handleCloseAboutMe = () => setOpenAboutMe(false);
           <MealCard
             meal={post}
             patientInfo={{
+              user_id:patientInfo.user_id,
+              patient_id: patientInfo.patientId,
               firstName: patientInfo.first_name,
               lastName: patientInfo.last_name,
             }}

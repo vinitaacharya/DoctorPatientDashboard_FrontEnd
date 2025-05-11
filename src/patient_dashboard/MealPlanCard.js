@@ -78,11 +78,12 @@ const handleExpandClick = async () => {
 
   const handleAddComment = async () => {
   const post_id=meal.post_id
-  console.log('here', post_id);
+  const user_id = patientInfo.user_id
+  console.log('here', user_id);
   if (newComment.trim() === "") return;
   const commentData = {
     post_id: post_id,
-    user_id: patientInfo.patient_id,  // Ensure you have this in patientInfo
+    user_id: user_id,  // Ensure you have this in patientInfo
     comment_text: newComment
   };
 
