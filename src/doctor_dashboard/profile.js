@@ -43,6 +43,18 @@ useEffect(() => {
     setDoctorUserId(doctorId); // ✅ This is missing!
   }
 }, []);
+// Step 1: Upload base64 to backend/cloud and get URL
+//const uploadImage = async (base64) => {
+  const res = await fetch(`${apiUrl}/upload-image`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image: base64 })
+  });
+
+  if (!res.ok) throw new Error("Image upload failed");
+  const data = await res.json();
+  return data.image_url; // <-- Backend should return this
+};
 
 useEffect(() => {
   const fetchPatientInfo = async () => {
@@ -152,13 +164,14 @@ const handleCreatePost = async () => {
   const meal_name = title;
   const meal_calories = parseInt(calories);
   const tagToSubmit = selectedTag === "Other" ? customTag : selectedTag;
-
+  
   if (!user_id || !meal_name || !description || !imageBase64 || !tagToSubmit) {
     alert("Please fill out all fields.");
     return;
   }
 
   try {
+    const imageUrl = await uploadImage(imageBase64); // Step 1
     const res = await fetch(`${apiUrl}/add-post`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -167,7 +180,7 @@ const handleCreatePost = async () => {
         meal_name,
         meal_calories,
         description,
-        picture: imageBase64,
+        meal_picture_url: imageUrl,
         add_tag: tagToSubmit
       })
     });
@@ -357,14 +370,16 @@ const handleCreatePost = async () => {
     if (file) {
       setUploadedFileName(file.name);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result;
-        if (typeof result === "string" && result.includes(',')) {
-          setImageBase64(result.split(',')[1]); // safe base64 split
-        } else {
-          console.warn("Unexpected file format for base64 image.");
-        }
-      };
+reader.onloadend = () => {
+  const result = reader.result;
+  if (typeof result === "string" && result.includes(',')) {
+    const base64Only = result.split(',')[1]; // 👈 only get base64
+    setImageBase64(base64Only);
+  } else {
+    console.warn("Unexpected file format for base64 image.");
+  }
+};
+
       reader.readAsDataURL(file);
     }
   }}
