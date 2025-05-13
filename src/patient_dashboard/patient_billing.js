@@ -75,6 +75,50 @@ function Patient_Billing() {
   e.preventDefault();
 
   const numericAmount = parseFloat(amount.replace("$", ""));
+//valdiate 
+  const cardNumberDigits = cardNumber.replace(/\s+/g, '');
+  const cvcDigits = cardCVC.trim();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+  if (!/^\d{16}$/.test(cardNumberDigits)) {
+    alert("Card number must be 16 digits.");
+    return;
+  }
+
+  if (!/^\d{3,4}$/.test(cvcDigits)) {
+    alert("CVC must be 3 or 4 digits.");
+    return;
+  }
+
+  if (!emailRegex.test(email)) {
+    alert("Please enter a valid email.");
+    return;
+  }
+
+  if (numericAmount <= 0 || isNaN(numericAmount)) {
+    alert("Amount must be a valid positive number.");
+    return;
+  }
+  // Validate expiration date
+const expRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+if (!expRegex.test(cardExpir)) {
+  alert("Expiration must be in MM/YY format.");
+  return;
+}
+
+// Check if the expiration date is in the past
+const [expMonth, expYear] = cardExpir.split("/").map(Number);
+const now = new Date();
+const currentYear = now.getFullYear() % 100; // Get last two digits of current year
+const currentMonth = now.getMonth() + 1; // JS months are 0-indexed
+
+if (
+  expYear < currentYear ||
+  (expYear === currentYear && expMonth < currentMonth)
+) {
+  alert("Card expiration date cannot be in the past.");
+  return;
+}
 
   try {
     const response = await fetch(`${apiUrl}/patient/${patientId}/payment`, {
@@ -116,8 +160,8 @@ function Patient_Billing() {
   
 
   const [rows, setRows] = useState([]);
-  const patientId = localStorage.getItem('patient_id'); // assuming you're storing patient ID in localStorage
-
+  const patientId = localStorage.getItem('patientId'); // assuming you're storing patient ID in localStorage
+  console.log('patien  tId',patientId)
 useEffect(() => {
   const fetchBills = async () => {
     try {
@@ -131,7 +175,7 @@ useEffect(() => {
         article: item.article !== 'credit' ? `Appt. ${item.article}` : item.article,
         date: new Date(item.created_at).toLocaleDateString("en-US"), // for the gray text under article
         appointmentFee: item.doctor_bill ? `$${item.doctor_bill.toFixed(2)}` : "-",
-        totalPrescriptionCharge: item.pharm_bill ? `$${item.pharm_bill.toFixed(2)}` : "$0.00",
+        totalPrescriptionCharge: item.pharm_bill ? `$${item.pharm_bill.toFixed(2)}` : "-",
         charge: item.credit === "" ? `$${(item.doctor_bill + item.pharm_bill).toFixed(2)}` : "$0.00",
         credit: item.credit !== "" ? `$${item.credit.toFixed(2)}` : "$0.00",
         currentBill: `$${item.current_bill.toFixed(2)}`
@@ -151,8 +195,9 @@ useEffect(() => {
 
 const calculateTotalBalance = () => {
   if (!rows.length) return "0.00";
-  const latest = rows[rows.length - 1]; // because of `.reverse()` in render
-  return latest.currentBill.replace('$', '');
+  const latest = rows[rows.length - 1];
+  const balance = parseFloat(latest.currentBill.replace('$', ''));
+  return Math.abs(balance).toFixed(2);
 };
 
   
@@ -337,7 +382,11 @@ const calculateTotalBalance = () => {
     fullWidth
     variant="outlined"
     value={cardNumber}
-    onChange={(e) => setcardNumber(e.target.value)}
+onChange={(e) => {
+  let value = e.target.value.replace(/\D/g, "").substring(0, 16);
+  value = value.replace(/(.{4})/g, "$1 ").trim();
+  setcardNumber(value);
+}}
     required
   />
   <Box sx={{ display: "flex", gap: 1 }}>
@@ -346,7 +395,13 @@ const calculateTotalBalance = () => {
       variant="outlined"
       fullWidth
       value={cardExpir}
-      onChange={(e) => setCardExpir(e.target.value)}
+onChange={(e) => {
+  let value = e.target.value.replace(/\D/g, "").substring(0, 4);
+  if (value.length >= 3) {
+    value = `${value.substring(0, 2)}/${value.substring(2)}`;
+  }
+  setCardExpir(value);
+}}
       required
     />
     <TextField
