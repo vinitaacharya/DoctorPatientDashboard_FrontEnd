@@ -32,8 +32,7 @@ export default function MealPlanCard({ meal, doctorInfo, removeFromLikedPosts })
     ],
         fullRecipe = '',
     user = {},
-    ingredients = [],
-    directions = [],
+   
   } = meal || {};
 
   //const [expanded, setExpanded] = useState(false);
@@ -62,7 +61,8 @@ const handleExpandClick = async () => {
           firstName: comment.first_name,
           lastName: comment.last_name,
           text: comment.comment_text,
-          created_at: comment.created_at
+          created_at: comment.created_at,
+          isDoctor:comment.doctor_id,
         }));
 
         setComments(formattedComments);
@@ -605,7 +605,7 @@ const handleCloseModal = () => setOpenModal(false);
     }}
   >
     
-    <Typography  sx={{color: user.doctor_id !== '' ? '#5889BD' : 'inherit', fontWeight: 'bold', pr:'1vh' }}>
+    <Typography  sx={{color: comment.doctor_id !==null  ? '#5889BD' : 'inherit', fontWeight: 'bold', pr:'1vh' }}>
       {comment.firstName} {comment.lastName}
     </Typography>
     <Typography >{comment.text || comment.comment_text}</Typography>
