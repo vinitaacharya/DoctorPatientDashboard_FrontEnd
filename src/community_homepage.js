@@ -26,6 +26,9 @@ import food1 from "./reciepe photo.png";
 const apiUrl = process.env.REACT_APP_API_URL;
 
 export default function CommunityForum() {
+
+
+  
   const [isDoctor, setIsDoctor] = useState(true); // 👈 clearer flag
 
   useEffect(() => {

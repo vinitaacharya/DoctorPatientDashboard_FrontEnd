@@ -33,6 +33,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const copyToClipboard = (text) => {
@@ -122,6 +123,8 @@ function Landing() {
     setSnackType(type);
     setSnackOpen(true);
   };
+
+  
 
 
 
@@ -1007,6 +1010,8 @@ const stories = [
         </Typography>
       </Container>
     </Box>
+
+
 
       <Snackbar
         open={snackOpen}

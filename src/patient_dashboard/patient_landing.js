@@ -79,6 +79,17 @@ const StyledRating = styled(Rating)({
 
 function Patient_Landing() {
 
+      const [snackOpen, setSnackOpen] = useState(false);
+      const [snackMsg, setSnackMsg] = useState("");
+      const [snackType, setSnackType] = useState("error");
+  
+      const showSnack = (msg, type = "error") => {
+        setSnackMsg(msg);
+        setSnackType(type);
+        setSnackOpen(true);
+      };
+
+
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const [appointmentToCancel, setAppointmentToCancel] = useState(null);
   const [refreshGraph, setRefreshGraph] = useState(false);
@@ -108,11 +119,11 @@ function Patient_Landing() {
           prev.filter(appt => appt.patient_appt_id !== appointmentToCancel)
         );
       } else {
-        alert("Failed to cancel the appointment.");
+        showSnack("Failed to cancel the appointment.");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Something went wrong.");
+      showSnack("Something went wrong.");
     } finally {
       closeCancelModal();
     }
