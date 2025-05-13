@@ -175,10 +175,10 @@ const handleCreatePost = async () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        user_id,
-        meal_name,
-        meal_calories,
-        description,
+        user_id:user_id,
+        meal_name:title,
+        meal_calories:meal_calories,
+        description:description,
         picture: imageBase64,
         add_tag: tagToSubmit
       })

@@ -174,13 +174,8 @@ const handleCreatePost = async () => {
         add_tag: tagToSubmit
       })
     });
-    console.log('userId',user_id);
-      console.log("userId",user_id);
-  console.log("meal_name",meal_name);
-  console.log("meal_calories",meal_calories);
-  console.log("tagToSubmit",tagToSubmit);
-  console.log("base64", imageBase64);
-  console.log("description", description);
+      console.log('userId',user_id);
+
     if (!res.ok) throw new Error("Failed to create post");
 
     const data = await res.json();
