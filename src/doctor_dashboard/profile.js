@@ -4,7 +4,6 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import AddIcon from '@mui/icons-material/Add';
 import MealCard from "./MealPlanCard"; // Make sure MealCard is exported from mealPlanCard.js
-import food1 from "./reciepe photo.png"; // Or replace with relevant image
 import profileBackground from "./profile_assets/profile_background.png"
 import ProfileImg from "./profile_assets/profilePageImg.png"
 import Tabs from '@mui/material/Tabs';
