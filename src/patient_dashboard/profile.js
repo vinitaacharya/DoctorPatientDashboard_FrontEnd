@@ -17,7 +17,17 @@ import { Radio, RadioGroup, Typography,Grid,Button,Box,TextField,FormControlLabe
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-  const Profile = () => {
+const Profile = () => {
+
+      const [snackOpen, setSnackOpen] = useState(false);
+      const [snackMsg, setSnackMsg] = useState("");
+      const [snackType, setSnackType] = useState("error");
+  
+      const showSnack = (msg, type = "error") => {
+        setSnackMsg(msg);
+        setSnackType(type);
+        setSnackOpen(true);
+      };
 
 
   const [selectedTag, setSelectedTag] = useState('');

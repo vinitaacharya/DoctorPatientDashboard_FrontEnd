@@ -61,7 +61,15 @@ const mockDescriptions = [
 ];
 function Pharmacy_Landing() {
     
-
+      const [snackOpen, setSnackOpen] = useState(false);
+      const [snackMsg, setSnackMsg] = useState("");
+      const [snackType, setSnackType] = useState("error");
+  
+      const showSnack = (msg, type = "error") => {
+        setSnackMsg(msg);
+        setSnackType(type);
+        setSnackOpen(true);
+      };
     
     const [pharmacyInfo, setPharmacyInfo] = useState(null);
     const [pharmacyStock, setPharmacyStock] = useState([]);
