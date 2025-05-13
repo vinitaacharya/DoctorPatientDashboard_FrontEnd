@@ -369,7 +369,7 @@ function Patient_Landing() {
     if (
       !weightChange || !weightAmount || !bloodPressure
     ) {
-      setError("All fields are required.");
+      setWeeklyError("All fields are required.");
       return;
     }
     if (!weightChange) {
