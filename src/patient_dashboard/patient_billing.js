@@ -17,6 +17,11 @@ import {
 import TablePagination from "@mui/material/TablePagination";
 import { styled } from "@mui/material/styles";
 
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const columns = [
@@ -38,6 +43,29 @@ const CustomTableCell = styled(TableCell)({
 
 
 function Patient_Billing() {
+  
+
+    const [snackOpen, setSnackOpen] = useState(false);
+    const [snackMsg, setSnackMsg] = useState("");
+    const [snackType, setSnackType] = useState("error");
+
+    const showSnack = (msg, type = "error") => {
+      setSnackMsg(msg);
+      setSnackType(type);
+      setSnackOpen(true);
+    };
+
+    <Snackbar
+      open={snackOpen}
+      autoHideDuration={4000}
+      onClose={() => setSnackOpen(false)}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+    >
+      <MuiAlert onClose={() => setSnackOpen(false)} severity={snackType} variant="filled" sx={{ width: '100%' }}>
+        {snackMsg}
+      </MuiAlert>
+    </Snackbar>
+    
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -81,28 +109,28 @@ function Patient_Billing() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   
   if (!/^\d{16}$/.test(cardNumberDigits)) {
-    alert("Card number must be 16 digits.");
+    showSnack("Card number must be 16 digits.");
     return;
   }
 
   if (!/^\d{3,4}$/.test(cvcDigits)) {
-    alert("CVC must be 3 or 4 digits.");
+    showSnack("CVC must be 3 or 4 digits.");
     return;
   }
 
   if (!emailRegex.test(email)) {
-    alert("Please enter a valid email.");
+    showSnack("Please enter a valid email.");
     return;
   }
 
   if (numericAmount <= 0 || isNaN(numericAmount)) {
-    alert("Amount must be a valid positive number.");
+    showSnack("Amount must be a valid positive number.");
     return;
   }
   // Validate expiration date
 const expRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
 if (!expRegex.test(cardExpir)) {
-  alert("Expiration must be in MM/YY format.");
+  showSnack("Expiration must be in MM/YY format.");
   return;
 }
 
@@ -116,7 +144,7 @@ if (
   expYear < currentYear ||
   (expYear === currentYear && expMonth < currentMonth)
 ) {
-  alert("Card expiration date cannot be in the past.");
+  showSnack("Card expiration date cannot be in the past.");
   return;
 }
 
@@ -147,11 +175,11 @@ if (
       console.log("Payment successful:", data);
     } else {
       // Handle 400 or 404 error
-      alert(data.error || "Payment failed.");
+      showSnack(data.error || "Payment failed.");
     }
   } catch (error) {
     console.error("Error submitting payment:", error);
-    alert("An error occurred while processing the payment.");
+    showSnack("An error occurred while processing the payment.");
   }
 };
 

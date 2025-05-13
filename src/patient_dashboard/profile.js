@@ -8,11 +8,27 @@ import profileBackground from "./profile_assets/profile_background.png"
 import ProfileImg from "./profile_assets/profilePageImg.png"
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+
 import { Radio, RadioGroup, Typography,Grid,Button,Box,TextField,FormControlLabel,Modal, IconButton, FormLabel, Avatar } from '@mui/material';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-  const Profile = () => {
+const Profile = () => {
+
+      const [snackOpen, setSnackOpen] = useState(false);
+      const [snackMsg, setSnackMsg] = useState("");
+      const [snackType, setSnackType] = useState("error");
+  
+      const showSnack = (msg, type = "error") => {
+        setSnackMsg(msg);
+        setSnackType(type);
+        setSnackOpen(true);
+      };
+
+
   const [selectedTag, setSelectedTag] = useState('');
 const [customTag, setCustomTag] = useState('');
   const [openCreatePost, setOpenCreatePost] = React.useState(false);
@@ -166,7 +182,7 @@ const handleCreatePost = async () => {
   const tagToSubmit = selectedTag === "Other" ? customTag : selectedTag;
 
   if (!user_id || !meal_name || !description || !imageBase64 || !tagToSubmit) {
-    alert("Please fill out all fields.");
+    showSnack("Please fill out all fields.");
     return;
   }
 
@@ -188,7 +204,7 @@ const handleCreatePost = async () => {
 
     const data = await res.json();
     console.log("Post created:", data);
-    alert("Post successfully created!");
+    showSnack("Post successfully created!");
 
     // Optional: Reset form
     setTitle('');
@@ -202,7 +218,7 @@ const handleCreatePost = async () => {
     fetchUserPosts(user_id); // Refresh user's posts
   } catch (error) {
     console.error("Error creating post:", error);
-    alert("There was a problem creating the post.");
+    showSnack("There was a problem creating the post.");
   }
 };
 

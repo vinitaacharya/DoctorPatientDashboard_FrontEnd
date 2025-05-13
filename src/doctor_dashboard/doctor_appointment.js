@@ -15,6 +15,9 @@ import Button from '@mui/material/Button';
 import { useNavigate } from "react-router-dom";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
 
 import { io } from "socket.io-client";
 
@@ -109,6 +112,27 @@ const style = {
 };
 
 function Doctor_Appointment() {
+
+    const [snackOpen, setSnackOpen] = useState(false);
+  const [snackMsg, setSnackMsg] = useState("");
+  const [snackType, setSnackType] = useState("error");
+
+  const showSnack = (msg, type = "error") => {
+    setSnackMsg(msg);
+    setSnackType(type);
+    setSnackOpen(true);
+  };
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={4000}
+        onClose={() => setSnackOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <MuiAlert onClose={() => setSnackOpen(false)} severity={snackType} variant="filled" sx={{ width: '100%' }}>
+          {snackMsg}
+        </MuiAlert>
+      </Snackbar>
+
 
   const location = useLocation();
   const { appointmentId } = location.state || {};
@@ -321,15 +345,15 @@ function Doctor_Appointment() {
     const data = await res.json();
 
     if (res.ok) {
-      alert(`Bill recorded successfully:\nDoctor: $${data.doctor_bill}\nPharmacy: $${data.pharm_bill}\nTotal: $${data.current_bill}`);
+      showSnack(`Bill recorded successfully:\nDoctor: $${data.doctor_bill}\nPharmacy: $${data.pharm_bill}\nTotal: $${data.current_bill}`);
       return true;
     } else {
-      alert(data.error || "Billing failed.");
+      showSnack(data.error || "Billing failed.");
       return false;
     }
   } catch (err) {
     console.error("Billing error:", err);
-    alert("An error occurred generating the bill.");
+    showSnack("An error occurred generating the bill.");
     return false;
   }
 };
@@ -436,7 +460,7 @@ function Doctor_Appointment() {
                             });
                             const data = await res.json();
                             if (res.ok) {
-                              alert("Prescription submitted successfully!");
+                              showSnack("Prescription submitted successfully!");
                                    const billSuccess = await generateBill(appointmentId);
                                     if (billSuccess) {
                                       setHasPrescribed(true);

@@ -33,6 +33,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const copyToClipboard = (text) => {
@@ -123,6 +124,8 @@ function Landing() {
     setSnackOpen(true);
   };
 
+  
+
 
 
   useEffect(() => {
@@ -189,6 +192,7 @@ function Landing() {
           console.log("Patient ID returned from backend:", data.patient_id); // ✅ debug line
           localStorage.setItem("patientId", data.patient_id);
           localStorage.removeItem("doctorId");
+          localStorage.removeItem("userId");
 
           // Redirect to dashboard
           navigate("/patient_dashboard/patient_landing");
@@ -395,70 +399,70 @@ const stories = [
                             }}>
                                   Patient 
                             </Button>
-<Modal
-  open={openPatientLogin}
-  onClose={handleClosePatientLogin}
-  aria-labelledby="modal-modal-title"
-  aria-describedby="modal-modal-description"
->
-  <Box sx={{
-    ...style,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '20px',
-    borderRadius: '23px',
-    padding: '30px'
-  }}>
-    <Typography id="modal-modal-title" variant="h6" component="h2" color="black" sx={{ textAlign: 'center' }}>
-      Patient Login
-    </Typography>
-    
-    {/* Email Field */}
-    <div className='labels'>
-      <label className='input-group' htmlFor="email">
-        Email:
-        <input
-          type='text'
-          name='email'
-          className="input-field" 
-          placeholder='Enter Email'
-          value={values.email}
-          onChange={e => setValues({...values, email: e.target.value})}
-          style={{ width: '100%', padding: '8px 12px', boxSizing: 'border-box' }}
-        />
-      </label>
-    </div>
-    
-    {/* Password Field */}
-    <div className='labels'>
-      <label className='input-group' htmlFor="password">
-        Password:
-        <input
-          type='password'
-          name='password'
-          className="input-field" 
-          placeholder='Enter Password'
-          value={values.password}
-          onChange={e => setValues({...values, password: e.target.value})}
-          style={{ width: '100%', padding: '8px 12px', boxSizing: 'border-box' }}
-        />
-      </label>
-    </div>
-    
-    <Button 
-      variant="contained" 
-      onClick={() => handleLogin(values.email, values.password)}
-      sx={{
-        width: '100%',
-        borderRadius: '23px',
-        py: 1.5,
-        backgroundColor: '#5C8CC6',
-        '&:hover': { backgroundColor: '#4A76A8' },
-        marginTop: '20px'
-      }}
-    >
-      Login
-    </Button>
+                              <Modal
+                                open={openPatientLogin}
+                                onClose={handleClosePatientLogin}
+                                aria-labelledby="modal-modal-title"
+                                aria-describedby="modal-modal-description"
+                              >
+                                <Box sx={{
+                                  ...style,
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  gap: '20px',
+                                  borderRadius: '23px',
+                                  padding: '30px'
+                                }}>
+                                  <Typography id="modal-modal-title" variant="h6" component="h2" color="black" sx={{ textAlign: 'center' }}>
+                                    Patient Login
+                                  </Typography>
+                                  
+                                  {/* Email Field */}
+                                  <div className='labels'>
+                                    <label className='input-group' htmlFor="email">
+                                      Email:
+                                      <input
+                                        type='text'
+                                        name='email'
+                                        className="input-field" 
+                                        placeholder='Enter Email'
+                                        value={values.email}
+                                        onChange={e => setValues({...values, email: e.target.value})}
+                                        style={{ width: '100%', padding: '8px 12px', boxSizing: 'border-box' }}
+                                      />
+                                    </label>
+                                  </div>
+                                  
+                                  {/* Password Field */}
+                                  <div className='labels'>
+                                    <label className='input-group' htmlFor="password">
+                                      Password:
+                                      <input
+                                        type='password'
+                                        name='password'
+                                        className="input-field" 
+                                        placeholder='Enter Password'
+                                        value={values.password}
+                                        onChange={e => setValues({...values, password: e.target.value})}
+                                        style={{ width: '100%', padding: '8px 12px', boxSizing: 'border-box' }}
+                                      />
+                                    </label>
+                                  </div>
+                                  
+                                  <Button 
+                                    variant="contained" 
+                                    onClick={() => handleLogin(values.email, values.password)}
+                                    sx={{
+                                      width: '100%',
+                                      borderRadius: '23px',
+                                      py: 1.5,
+                                      backgroundColor: '#5C8CC6',
+                                      '&:hover': { backgroundColor: '#4A76A8' },
+                                      marginTop: '20px'
+                                    }}
+                                  >
+                                    Login
+                                  </Button>
                                     </Box>
                                   </Modal>
                                   
@@ -1006,6 +1010,8 @@ const stories = [
         </Typography>
       </Container>
     </Box>
+
+
 
       <Snackbar
         open={snackOpen}
