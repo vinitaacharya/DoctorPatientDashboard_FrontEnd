@@ -22,6 +22,7 @@ function Doctor_Patientlist() {
   const [patients, setPatients] = useState([]);
   const [openLearnMore, setOpenLearnMore] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetch(`${apiUrl}/doc_patients/${doctorId}`)
@@ -42,10 +43,12 @@ function Doctor_Patientlist() {
     <div style={{ display: "flex" }}>
       <Doctor_Navbar />
       <Box sx={{ flexGrow: 1, padding: 4, height: "92vh" }}>
-        <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: "medium", fontFamily: 'Montserrat', marginLeft: '1vw', fontSize: '2em' }}>
-          Your Patients
-        </Typography>
-
+        <Box>
+          <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: "medium", fontFamily: 'Montserrat', marginLeft: '1vw', fontSize: '2em' }}>
+            Your Patients
+          </Typography>
+          //add search bar here
+        </Box>  
         <Box sx={{ backgroundColor: "#EEF2FE", padding: '2vw', borderRadius: 10, width: "80vw", height: "80vh", margin: "auto" }}>
           <Box className="custom-scroll" sx={{ height: "72vh", overflowY: "auto" }}>
             {patients.map((pat, index) => (
