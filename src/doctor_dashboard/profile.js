@@ -44,7 +44,7 @@ useEffect(() => {
   }
 }, []);
 // Step 1: Upload base64 to backend/cloud and get URL
-//const uploadImage = async (base64) => {
+const uploadImage = async (base64) => {
   const res = await fetch(`${apiUrl}/upload-image`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
