@@ -10,6 +10,9 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
 
 
 
@@ -144,6 +147,18 @@ const MealCard = ({ title, tags, description, image, day, onAddToPlan, meal_id})
 
 function Patient_Mealplan() {
 
+    const [snackOpen, setSnackOpen] = useState(false);
+    const [snackMsg, setSnackMsg] = useState("");
+    const [snackType, setSnackType] = useState("error");
+  
+    const showSnack = (msg, type = "error") => {
+      setSnackMsg(msg);
+      setSnackType(type);
+      setSnackOpen(true);
+    };
+
+
+
 
   const [patientInfo, setPatientInfo] = useState(null);
   
@@ -247,10 +262,10 @@ const handleDeleteMealPlan = async (mealPlanId) => {
         }))
       );
       
-      alert("Meal plan deleted successfully");
+      showSnack("Meal plan deleted successfully");
     } catch (error) {
       console.error("Error deleting meal plan:", error);
-      alert("Failed to delete meal plan");
+      showSnack("Failed to delete meal plan");
     }
   }
 };
@@ -467,7 +482,7 @@ const handleSaveNew = async () => {
   try {
     const patientId = localStorage.getItem("patientId");
     if (!patientId) {
-      alert("No patient ID found");
+      showSnack("No patient ID found");
       return;
     }
 
@@ -496,12 +511,12 @@ const handleSaveNew = async () => {
       }))
     );
 
-    alert("Meal plan created successfully!");
+    showSnack("Meal plan created successfully!");
     setTitle("");
     handleCloseNewPlanModal();
   } catch (error) {
     console.error("Meal plan creation failed:", error);
-    alert("Could not create meal plan.");
+    showSnack("Could not create meal plan.");
   }
 };
 
@@ -599,7 +614,7 @@ const handleSaveMealPlan = async () => {
   setIsSaving(true);
   try {
     if (!selectedMealPlan?.meal_plan_id) {
-      alert("No meal plan selected");
+      showSnack("No meal plan selected");
       return;
     }
 
@@ -651,10 +666,10 @@ const handleSaveMealPlan = async () => {
 
     await Promise.all(savePromises);
     
-    alert("Meal plan saved successfully!");
+    showSnack("Meal plan saved successfully!");
   } catch (error) {
     console.error("Error saving meal plan:", error);
-    alert(`Could not save meal plan: ${error.message}`);
+    showSnack(`Could not save meal plan: ${error.message}`);
   } finally {
     setIsSaving(false);
   }
@@ -1021,6 +1036,18 @@ const handleSaveMealPlan = async () => {
     </ModalContent>
 </Modal>
       </Box>
+
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={4000}
+        onClose={() => setSnackOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <MuiAlert onClose={() => setSnackOpen(false)} severity={snackType} variant="filled" sx={{ width: '100%' }}>
+          {snackMsg}
+        </MuiAlert>
+      </Snackbar>
+
     </div>
   );
 }

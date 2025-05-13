@@ -98,6 +98,31 @@ function Doctor_Landing() {
     }
   }, [doctorInfo]);
 
+    const [userInfo, setUserInfo] = useState(null);
+  
+      useEffect(() => {
+      const fetchUserInfo = async () => {
+        const id = localStorage.getItem("doctorId");
+        if (!id) {
+          console.warn("No patient ID in localStorage");
+          return;
+        }
+        try {
+          const res = await fetch(`${apiUrl}/user?doctor_id=${id}`);
+          if (!res.ok) {
+            throw new Error("Failed to fetch user info");
+          }
+          const data = await res.json();
+          setUserInfo(data);
+          console.log("User ID", data);
+          localStorage.setItem("userId", data.user_id);
+        } catch (error) {
+          console.error("Error fetching user info:", error);
+        }
+      };
+      fetchUserInfo();
+    }, []);
+
 
 
 
