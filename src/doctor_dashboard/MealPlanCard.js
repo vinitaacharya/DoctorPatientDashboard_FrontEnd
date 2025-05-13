@@ -605,7 +605,7 @@ const handleCloseModal = () => setOpenModal(false);
     }}
   >
     
-    <Typography  sx={{color: comment.doctor_id !==null  ? '#5889BD' : 'inherit', fontWeight: 'bold', pr:'1vh' }}>
+    <Typography  sx={{color: comment.isDoctor !==null  ? '#5889BD' : 'inherit', fontWeight: 'bold', pr:'1vh' }}>
       {comment.firstName} {comment.lastName}
     </Typography>
     <Typography >{comment.text || comment.comment_text}</Typography>
