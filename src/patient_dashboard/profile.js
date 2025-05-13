@@ -89,6 +89,7 @@ useEffect(() => {
 }, []);
 const [likedPosts, setLikedPosts] = useState([]);
 
+
 useEffect(() => {
   if (changeTab === 1) {
     const fetchLikedPosts = async () => {
@@ -369,14 +370,16 @@ const handleCreatePost = async () => {
     if (file) {
       setUploadedFileName(file.name);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result;
-        if (typeof result === "string" && result.includes(',')) {
-          setImageBase64(result.split(',')[1]); // safe base64 split
-        } else {
-          console.warn("Unexpected file format for base64 image.");
-        }
-      };
+reader.onloadend = () => {
+  const result = reader.result;
+  if (typeof result === "string" && result.includes(',')) {
+    const base64Only = result.split(',')[1]; // 👈 only get base64
+    console.log('imageulr', base64Only)
+    setImageBase64(base64Only);
+  } else {
+    console.warn("Unexpected file format for base64 image.");
+  }
+};
       reader.readAsDataURL(file);
     }
   }}

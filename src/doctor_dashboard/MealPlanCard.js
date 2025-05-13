@@ -378,7 +378,8 @@ const handleCloseModal = () => setOpenModal(false);
     <>
     <Card sx={{ maxWidth: '43vh', height:'55vh', mx:4, my:2 }}>
   
-      <CardMedia sx={{ height: '30vh'}} component="img"  image={meal.image} style={{padding:4}} alt={title} />
+      <CardMedia sx={{ height: '30vh', width: '100%' }} 
+      style={{ padding: 0, objectFit: 'cover' }}  component="img"  image={meal.image} style={{padding:4}} alt={title} />
       
       <CardContent>
       <div style={{ marginBottom: 8 }}>
@@ -490,7 +491,8 @@ const handleCloseModal = () => setOpenModal(false);
       component="img"
       image={meal.image}
       alt={title}
-      sx={{ width: '100%', maxHeight: '40vh', objectFit: 'cover' }}
+      sx={{ height: '45vh', width: '100%' }} 
+      style={{ padding: 0, objectFit: 'cover' }} 
     />
 
     {/* Scrollable Description */}
@@ -518,7 +520,7 @@ const handleCloseModal = () => setOpenModal(false);
         borderTop: '1px solid #ccc',
         px: 2,
         py: 1,
-        maxHeight: '25vh',
+        height: '25vh',
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -602,7 +604,8 @@ const handleCloseModal = () => setOpenModal(false);
       display:'flex',
     }}
   >
-    <Typography  sx={{color: user.doctor_id === 'doctor' ? '#5889BD' : 'inherit', fontWeight: 'bold', pr:'1vh' }}>
+    
+    <Typography  sx={{color: user.doctor_id !== '' ? '#5889BD' : 'inherit', fontWeight: 'bold', pr:'1vh' }}>
       {comment.firstName} {comment.lastName}
     </Typography>
     <Typography >{comment.text || comment.comment_text}</Typography>
