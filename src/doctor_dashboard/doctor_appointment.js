@@ -467,11 +467,11 @@ function Doctor_Appointment() {
                                       handleClose();
                                     }
                             } else {
-                              showSnack(data.error || "Failed to submit prescription.");
+                              alert(data.error || "Failed to submit prescription.");
                             }
                           } catch (err) {
                             console.error("Prescription error:", err);
-                            showSnack("An error occurred submitting the prescription.");
+                            alert("An error occurred submitting the prescription.");
                           }
                         }}
                       >
