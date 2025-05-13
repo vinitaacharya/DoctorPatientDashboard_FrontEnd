@@ -118,7 +118,7 @@ useEffect(() => {
           title: post.meal_name,
           tags: [`#${post.tag}`],
           description: post.description,
-          image: `data:image/jpeg;base64,${post.picture}`,
+          image: `${post.picture}`,
           comments: []
         }));
 
@@ -150,7 +150,7 @@ const fetchUserPosts = async (user_id) => {
       title: post.meal_name,
       tags: [`#${post.tag}`],
       description: post.description,
-      image: `data:image/jpeg;base64,${post.picture}`,
+      image: `${post.picture}`,
     }));
     setPosts(formattedPosts);
   } catch (error) {

@@ -134,7 +134,7 @@ const [selectedCategory, setSelectedCategory] = useState("All");
           title: post.meal_name,
           tags: [`#${post.tag}`],
           description: post.description,
-          image: `data:image/jpeg;base64,${post.picture}`, // Assuming JPEG, adjust if needed
+          image: `${post.picture}`, // Assuming JPEG, adjust if needed
         }));
         setPosts(formattedPosts);
       })

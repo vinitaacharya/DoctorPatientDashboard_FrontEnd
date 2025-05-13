@@ -40,21 +40,10 @@ useEffect(() => {
   console.log("docs", doctorId);
 
   if (doctorId) {
-    setDoctorUserId(doctorId); // ✅ This is missing!
+    setDoctorUserId(doctorId); 
   }
 }, []);
-// Step 1: Upload base64 to backend/cloud and get URL
-const uploadImage = async (base64) => {
-  const res = await fetch(`${apiUrl}/upload-image`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ image: base64 })
-  });
 
-  if (!res.ok) throw new Error("Image upload failed");
-  const data = await res.json();
-  return data.image_url; // <-- Backend should return this
-};
 
 useEffect(() => {
   const fetchPatientInfo = async () => {
@@ -118,7 +107,7 @@ useEffect(() => {
           title: post.meal_name,
           tags: [`#${post.tag}`],
           description: post.description,
-          image: `data:image/jpeg;base64,${post.picture}`,
+          image: `${post.picture}`,
           comments: []
         }));
 
@@ -150,7 +139,7 @@ const fetchUserPosts = async (user_id) => {
       title: post.meal_name,
       tags: [`#${post.tag}`],
       description: post.description,
-      image: `data:image/jpeg;base64,${post.picture}`,
+      image: `${post.picture}`,
     }));
     setPosts(formattedPosts);
   } catch (error) {
@@ -170,21 +159,28 @@ const handleCreatePost = async () => {
     return;
   }
 
+  
+
   try {
-    const imageUrl = await uploadImage(imageBase64); // Step 1
     const res = await fetch(`${apiUrl}/add-post`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        user_id,
-        meal_name,
-        meal_calories,
-        description,
-        meal_picture_url: imageUrl,
+        user_id:user_id,
+        meal_name:title,
+        meal_calories:meal_calories,
+        description:description,
+        picture: imageBase64,
         add_tag: tagToSubmit
       })
     });
     console.log('userId',user_id);
+      console.log("userId",user_id);
+  console.log("meal_name",meal_name);
+  console.log("meal_calories",meal_calories);
+  console.log("tagToSubmit",tagToSubmit);
+  console.log("base64", imageBase64);
+  console.log("description", description);
     if (!res.ok) throw new Error("Failed to create post");
 
     const data = await res.json();
@@ -374,6 +370,7 @@ reader.onloadend = () => {
   const result = reader.result;
   if (typeof result === "string" && result.includes(',')) {
     const base64Only = result.split(',')[1]; // 👈 only get base64
+    console.log('imageulr', base64Only)
     setImageBase64(base64Only);
   } else {
     console.warn("Unexpected file format for base64 image.");
