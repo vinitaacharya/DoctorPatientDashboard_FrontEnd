@@ -1237,7 +1237,7 @@ const handleCreateAppointment = async () => {
                         </Typography>
                         <TextField
                           fullWidth
-                          placeholder="Type here"
+                          placeholder="a/b"
                           size="small"
 
                           value={bloodPressure}
