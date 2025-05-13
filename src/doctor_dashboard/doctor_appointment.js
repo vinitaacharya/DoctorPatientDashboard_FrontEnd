@@ -309,6 +309,30 @@ function Doctor_Appointment() {
     const [hasPrescribed, setHasPrescribed] = useState(false);
 
 
+    //handle creating bill
+    const generateBill = async (apptId) => {
+  try {
+    const res = await fetch(`${apiUrl}/patient/bill`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ appt_id: apptId }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert(`Bill recorded successfully:\nDoctor: $${data.doctor_bill}\nPharmacy: $${data.pharm_bill}\nTotal: $${data.current_bill}`);
+      return true;
+    } else {
+      alert(data.error || "Billing failed.");
+      return false;
+    }
+  } catch (err) {
+    console.error("Billing error:", err);
+    alert("An error occurred generating the bill.");
+    return false;
+  }
+};
 
     
 
@@ -413,8 +437,11 @@ function Doctor_Appointment() {
                             const data = await res.json();
                             if (res.ok) {
                               alert("Prescription submitted successfully!");
-                              setHasPrescribed(true);
-                              handleClose();
+                                   const billSuccess = await generateBill(appointmentId);
+                                    if (billSuccess) {
+                                      setHasPrescribed(true);
+                                      handleClose();
+                                    }
                             } else {
                               alert(data.error || "Failed to submit prescription.");
                             }
