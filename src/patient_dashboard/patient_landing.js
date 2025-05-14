@@ -1800,7 +1800,7 @@ const handleCreateAppointment = async () => {
                                   fullWidth
                                   value={apptReason}
                                   onChange={(e) => setApptReason(e.target.value)}
-                                  sx={{ mb: 2 }}
+                                  sx={{ mb: 2, }}
                                 />
 
                                 <TextField

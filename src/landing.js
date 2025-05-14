@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./landing.css";
 import heroImage from "./assets/heroimage.png";
-import patient1 from "./assets/patient1.png";
+import patient1 from "./assets/mike.png";
 import patient2 from "./assets/jenna.png";
 import patient3 from "./assets/cassie.png";
 
@@ -301,8 +301,8 @@ const stories = [
   {
     title: "Health Discipline",
     image: patient1,
-    short: `“I used to be heavily overweight and it sucked. Now after a few appointments I was able to get my life together. I even donated $100M”"`,
-    full: `"“I used to be heavily overweight and it sucked. Now after a few appointments I was able to get my life together. I even donated $100M”."`
+    short: `"I used to be heavily overweight and it sucked. Now after a few appointments I was able to get my life together. I even donated $100M."`,
+    full: `"I used to be heavily overweight and it sucked. Now after a few appointments I was able to get my life together. I even donated $100M."`
   },
   {
     title: "Health to Wealth",
