@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./landing.css";
 import heroImage from "./assets/heroimage.png";
 import patient1 from "./assets/patient1.png";
-import patient2 from "./assets/patient2.png";
-import patient3 from "./assets/patient3.png";
+import patient2 from "./assets/jenna.png";
+import patient3 from "./assets/cassie.png";
 
 import doctor1 from "./assets/doctor1.png";
 import doctor2 from "./assets/doctor2.png";
