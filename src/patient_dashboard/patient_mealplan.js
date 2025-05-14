@@ -666,7 +666,7 @@ const handleSaveMealPlan = async () => {
 
     await Promise.all(savePromises);
     
-    showSnack("Meal plan saved successfully!", "sucess");
+    showSnack("Meal plan saved successfully!", "success");
   } catch (error) {
     console.error("Error saving meal plan:", error);
     showSnack(`Could not save meal plan: ${error.message}`);
