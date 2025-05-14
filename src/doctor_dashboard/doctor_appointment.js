@@ -345,7 +345,7 @@ function Doctor_Appointment() {
     const data = await res.json();
 
     if (res.ok) {
-      showSnack(`Bill recorded successfully:\nDoctor: $${data.doctor_bill}\nPharmacy: $${data.pharm_bill}\nTotal: $${data.current_bill}`);
+      showSnack(`Bill recorded successfully:\nDoctor: $${data.doctor_bill}\nPharmacy: $${data.pharm_bill}\nTotal: $${data.current_bill}`, "success");
       return true;
     } else {
       showSnack(data.error || "Billing failed.");
@@ -550,7 +550,7 @@ useEffect(() => {
       }
 
       // 3. Generate bill and close modal
-      showSnack("Prescription and meal plan submitted successfully!");
+      showSnack("Prescription and meal plan submitted successfully!", "success");
       const billSuccess = await generateBill(appointmentId);
       if (billSuccess) {
         setHasPrescribed(true);

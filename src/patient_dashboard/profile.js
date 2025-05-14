@@ -205,7 +205,7 @@ const handleCreatePost = async () => {
 
     const data = await res.json();
     console.log("Post created:", data);
-    showSnack("Post successfully created!");
+    showSnack("Post successfully created!", "sucess");
 
     // Optional: Reset form
     setTitle('');

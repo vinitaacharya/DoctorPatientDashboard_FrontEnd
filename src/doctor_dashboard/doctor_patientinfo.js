@@ -301,7 +301,7 @@ function DoctorPatientInfo() {
               const result = await response.json();
               if (!response.ok) throw new Error(result.error || "Failed to update patient");
           
-              showSnack("Patient information updated successfully!");
+              showSnack("Patient information updated successfully!", "success");
               setIsEditing(false);
             } catch (err) {
               console.error("Update error:", err);

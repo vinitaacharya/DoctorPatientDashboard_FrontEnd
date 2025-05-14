@@ -262,7 +262,7 @@ const handleDeleteMealPlan = async (mealPlanId) => {
         }))
       );
       
-      showSnack("Meal plan deleted successfully");
+      showSnack("Meal plan deleted successfully", "success");
     } catch (error) {
       console.error("Error deleting meal plan:", error);
       showSnack("Failed to delete meal plan");
@@ -511,7 +511,7 @@ const handleSaveNew = async () => {
       }))
     );
 
-    showSnack("Meal plan created successfully!");
+    showSnack("Meal plan created successfully!", "success");
     setTitle("");
     handleCloseNewPlanModal();
   } catch (error) {
@@ -666,7 +666,7 @@ const handleSaveMealPlan = async () => {
 
     await Promise.all(savePromises);
     
-    showSnack("Meal plan saved successfully!");
+    showSnack("Meal plan saved successfully!", "sucess");
   } catch (error) {
     console.error("Error saving meal plan:", error);
     showSnack(`Could not save meal plan: ${error.message}`);
@@ -742,16 +742,16 @@ const handleSaveMealPlan = async () => {
                           <MenuItem value="" disabled>
                             Select Tag
                           </MenuItem>
-                          <MenuItem value="Low_Carb">Low Carb</MenuItem>
+                          <MenuItem value="Low Carb">Low Carb</MenuItem>
                           <MenuItem value="Keto">Keto</MenuItem>
                           <MenuItem value="Paleo">Paleo</MenuItem>
                           <MenuItem value="Mediterranean">Mediterranean</MenuItem>
                           <MenuItem value="Vegan">Vegan</MenuItem>
                           <MenuItem value="Vegetarian">Vegetarian</MenuItem>
-                          <MenuItem value="Gluten_Free">Gluten-Free</MenuItem>
-                          <MenuItem value="Dairy_Free">Dairy-Free</MenuItem>
-                          <MenuItem value="Weight_Loss">Weight Loss</MenuItem>
-                          <MenuItem value="Weight_Gain">Weight Gain</MenuItem>
+                          <MenuItem value="Gluten Free">Gluten-Free</MenuItem>
+                          <MenuItem value="Dairy-Free">Dairy-Free</MenuItem>
+                          <MenuItem value="Weight Loss">Weight Loss</MenuItem>
+                          <MenuItem value="Weight Gain">Weight Gain</MenuItem>
                           <MenuItem value="Other">Other</MenuItem>
                         </TextField>
                         

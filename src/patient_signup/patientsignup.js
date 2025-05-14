@@ -257,7 +257,7 @@ const handleFileUpload = (e) => {
       .then(res => res.json())
       .then(response => {
         if (response.message) {
-          showSnack("Account and survey submitted successfully!");
+          showSnack("Account and survey submitted successfully!", "success");
           navigate('/landing');
         } else {
           throw new Error(response.error || "Something went wrong");

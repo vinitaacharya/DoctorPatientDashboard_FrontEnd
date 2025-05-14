@@ -253,7 +253,7 @@ const handleDeleteMealPlan = async (mealPlanId) => {
         }))
       );
       
-      showSnack("Meal plan deleted successfully");
+      showSnack("Meal plan deleted successfully", "success");
     } catch (error) {
       console.error("Error deleting meal plan:", error);
       showSnack("Failed to delete meal plan");
@@ -507,7 +507,7 @@ const handleSaveNew = async () => {
       }))
     );
 
-    showSnack("Meal plan created successfully!");
+    showSnack("Meal plan created successfully!", "success");
     setTitle("");
     handleCloseNewPlanModal();
   } catch (error) {
@@ -663,7 +663,7 @@ const handleSaveMealPlan = async () => {
 
     await Promise.all(savePromises);
     
-    showSnack("Meal plan saved successfully!");
+    showSnack("Meal plan saved successfully!", "success");
   } catch (error) {
     console.error("Error saving meal plan:", error);
     showSnack(`Could not save meal plan: ${error.message}`);
